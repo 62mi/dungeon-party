@@ -767,10 +767,33 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   padding:8px;
   min-height:120px;
   transition:all 0.3s ease;
+  cursor:pointer;
+  position:relative;
 }
 .character-slot:hover{
   background:rgba(13,17,23,0.6);
-  border-color:#334155;
+  border-color:#ffd700;
+  box-shadow:0 0 12px rgba(255,215,0,0.3);
+  transform:translateY(-2px);
+}
+.character-slot:active{
+  transform:translateY(0);
+  box-shadow:0 0 8px rgba(255,215,0,0.5);
+}
+.character-slot::after{
+  content:'📋クリックで詳細';
+  position:absolute;
+  bottom:-20px;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:0.7em;
+  color:#888;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 0.3s ease;
+}
+.character-slot:hover::after{
+  opacity:1;
 }
 .character-sprite{
   width:50px;
@@ -1334,7 +1357,9 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 <div class="adventure-field" id="adventureField">
   <!-- 左側：パーティー -->
   <div class="party-area">
-    <div class="area-title">🛡️ パーティー</div>
+    <div class="area-title">🛡️ パーティー
+      <span style="font-size:0.7em; color:#888; display:block; font-weight:normal;">キャラクターをクリックで詳細表示</span>
+    </div>
     <div class="party-grid">
       <div class="character-slot" data-index="0" onmouseover="showCharacterTooltip(0)" onmouseout="hideCharacterTooltip()" ontouchstart="showCharacterTooltip(0)" ontouchend="setTimeout(() => hideCharacterTooltip(), 3000)" onclick="showCharacterDetails(0)">
         <div class="character-sprite" id="char0"></div>
@@ -3050,6 +3075,16 @@ function updateAdventureField() {
         nameEl.title = `Lv.${member.level || 1} - クリックで詳細表示`;
       }
       
+      // キャラクタースロット全体にもツールチップを設定
+      const characterSlot = document.querySelector(`[data-index="${index}"]`);
+      if (characterSlot) {
+        characterSlot.title = `${member.name} Lv.${member.level || 1}
+HP: ${Math.max(0, member.hp)}/${member.maxHp}
+ATK: ${member.atk} DEF: ${member.def} SPD: ${member.spd}
+EXP: ${member.exp || 0}/${member.expToNext || 50}
+クリックで詳細表示`;
+      }
+      
       // HPバー更新
       if (hpFill && hpText) {
         const hpPercent = Math.max(0, member.hp / member.maxHp * 100);
@@ -4367,43 +4402,74 @@ function applyEnhancement(enhancement) {
 // === キャラクターツールチップシステム ===
 function showCharacterTooltip(index) {
   console.log('ツールチップ表示:', index);
+  
+  if (!party || party.length === 0) {
+    console.log('パーティーが存在しません');
+    return;
+  }
+  
   const member = party[index];
   if (!member) {
     console.log('メンバーが見つかりません:', index);
     return;
   }
+  
   console.log('メンバー情報:', member);
   
-  const tooltip = document.getElementById('characterTooltip');
-  
-  // 基本情報
-  document.getElementById('tooltipIcon').textContent = member.icon;
-  document.getElementById('tooltipName').textContent = member.name;
-  document.getElementById('tooltipClass').textContent = member.className || member.class;
-  document.getElementById('tooltipLevel').textContent = `レベル ${member.level || 1}`;
-  
-  // ステータス
-  document.getElementById('tooltipHP').textContent = `${Math.max(0, member.hp)}/${member.maxHp}`;
-  document.getElementById('tooltipATK').textContent = member.atk;
-  document.getElementById('tooltipDEF').textContent = member.def;
-  document.getElementById('tooltipSPD').textContent = member.spd;
-  
-  // 経験値バー
-  const currentExp = member.exp || 0;
-  const expToNext = member.expToNext || 100;
-  const expPercent = Math.min(100, (currentExp / expToNext) * 100);
-  
-  document.getElementById('tooltipExpFill').style.width = `${expPercent}%`;
-  document.getElementById('tooltipExpText').textContent = `${currentExp}/${expToNext} EXP`;
-  
-  // 装備品
-  updateTooltipEquipment(member);
-  
-  // ツールチップを表示
-  tooltip.style.display = 'block';
-  
-  // マウス位置に追従
-  document.addEventListener('mousemove', updateTooltipPosition);
+  try {
+    const tooltip = document.getElementById('characterTooltip');
+    if (!tooltip) {
+      console.log('ツールチップ要素が見つかりません');
+      return;
+    }
+    
+    // 基本情報
+    const tooltipIcon = document.getElementById('tooltipIcon');
+    const tooltipName = document.getElementById('tooltipName');
+    const tooltipClass = document.getElementById('tooltipClass');
+    const tooltipLevel = document.getElementById('tooltipLevel');
+    
+    if (tooltipIcon) tooltipIcon.textContent = member.icon || '❓';
+    if (tooltipName) tooltipName.textContent = member.name || '不明';
+    if (tooltipClass) tooltipClass.textContent = member.className || member.class || '不明';
+    if (tooltipLevel) tooltipLevel.textContent = `レベル ${member.level || 1}`;
+    
+    // ステータス
+    const tooltipHP = document.getElementById('tooltipHP');
+    const tooltipATK = document.getElementById('tooltipATK');
+    const tooltipDEF = document.getElementById('tooltipDEF');
+    const tooltipSPD = document.getElementById('tooltipSPD');
+    
+    if (tooltipHP) tooltipHP.textContent = `${Math.max(0, member.hp || 0)}/${member.maxHp || 100}`;
+    if (tooltipATK) tooltipATK.textContent = member.atk || 0;
+    if (tooltipDEF) tooltipDEF.textContent = member.def || 0;
+    if (tooltipSPD) tooltipSPD.textContent = member.spd || 0;
+    
+    // 経験値バー
+    const currentExp = member.exp || 0;
+    const expToNext = member.expToNext || 50;
+    const expPercent = Math.min(100, (currentExp / expToNext) * 100);
+    
+    const tooltipExpFill = document.getElementById('tooltipExpFill');
+    const tooltipExpText = document.getElementById('tooltipExpText');
+    
+    if (tooltipExpFill) tooltipExpFill.style.width = `${expPercent}%`;
+    if (tooltipExpText) tooltipExpText.textContent = `${currentExp}/${expToNext} EXP`;
+    
+    // 装備品
+    updateTooltipEquipment(member);
+    
+    // ツールチップを表示
+    tooltip.style.display = 'block';
+    tooltip.style.zIndex = '9999';
+    
+    // マウス位置に追従
+    document.addEventListener('mousemove', updateTooltipPosition);
+    
+    console.log('ツールチップ表示完了');
+  } catch (error) {
+    console.error('ツールチップ表示エラー:', error);
+  }
 }
 
 function updateTooltipEquipment(member) {
@@ -4456,33 +4522,69 @@ function updateTooltipPosition(event) {
 
 // 簡単なキャラクター詳細表示（クリック時）
 function showCharacterDetails(index) {
-  const member = party[index];
-  if (!member) {
-    alert('キャラクターが見つかりません');
+  console.log('showCharacterDetails called with index:', index);
+  console.log('party array:', party);
+  
+  if (!party || party.length === 0) {
+    alert('パーティーが見つかりません。ゲームを開始してください。');
     return;
   }
   
-  const equipmentText = member.equipment ? 
-    Object.entries(member.equipment).map(([slot, item]) => 
-      `${item.name} (${Object.entries(item).filter(([k, v]) => ['atk', 'def', 'hp', 'spd'].includes(k) && v > 0).map(([k, v]) => `${k.toUpperCase()}+${v}`).join(', ')})`
-    ).join('\n') : 
+  const member = party[index];
+  if (!member) {
+    alert(`キャラクター${index}が見つかりません。パーティー数: ${party.length}`);
+    return;
+  }
+  
+  console.log('member data:', member);
+  
+  const equipmentText = member.equipment && Object.keys(member.equipment).length > 0 ? 
+    Object.entries(member.equipment).map(([slot, item]) => {
+      const stats = Object.entries(item).filter(([k, v]) => ['atk', 'def', 'hp', 'spd'].includes(k) && v > 0)
+        .map(([k, v]) => `${k.toUpperCase()}+${v}`).join(', ');
+      return `${item.name}${stats ? ` (${stats})` : ''}`;
+    }).join('\n') : 
     '装備なし';
   
   const details = `
-【${member.name}】 Lv.${member.level || 1} ${member.className || member.class}
+【${member.name}】
+職業: ${member.className || member.class || '不明'}
+レベル: ${member.level || 1}
 
-💗 HP: ${Math.max(0, member.hp)}/${member.maxHp}
-⚔️ ATK: ${member.atk}
-🛡️ DEF: ${member.def}
-💨 SPD: ${member.spd}
+💗 HP: ${Math.max(0, member.hp || 0)}/${member.maxHp || 100}
+⚔️ ATK: ${member.atk || 0}
+🛡️ DEF: ${member.def || 0}  
+💨 SPD: ${member.spd || 0}
 
-📈 EXP: ${member.exp || 0}/${member.expToNext || 50}
+📈 経験値: ${member.exp || 0}/${member.expToNext || 50}
 
 🎒 装備:
 ${equipmentText}
   `;
   
   alert(details);
+}
+
+// テスト用関数
+function testCharacterDetails() {
+  if (!party || party.length === 0) {
+    alert('パーティーがありません。ゲームを開始してください。');
+    return;
+  }
+  
+  console.log('パーティー情報:', party);
+  showCharacterDetails(0); // 最初のキャラクターを表示
+}
+
+// デバッグ用：グローバル関数としてparty情報を確認
+function debugParty() {
+  console.log('Current party:', party);
+  console.log('Party length:', party ? party.length : 'undefined');
+  if (party && party.length > 0) {
+    party.forEach((member, index) => {
+      console.log(`Member ${index}:`, member);
+    });
+  }
 }
 
 // === 経験値・レベルシステム ===
