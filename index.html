@@ -72,6 +72,23 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 /* === ダンジョン画面 === */
 .dungeon-sticky{position:sticky;top:0;z-index:30;background:#1a1a2e;padding:6px 0 8px;border-bottom:2px solid #333}
 .dungeon-header{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
+.dungeon-controls{display:flex;gap:15px;align-items:center}
+.game-controls{display:flex;gap:8px}
+.control-btn{
+  background:rgba(22,33,62,0.8);
+  border:1px solid #334155;
+  color:#e2e8f0;
+  padding:8px 12px;
+  border-radius:6px;
+  cursor:pointer;
+  transition:all 0.2s ease;
+  font-size:1em;
+}
+.control-btn:hover{
+  background:rgba(34,51,78,1);
+  border-color:#4a5568;
+  transform:translateY(-1px);
+}
 .floor-display{font-size:1.8em;color:#ffd700;font-weight:bold;text-shadow:0 0 12px #ffd70055;letter-spacing:2px}
 .party-hp{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px;margin-top:8px}
 .hp-bar-wrap{background:#16213e;border:1px solid #333;border-radius:6px;padding:7px 10px;transition:opacity .3s, filter .3s}
@@ -98,6 +115,7 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 .log-line.system{color:#aaa}
 .log-line.talk{color:#7ecfcf;background:#7ecfcf0a;padding:4px 10px;margin:2px 0;border-radius:8px;border:1px solid #7ecfcf15;position:relative}
 .log-line.talk-bubble{background:#1a2e3e;border:1px solid #2a4e5e;border-radius:12px;padding:6px 12px;margin:3px 0 3px 16px;color:#a0dede;position:relative}
+.log-line.achievement{color:#ffd700;background:linear-gradient(90deg,#ffd70020,#ffd70010,#ffd70020);padding:8px 12px;border:2px solid #ffd700;margin:4px 0;font-weight:bold;animation:glow 2s infinite alternate}
 
 /* === 冒険フィールド === */
 .adventure-field{
@@ -431,6 +449,196 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   0%,100%{filter:brightness(1)}
   50%{filter:brightness(2.5) saturate(0) contrast(2)}
 }
+@keyframes glow{
+  0%{box-shadow:0 0 5px #ffd700}
+  100%{box-shadow:0 0 20px #ffd700, 0 0 30px #ffd700}
+}
+
+/* === 設定画面 === */
+.settings-container{
+  max-width:600px;
+  margin:0 auto;
+  padding:20px;
+}
+.setting-group{
+  background:rgba(22,33,62,0.6);
+  border:1px solid #334155;
+  border-radius:10px;
+  padding:20px;
+  margin:20px 0;
+}
+.setting-group h3{
+  color:#ffd700;
+  margin-bottom:15px;
+  border-bottom:1px solid #334155;
+  padding-bottom:5px;
+}
+.setting-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:10px 0;
+  padding:8px;
+  background:rgba(13,17,23,0.4);
+  border-radius:6px;
+}
+.setting-item label{
+  color:#e2e8f0;
+  font-weight:bold;
+}
+.setting-item select, .setting-item input{
+  background:#2d3748;
+  color:#e2e8f0;
+  border:1px solid #4a5568;
+  padding:5px 10px;
+  border-radius:4px;
+}
+.stats-display{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.stat-line{
+  background:rgba(13,17,23,0.4);
+  padding:8px 12px;
+  border-radius:6px;
+  color:#e2e8f0;
+  display:flex;
+  justify-content:space-between;
+}
+.stat-line span{
+  color:#ffd700;
+  font-weight:bold;
+}
+.setting-buttons{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+/* === アチーブメント === */
+.achievement-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+.achievement-item{
+  background:rgba(13,17,23,0.4);
+  border:1px solid #334155;
+  border-radius:8px;
+  padding:12px;
+  text-align:center;
+  transition:all 0.3s ease;
+}
+.achievement-item.unlocked{
+  border-color:#ffd700;
+  background:rgba(255,215,0,0.1);
+}
+.achievement-item.locked{
+  opacity:0.5;
+}
+.achievement-icon{
+  font-size:2em;
+  margin-bottom:5px;
+}
+.achievement-name{
+  color:#ffd700;
+  font-weight:bold;
+  font-size:0.9em;
+  margin-bottom:3px;
+}
+.achievement-desc{
+  color:#b8b8d0;
+  font-size:0.8em;
+  line-height:1.2;
+}
+
+/* === 結果画面改善 === */
+.result-container{
+  max-width:800px;
+  margin:0 auto;
+  padding:20px;
+}
+.result-summary{
+  background:linear-gradient(135deg,#1a2a4e,#16213e);
+  border:2px solid #ffd700;
+  border-radius:15px;
+  padding:25px;
+  text-align:center;
+  margin:20px 0;
+}
+.result-title-main{
+  font-size:2em;
+  color:#ffd700;
+  margin-bottom:10px;
+}
+.result-subtitle{
+  font-size:1.2em;
+  color:#e2e8f0;
+  margin-bottom:15px;
+}
+.result-time{
+  color:#aaa;
+  font-size:0.9em;
+}
+.result-stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:15px;
+  margin:20px 0;
+}
+.result-stat-card{
+  background:rgba(22,33,62,0.6);
+  border:1px solid #334155;
+  border-radius:10px;
+  padding:15px;
+  text-align:center;
+}
+.result-stat-card h4{
+  color:#ffd700;
+  margin-bottom:10px;
+}
+.result-stat-value{
+  font-size:1.5em;
+  color:#fff;
+  font-weight:bold;
+}
+.result-party{
+  background:rgba(22,33,62,0.6);
+  border:1px solid #334155;
+  border-radius:10px;
+  padding:20px;
+  margin:20px 0;
+}
+.result-party h4{
+  color:#ffd700;
+  text-align:center;
+  margin-bottom:15px;
+}
+.result-party-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+}
+.result-party-member{
+  background:rgba(13,17,23,0.4);
+  border-radius:8px;
+  padding:12px;
+  text-align:center;
+}
+.result-party-member.dead{
+  opacity:0.5;
+  border:1px solid #666;
+}
+.result-party-member.alive{
+  border:1px solid #4caf50;
+}
+.result-buttons{
+  text-align:center;
+  margin:30px 0;
+}
 .log-line.talk-bubble::before{content:'';position:absolute;left:-8px;top:10px;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:8px solid #2a4e5e}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
@@ -516,7 +724,11 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 <div class="subtitle">相性の良い組み合わせを見つけて、より深い階層を目指そう</div>
 <div class="party-info" id="party-info">0 / 4 人選択中</div>
 <div class="char-grid" id="char-grid"></div>
-<button class="btn" id="start-btn" disabled onclick="startDungeon()" style="margin-bottom:80px">⚔️ 出発！</button>
+<div class="button-group" style="text-align:center; margin-bottom:80px;">
+  <button class="btn" id="continue-btn" onclick="continueGame()" style="display:none; margin: 5px;">📖 続きから</button>
+  <button class="btn" id="start-btn" disabled onclick="startDungeon()" style="margin: 5px;">⚔️ 出発！</button>
+  <button class="btn" onclick="showSettings()" style="margin: 5px; background:#666;">⚙️ 設定</button>
+</div>
 </div>
 <!-- パーティープレビュー（固定下部） -->
 <div class="party-preview" id="party-preview">
@@ -538,10 +750,17 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 <div class="dungeon-sticky">
 <div class="dungeon-header">
 <div class="floor-display" id="floor-display">B1F</div>
-<div class="speed-control">
-<button onclick="setSpeed(0)" id="spd0">▶</button>
-<button onclick="setSpeed(1)" id="spd1" class="active">▶▶</button>
-<button onclick="setSpeed(2)" id="spd2">▶▶▶</button>
+<div class="dungeon-controls">
+  <div class="speed-control">
+    <button onclick="setSpeed(0)" id="spd0">▶</button>
+    <button onclick="setSpeed(1)" id="spd1" class="active">▶▶</button>
+    <button onclick="setSpeed(2)" id="spd2">▶▶▶</button>
+  </div>
+  <div class="game-controls">
+    <button onclick="saveGame()" class="control-btn" title="セーブ">💾</button>
+    <button onclick="showSettings()" class="control-btn" title="設定">⚙️</button>
+    <button onclick="pauseGame()" class="control-btn" id="pause-btn" title="ポーズ">⏸️</button>
+  </div>
 </div>
 </div>
 <div class="party-hp" id="party-hp"></div>
@@ -638,11 +857,72 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 <div class="log-area" id="log-area"></div>
 </div>
 
+<!-- 設定画面 -->
+<div class="screen" id="settings-screen">
+<h1>⚙️ 設定</h1>
+<div class="settings-container">
+  <div class="setting-group">
+    <h3>ゲーム設定</h3>
+    <div class="setting-item">
+      <label>戦闘速度:</label>
+      <select id="default-speed" onchange="updateSettings()">
+        <option value="0">遅い</option>
+        <option value="1" selected>普通</option>
+        <option value="2">速い</option>
+      </select>
+    </div>
+    <div class="setting-item">
+      <label>オートセーブ:</label>
+      <input type="checkbox" id="auto-save" onchange="updateSettings()" checked>
+    </div>
+    <div class="setting-item">
+      <label>アニメーション:</label>
+      <input type="checkbox" id="animations" onchange="updateSettings()" checked>
+    </div>
+  </div>
+  
+  <div class="setting-group">
+    <h3>統計情報</h3>
+    <div class="stats-display" id="stats-display">
+      <div class="stat-line">プレイ回数: <span id="stat-games">0</span>回</div>
+      <div class="stat-line">最高到達階層: <span id="stat-floor">B1F</span></div>
+      <div class="stat-line">倒したモンスター: <span id="stat-monsters">0</span>体</div>
+      <div class="stat-line">解除した罠: <span id="stat-traps">0</span>個</div>
+    </div>
+  </div>
+  
+  <div class="setting-group">
+    <h3>アチーブメント</h3>
+    <div class="achievements-display" id="achievements-display">
+      <div class="achievement-grid" id="achievement-grid"></div>
+    </div>
+  </div>
+  
+  <div class="setting-group">
+    <h3>データ管理</h3>
+    <div class="setting-buttons">
+      <button class="btn" onclick="deleteSaveData()" style="background:#d44; margin:5px;">🗑️ セーブ削除</button>
+      <button class="btn" onclick="resetStats()" style="background:#d44; margin:5px;">📊 統計リセット</button>
+    </div>
+  </div>
+</div>
+
+<button class="btn" onclick="backToSelect()">🔙 戻る</button>
+</div>
+
 <!-- 結果画面 -->
 <div class="screen" id="result-screen">
-<h1>🏰 探索終了</h1>
-<div class="result-box" id="result-box"></div>
-<button class="btn" onclick="backToSelect()">🔄 もう一度挑戦</button>
+<h1 id="result-title">🏰 探索終了</h1>
+<div class="result-container">
+  <div class="result-summary" id="result-summary"></div>
+  <div class="result-stats" id="result-stats"></div>
+  <div class="result-party" id="result-party"></div>
+  <div class="result-achievements" id="result-achievements"></div>
+</div>
+<div class="result-buttons">
+  <button class="btn" onclick="backToSelect()" style="margin: 5px;">🔄 もう一度挑戦</button>
+  <button class="btn" onclick="shareResult()" style="margin: 5px; background:#1da1f2;">📤 結果をシェア</button>
+</div>
 </div>
 
 <script>
@@ -1429,6 +1709,107 @@ let deathLog = [];
 let loveStates = {}; // uid pair -> stage (0-4)
 let mvpDamage = {};
 let intervalId = null;
+let gameStartTime = 0;
+let totalPlayTime = 0;
+let achievements = [];
+let gameStats = {
+  monstersKilled: 0,
+  trapsDisarmed: 0,
+  conversationsHad: 0,
+  highestFloor: 0,
+  totalDamageDealt: 0,
+  totalHealing: 0,
+  gamesPlayed: 0,
+  totalDeaths: 0
+};
+
+// ===== セーブ・ロード機能 =====
+function saveGame() {
+  const saveData = {
+    version: '2.0',
+    party: party,
+    floor: floor,
+    loveStates: loveStates,
+    deathLog: deathLog,
+    mvpDamage: mvpDamage,
+    gameStats: gameStats,
+    achievements: achievements,
+    gameStartTime: gameStartTime,
+    timestamp: Date.now()
+  };
+  
+  localStorage.setItem('dungeonParty_save', JSON.stringify(saveData));
+  showEventMessage('ゲームを保存しました', 'system');
+}
+
+function loadGame() {
+  const saveStr = localStorage.getItem('dungeonParty_save');
+  if (!saveStr) return false;
+  
+  try {
+    const saveData = JSON.parse(saveStr);
+    if (saveData.version !== '2.0') return false;
+    
+    party = saveData.party || [];
+    floor = saveData.floor || 1;
+    loveStates = saveData.loveStates || {};
+    deathLog = saveData.deathLog || [];
+    mvpDamage = saveData.mvpDamage || {};
+    gameStats = {...gameStats, ...saveData.gameStats};
+    achievements = saveData.achievements || [];
+    gameStartTime = saveData.gameStartTime || Date.now();
+    
+    showScreen('dungeon-screen');
+    renderHP();
+    updateAdventureField();
+    showEventMessage('ゲームを読み込みました', 'system');
+    
+    return true;
+  } catch (e) {
+    console.error('セーブデータの読み込みに失敗:', e);
+    return false;
+  }
+}
+
+function hasSaveData() {
+  const saveStr = localStorage.getItem('dungeonParty_save');
+  return saveStr !== null;
+}
+
+function deleteSaveData() {
+  localStorage.removeItem('dungeonParty_save');
+  showEventMessage('セーブデータを削除しました', 'system');
+}
+
+// ===== アチーブメントシステム =====
+const ACHIEVEMENTS = {
+  first_clear: { name: '初回クリア', desc: '初めてB10Fをクリア', icon: '🏆' },
+  all_alive: { name: '完全勝利', desc: '全員生存でクリア', icon: '💪' },
+  speed_run: { name: 'スピードラン', desc: '10分以内でクリア', icon: '⚡' },
+  love_master: { name: '恋愛マスター', desc: '恋愛レベル3のペアを作成', icon: '💕' },
+  no_healer: { name: '無謀な挑戦', desc: 'ヒーラーなしでB5F到達', icon: '🔥' },
+  balanced_party: { name: 'バランス型', desc: '全6職業を使用してクリア', icon: '⚖️' },
+  trap_master: { name: 'トラップマスター', desc: '罠を20個解除', icon: '🔧' },
+  monster_hunter: { name: 'モンスターハンター', desc: '100体のモンスターを撃破', icon: '⚔️' }
+};
+
+function checkAchievement(achievementId) {
+  if (achievements.includes(achievementId)) return;
+  
+  const achievement = ACHIEVEMENTS[achievementId];
+  if (!achievement) return;
+  
+  achievements.push(achievementId);
+  showEventMessage(`🏆 アチーブメント獲得: ${achievement.name}`, 'achievement');
+  addLog(`🏆 アチーブメント獲得: ${achievement.name} - ${achievement.desc}`, 'achievement');
+  
+  // セーブデータ更新
+  if (running) saveGame();
+}
+
+function updateStats(statName, value = 1) {
+  gameStats[statName] = (gameStats[statName] || 0) + value;
+}
 
 // ===== UI: 選択画面 =====
 const STAT_MAX = {hp:200, atk:60, def:30, spd:30};
@@ -1625,9 +2006,17 @@ function startDungeon() {
   });
 
   running = true;
+  gameStartTime = Date.now();
+  updateStats('gamesPlayed');
   
   // 冒険フィールド初期化
   initAdventureField();
+  
+  // 自動セーブ設定の確認
+  const settings = JSON.parse(localStorage.getItem('dungeonParty_settings') || '{}');
+  if (settings.autoSave !== false) {
+    saveGame();
+  }
   
   scheduleNextFloor();
 }
@@ -1758,6 +2147,7 @@ function triggerBanter(context) {
   if (lines) {
     addLog('💬', 'talk');
     lines.forEach(l => addLog(`  ${l}`, 'talk'));
+    updateStats('conversationsHad');
   }
 }
 
@@ -2080,7 +2470,7 @@ async function battleEvent() {
   const maxTier = Math.min(5, Math.ceil(floor / 8));
   const pool = monsters.filter(m => m.tier <= maxTier);
   const mon = pool[Math.floor(Math.random()*pool.length)];
-  const scale = 1 + floor * 0.08;
+  const scale = Math.pow(1.06, floor - 1); // より滑らかな成長
   const mAtk = Math.floor(mon.atk * scale);
   let mHp = Math.floor(mon.hp * scale);
   const maxHp = mHp;
@@ -2113,7 +2503,7 @@ async function battleEvent() {
     }
     
     // ダメージ計算
-    const lovePenalty = p.loveStage >= 3 ? 0.3 : p.loveStage >= 2 ? 0.7 : 1;
+    const lovePenalty = p.loveStage >= 3 ? 0.6 : p.loveStage >= 2 ? 0.8 : 1;
     const dmg = Math.max(1, Math.floor((p.atk + Math.random()*10) * lovePenalty));
     mHp -= dmg;
     mvpDamage[p.uid] += dmg;
@@ -2147,6 +2537,9 @@ async function battleEvent() {
   // 戦闘結果の処理
   if (mHp <= 0) {
     addLog(`  → ${pick(TEXTS.victory).replace(/{name}/g, mon.name)}`, 'battle');
+    updateStats('monstersKilled');
+    updateStats('totalDamageDealt', Object.values(mvpDamage).reduce((a,b) => a+b, 0));
+    
     // 勝利時キャラセリフ
     if (Math.random() < 0.35) {
       const speaker = pick(alive);
@@ -2206,6 +2599,7 @@ async function battleEvent() {
       t.hp = Math.min(t.maxHp, t.hp + heal);
       
       addLog(`  💚 ${pick(TEXTS.heal).replace(/{healer}/g, h.name).replace(/{target}/g, t.name).replace(/{val}/g, heal)} (HP:${t.hp}/${t.maxHp})`, 'heal');
+      updateStats('totalHealing', heal);
       
       // 回復対象にヒールエフェクト表示
       const targetIndex = party.findIndex(member => member.uid === t.uid);
@@ -2268,11 +2662,15 @@ function trapEvent() {
   const baseDmg = Math.floor(trap.dmg * scale);
 
   const thieves = party.filter(p=>p.classId==='thief' && p.alive && p.loveStage<3);
-  if (thieves.length > 0 && Math.random() < 0.75) {
+  if (thieves.length > 0 && Math.random() < 0.85) { // 解除率向上
     addLog(`🔧 ${pick(TEXTS.trapFound).replace(/{trap}/g, trap.name).replace(/{thief}/g, thieves[0].name)}`, 'trap');
     if (thieves[0].personality && thieves[0].personality.trapLine && Math.random() < 0.4) {
       addLog(`  💬 ${thieves[0].name}「${pick(thieves[0].personality.trapLine)}」`, 'talk');
     }
+    updateStats('trapsDisarmed');
+    
+    // 盗賊にボーナス経験値
+    thieves[0].atk += Math.floor(Math.random() * 2) + 1; // +1～2攻撃力
   } else {
     addLog(pick(TEXTS.trapTriggered).replace(/{trap}/g, trap.name), 'trap');
     const alive = party.filter(p=>p.alive);
@@ -2310,19 +2708,115 @@ function restEvent() {
 
 function treasureEvent() {
   const items = [
-    {name:'力の結晶', stat:'atk', val:5},
-    {name:'守りのお守り', stat:'def', val:5},
-    {name:'疾風の靴', stat:'spd', val:5},
-    {name:'生命の雫', stat:'hp', val:30},
+    // 基本強化アイテム
+    {name:'力の結晶', type:'stat', stat:'atk', val:5, rarity:'common'},
+    {name:'守りのお守り', type:'stat', stat:'def', val:5, rarity:'common'},
+    {name:'疾風の靴', type:'stat', stat:'spd', val:5, rarity:'common'},
+    {name:'生命の雫', type:'stat', stat:'hp', val:30, rarity:'common'},
+    
+    // 装備アイテム
+    {name:'鋭利な剣', type:'equipment', slot:'weapon', atk:8, rarity:'uncommon'},
+    {name:'魔法の杖', type:'equipment', slot:'weapon', atk:6, def:2, rarity:'uncommon'},
+    {name:'鋼の盾', type:'equipment', slot:'shield', def:10, rarity:'uncommon'},
+    {name:'皮の鎧', type:'equipment', slot:'armor', def:6, hp:20, rarity:'common'},
+    {name:'銀の指輪', type:'equipment', slot:'accessory', atk:3, def:3, rarity:'rare'},
+    {name:'賢者の帽子', type:'equipment', slot:'helmet', def:4, spd:3, rarity:'uncommon'},
+    
+    // 特殊アイテム
+    {name:'経験の書', type:'special', effect:'levelup', rarity:'rare'},
+    {name:'全回復薬', type:'special', effect:'fullheal', rarity:'uncommon'},
+    {name:'祝福の聖水', type:'special', effect:'blessing', rarity:'rare'}
   ];
-  const item = items[Math.floor(Math.random()*items.length)];
+  
+  // レアリティによる出現率調整
+  const rarityWeights = {common: 50, uncommon: 30, rare: 15, legendary: 5};
+  const weightedItems = [];
+  items.forEach(item => {
+    const weight = rarityWeights[item.rarity] || 10;
+    for(let i = 0; i < weight; i++) {
+      weightedItems.push(item);
+    }
+  });
+  
+  const item = weightedItems[Math.floor(Math.random() * weightedItems.length)];
   const alive = party.filter(p=>p.alive);
-  const t = alive[Math.floor(Math.random()*alive.length)];
+  const target = alive[Math.floor(Math.random()*alive.length)];
+  
   addLog(pick(TEXTS.treasureFind), 'synergy');
-  addLog(`  → ${pick(TEXTS.treasureGet).replace(/{item}/g, item.name).replace(/{target}/g, t.name)}`, 'synergy');
-  if (item.stat==='hp') { t.maxHp += item.val; t.hp += item.val; }
-  else t[item.stat] += item.val;
-  addLog(`  → ${pick(TEXTS.treasureStatUp[item.stat]).replace(/{target}/g, t.name)}`, 'synergy');
+  
+  if (item.type === 'stat') {
+    addLog(`  → ${pick(TEXTS.treasureGet).replace(/{item}/g, item.name).replace(/{target}/g, target.name)}`, 'synergy');
+    if (item.stat==='hp') { 
+      target.maxHp += item.val; 
+      target.hp += item.val; 
+    } else {
+      target[item.stat] += item.val;
+    }
+    addLog(`  → ${pick(TEXTS.treasureStatUp[item.stat]).replace(/{target}/g, target.name)}`, 'synergy');
+    
+  } else if (item.type === 'equipment') {
+    equipItem(target, item);
+    
+  } else if (item.type === 'special') {
+    useSpecialItem(target, item);
+  }
+}
+
+function equipItem(character, item) {
+  if (!character.equipment) character.equipment = {};
+  
+  const oldItem = character.equipment[item.slot];
+  if (oldItem) {
+    // 古い装備の効果を削除
+    removeEquipmentStats(character, oldItem);
+    addLog(`  → ${character.name}の${oldItem.name}が外れた`, 'system');
+  }
+  
+  // 新しい装備の効果を適用
+  character.equipment[item.slot] = item;
+  applyEquipmentStats(character, item);
+  
+  const rarityColor = {common:'#fff', uncommon:'#4caf50', rare:'#2196f3', legendary:'#ffd700'};
+  addLog(`  → ${character.name}が${item.name}を装備した！`, 'synergy');
+}
+
+function applyEquipmentStats(character, item) {
+  if (item.atk) character.atk += item.atk;
+  if (item.def) character.def += item.def;
+  if (item.spd) character.spd += item.spd;
+  if (item.hp) { character.maxHp += item.hp; character.hp += item.hp; }
+}
+
+function removeEquipmentStats(character, item) {
+  if (item.atk) character.atk -= item.atk;
+  if (item.def) character.def -= item.def;
+  if (item.spd) character.spd -= item.spd;
+  if (item.hp) character.maxHp -= item.hp;
+}
+
+function useSpecialItem(target, item) {
+  addLog(`  → ${target.name}が${item.name}を使用した！`, 'synergy');
+  
+  switch(item.effect) {
+    case 'levelup':
+      target.atk += 3;
+      target.def += 2;
+      target.maxHp += 15;
+      target.hp += 15;
+      addLog(`  → ${target.name}のレベルが上がった！全能力値が向上！`, 'synergy');
+      break;
+      
+    case 'fullheal':
+      target.hp = target.maxHp;
+      addLog(`  → ${target.name}のHPが完全回復した！`, 'heal');
+      break;
+      
+    case 'blessing':
+      target.atk += 5;
+      target.def += 5;
+      addLog(`  → ${target.name}に神の祝福が宿った！`, 'synergy');
+      break;
+  }
 }
 
 // ===== 同職嫉妬 =====
@@ -2439,43 +2933,334 @@ function endGame() {
   running = false;
   clearTimeout(intervalId);
   addLog(`\n${pick(TEXTS.wipe)}`, 'death');
+  
+  // 統計情報更新
+  gameStats.highestFloor = Math.max(gameStats.highestFloor, floor);
+  gameStats.totalDeaths += deathLog.length;
+  totalPlayTime = Date.now() - gameStartTime;
+  
+  // アチーブメント判定
+  checkEndGameAchievements();
+  
+  // データ保存
+  localStorage.setItem('dungeonParty_stats', JSON.stringify(gameStats));
+  localStorage.setItem('dungeonParty_achievements', JSON.stringify(achievements));
 
   setTimeout(() => {
-    // MVP計算
-    let mvpUid = null, mvpVal = 0;
-    Object.entries(mvpDamage).forEach(([uid,d]) => { if (d>mvpVal){mvpVal=d;mvpUid=uid;} });
-    const mvp = characters.find(c=>c.uid===mvpUid);
+    showDetailedResults();
+  }, 1000);
+}
 
-    const box = document.getElementById('result-box');
-    box.innerHTML = `
-      <div style="font-size:1em;color:#aaa">到達階数</div>
-      <div class="result-floor">B${floor}F</div>
-      ${mvp ? `<div style="margin:8px 0">🏆 MVP: ${mvp.icon} ${mvp.name}（総ダメージ: ${mvpVal}）</div>` : ''}
-      <div class="death-summary">
-        <div style="color:#ffd700;margin-bottom:6px">☠ 死因サマリー</div>
-        ${deathLog.map(d =>
-          `<div class="${d.cause.includes('恋')?'love':'death'}">B${d.floor}F - ${d.name}: ${d.cause}</div>`
-        ).join('')}
-        ${deathLog.length===0 ? '<div>記録なし</div>' : ''}
+function showDetailedResults() {
+  // MVP計算
+  let mvpUid = null, mvpVal = 0;
+  Object.entries(mvpDamage).forEach(([uid,d]) => { if (d>mvpVal){mvpVal=d;mvpUid=uid;} });
+  const mvp = characters.find(c=>c.uid===mvpUid);
+  
+  // 生存者数
+  const survivors = party.filter(p => p.alive).length;
+  const allDead = survivors === 0;
+  
+  // プレイ時間計算
+  const playTimeMinutes = Math.floor(totalPlayTime / 60000);
+  const playTimeSeconds = Math.floor((totalPlayTime % 60000) / 1000);
+  
+  // 恋愛状況
+  const loveCount = Object.values(loveStates).filter(state => state.stage >= 3).length;
+  
+  // 結果タイトル設定
+  const resultTitle = document.getElementById('result-title');
+  if (floor >= 30) {
+    resultTitle.innerHTML = '🌟 伝説の冒険者';
+  } else if (floor >= 20) {
+    resultTitle.innerHTML = '⭐ 熟練の冒険者';
+  } else if (floor >= 10) {
+    resultTitle.innerHTML = '💪 駆け出し冒険者';
+  } else {
+    resultTitle.innerHTML = '😅 探索終了';
+  }
+  
+  // サマリー表示
+  const summary = document.getElementById('result-summary');
+  summary.innerHTML = `
+    <div class="result-title-main">B${floor}F 到達</div>
+    <div class="result-subtitle">${survivors}/${party.length}人生存</div>
+    <div class="result-time">プレイ時間: ${playTimeMinutes}分${playTimeSeconds}秒</div>
+  `;
+  
+  // 統計表示
+  const stats = document.getElementById('result-stats');
+  stats.innerHTML = `
+    <div class="result-stat-card">
+      <h4>🏆 MVP</h4>
+      <div class="result-stat-value">${mvp ? `${mvp.icon} ${mvp.name}` : 'なし'}</div>
+      <div style="font-size:0.8em; color:#aaa;">${mvpVal}ダメージ</div>
+    </div>
+    <div class="result-stat-card">
+      <h4>⚔️ 総ダメージ</h4>
+      <div class="result-stat-value">${Object.values(mvpDamage).reduce((a,b) => a+b, 0)}</div>
+    </div>
+    <div class="result-stat-card">
+      <h4>💕 恋愛ペア</h4>
+      <div class="result-stat-value">${loveCount}組</div>
+    </div>
+    <div class="result-stat-card">
+      <h4>⏱️ 時間</h4>
+      <div class="result-stat-value">${playTimeMinutes}:${playTimeSeconds.toString().padStart(2, '0')}</div>
+    </div>
+  `;
+  
+  // パーティー状況
+  const partyResult = document.getElementById('result-party');
+  partyResult.innerHTML = `
+    <h4>🛡️ パーティー状況</h4>
+    <div class="result-party-grid">
+      ${party.map(member => `
+        <div class="result-party-member ${member.alive ? 'alive' : 'dead'}">
+          <div style="font-size:2em;">${member.icon}</div>
+          <div style="font-weight:bold;">${member.name}</div>
+          <div style="font-size:0.8em; color:#aaa;">${member.className}</div>
+          <div style="font-size:0.8em;">
+            ${member.alive ? `HP: ${member.hp}/${member.maxHp}` : '💀 戦闘不能'}
+          </div>
+          ${member.equipment ? Object.values(member.equipment).map(eq => `<div style="font-size:0.7em; color:#4caf50;">+${eq.name}</div>`).join('') : ''}
+        </div>
+      `).join('')}
+    </div>
+  `;
+  
+  // 新規アチーブメント表示
+  const recentAchievements = achievements.slice(-3); // 直近3つ
+  const achievementResult = document.getElementById('result-achievements');
+  if (recentAchievements.length > 0) {
+    achievementResult.innerHTML = `
+      <h4>🏆 獲得アチーブメント</h4>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        ${recentAchievements.map(id => {
+          const achievement = ACHIEVEMENTS[id];
+          return achievement ? `
+            <div class="achievement-item unlocked" style="width:150px;">
+              <div class="achievement-icon">${achievement.icon}</div>
+              <div class="achievement-name">${achievement.name}</div>
+            </div>
+          ` : '';
+        }).join('')}
       </div>
-      <div style="margin-top:12px;font-size:.8em;color:#888">
-        ${floor >= 30 ? '🌟 素晴らしい！最深部に近づいている！' :
-          floor >= 20 ? '⭐ なかなかの腕前だ！' :
-          floor >= 10 ? '💪 まだまだ先は長い...' :
-          '😅 相性を見直してみよう...'}
-      </div>`;
-    showScreen('result-screen');
-  }, 1500);
+    `;
+  } else {
+    achievementResult.innerHTML = '';
+  }
+  
+  showScreen('result-screen');
+}
+
+function checkEndGameAchievements() {
+  const survivors = party.filter(p => p.alive).length;
+  const playTimeMs = Date.now() - gameStartTime;
+  
+  // 初回クリア (B10F以上)
+  if (floor >= 10) {
+    checkAchievement('first_clear');
+  }
+  
+  // 完全勝利 (全員生存でクリア)
+  if (survivors === party.length && floor >= 10) {
+    checkAchievement('all_alive');
+  }
+  
+  // スピードラン (10分以内)
+  if (playTimeMs <= 600000 && floor >= 10) {
+    checkAchievement('speed_run');
+  }
+  
+  // 恋愛マスター
+  const maxLoveStage = Math.max(0, ...Object.values(loveStates).map(s => s.stage));
+  if (maxLoveStage >= 3) {
+    checkAchievement('love_master');
+  }
+  
+  // ヒーラーなし挑戦
+  const hasHealer = party.some(p => p.classId === 'healer');
+  if (!hasHealer && floor >= 5) {
+    checkAchievement('no_healer');
+  }
+  
+  // バランス型パーティー
+  const usedClasses = [...new Set(party.map(p => p.classId))];
+  if (usedClasses.length === 6 && floor >= 10) {
+    checkAchievement('balanced_party');
+  }
+  
+  // トラップマスター
+  if (gameStats.trapsDisarmed >= 20) {
+    checkAchievement('trap_master');
+  }
+  
+  // モンスターハンター
+  if (gameStats.monstersKilled >= 100) {
+    checkAchievement('monster_hunter');
+  }
 }
 
 function backToSelect() {
+  running = false;
+  if (intervalId) clearTimeout(intervalId);
   selected = [];
   renderSelect();
   showScreen('select-screen');
+  updateContinueButton();
+}
+
+function continueGame() {
+  if (loadGame()) {
+    running = true;
+    scheduleNextFloor();
+  }
+}
+
+function showSettings() {
+  showScreen('settings-screen');
+  updateStatsDisplay();
+  updateAchievementsDisplay();
+  loadSettings();
+}
+
+function pauseGame() {
+  running = !running;
+  const pauseBtn = document.getElementById('pause-btn');
+  if (running) {
+    pauseBtn.textContent = '⏸️';
+    pauseBtn.title = 'ポーズ';
+    scheduleNextFloor();
+    showEventMessage('ゲームを再開しました', 'system');
+  } else {
+    pauseBtn.textContent = '▶️';
+    pauseBtn.title = '再開';
+    if (intervalId) clearTimeout(intervalId);
+    showEventMessage('ゲームを一時停止しました', 'system');
+  }
+}
+
+function updateSettings() {
+  const settings = {
+    defaultSpeed: parseInt(document.getElementById('default-speed').value),
+    autoSave: document.getElementById('auto-save').checked,
+    animations: document.getElementById('animations').checked
+  };
+  localStorage.setItem('dungeonParty_settings', JSON.stringify(settings));
+  
+  // 即座に設定を適用
+  if (settings.defaultSpeed !== currentSpeed) {
+    setSpeed(settings.defaultSpeed);
+  }
+}
+
+function loadSettings() {
+  const settingsStr = localStorage.getItem('dungeonParty_settings');
+  if (!settingsStr) return;
+  
+  try {
+    const settings = JSON.parse(settingsStr);
+    document.getElementById('default-speed').value = settings.defaultSpeed || 1;
+    document.getElementById('auto-save').checked = settings.autoSave !== false;
+    document.getElementById('animations').checked = settings.animations !== false;
+  } catch (e) {
+    console.error('設定の読み込みに失敗:', e);
+  }
+}
+
+function resetStats() {
+  if (confirm('統計データをリセットしますか？この操作は取り消せません。')) {
+    gameStats = {
+      monstersKilled: 0,
+      trapsDisarmed: 0,
+      conversationsHad: 0,
+      highestFloor: 0,
+      totalDamageDealt: 0,
+      totalHealing: 0,
+      gamesPlayed: 0,
+      totalDeaths: 0
+    };
+    achievements = [];
+    localStorage.removeItem('dungeonParty_stats');
+    updateStatsDisplay();
+    updateAchievementsDisplay();
+    showEventMessage('統計データをリセットしました', 'system');
+  }
+}
+
+function updateStatsDisplay() {
+  document.getElementById('stat-games').textContent = gameStats.gamesPlayed || 0;
+  document.getElementById('stat-floor').textContent = gameStats.highestFloor ? `B${gameStats.highestFloor}F` : 'B1F';
+  document.getElementById('stat-monsters').textContent = gameStats.monstersKilled || 0;
+  document.getElementById('stat-traps').textContent = gameStats.trapsDisarmed || 0;
+}
+
+function updateAchievementsDisplay() {
+  const grid = document.getElementById('achievement-grid');
+  grid.innerHTML = '';
+  
+  Object.entries(ACHIEVEMENTS).forEach(([id, achievement]) => {
+    const div = document.createElement('div');
+    div.className = `achievement-item ${achievements.includes(id) ? 'unlocked' : 'locked'}`;
+    div.innerHTML = `
+      <div class="achievement-icon">${achievement.icon}</div>
+      <div class="achievement-name">${achievement.name}</div>
+      <div class="achievement-desc">${achievement.desc}</div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function updateContinueButton() {
+  const continueBtn = document.getElementById('continue-btn');
+  if (hasSaveData()) {
+    continueBtn.style.display = 'inline-block';
+  } else {
+    continueBtn.style.display = 'none';
+  }
+}
+
+function shareResult() {
+  const resultText = document.getElementById('result-summary').textContent;
+  if (navigator.share) {
+    navigator.share({
+      title: '深淵のダンジョン - 結果',
+      text: resultText,
+      url: window.location.href
+    });
+  } else {
+    // フォールバック: クリップボードにコピー
+    navigator.clipboard.writeText(resultText + '\n' + window.location.href)
+      .then(() => showEventMessage('結果をクリップボードにコピーしました', 'system'))
+      .catch(() => showEventMessage('シェア機能はサポートされていません', 'system'));
+  }
 }
 
 // 初期化
 renderSelect();
+loadSettings();
+updateContinueButton();
+
+// 統計データの読み込み
+const statsStr = localStorage.getItem('dungeonParty_stats');
+if (statsStr) {
+  try {
+    gameStats = {...gameStats, ...JSON.parse(statsStr)};
+  } catch (e) {
+    console.error('統計データの読み込みに失敗:', e);
+  }
+}
+
+// アチーブメントの読み込み
+const achievementsStr = localStorage.getItem('dungeonParty_achievements');
+if (achievementsStr) {
+  try {
+    achievements = JSON.parse(achievementsStr);
+  } catch (e) {
+    console.error('アチーブメントの読み込みに失敗:', e);
+  }
+}
 </script>
 </body>
 </html>
