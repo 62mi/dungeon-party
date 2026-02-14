@@ -875,12 +875,17 @@ CLASSES.forEach(c => {
 // ===== 隠し相性システム =====
 // 恋愛ペア（男,女）→恋に落ちやすい組み合わせ
 const LOVE_PAIRS = [
-  ['knight_m','healer_f', 0.9],   // ガレス×フィオナ：超高確率
-  ['mage_m','archer_f', 0.8],     // ゼノン×エレナ
-  ['thief_m','mage_f', 0.75],     // カイト×ルシエラ
-  ['archer_m','priest_f', 0.7],   // ロイド×リリアーネ
-  ['priest_m','thief_f', 0.65],   // セドリック×シャーリィ
-  ['knight_m','mage_f', 0.5],     // ガレス×ルシエラ（低め）
+  ['knight_m','healer_f', 0.95],   // ガレス×フィオナ：ほぼ確定
+  ['mage_m','archer_f', 0.9],     // ゼノン×エレナ
+  ['thief_m','mage_f', 0.85],     // カイト×ルシエラ
+  ['archer_m','priest_f', 0.85],   // ロイド×リリアーネ
+  ['priest_m','thief_f', 0.8],    // セドリック×シャーリィ
+  ['knight_f','healer_m', 0.75],  // アデライン×エルマー
+  ['knight_m','mage_f', 0.6],     // ガレス×ルシエラ
+  ['knight_m','archer_f', 0.5],   // ガレス×エレナ
+  ['thief_m','healer_f', 0.5],    // カイト×フィオナ
+  ['mage_m','thief_f', 0.45],     // ゼノン×シャーリィ
+  ['archer_m','healer_f', 0.4],   // ロイド×フィオナ
 ];
 
 // シナジーボーナス
@@ -1254,6 +1259,85 @@ const TEXTS = {
     '残されたパーティーは、二人の背中を複雑な思いで見送った...',
   ],
 
+  // === 恋人の死 → 発狂 ===
+  loverDeath: [
+    '🔥 {a}「{b}ッ！！嘘だろ...嘘だと言ってくれ...！！」',
+    '🔥 {a}「{b}...{b}...なんで...なんでだよ！！」',
+    '🔥 {a}は{b}の亡骸にすがりつき、絶叫した...！',
+    '🔥 {a}「返せ...{b}を返せぇぇぇ！！」{a}の目が暗い炎を宿した',
+    '🔥 {a}の瞳から光が消え...代わりに狂気の炎が灯った',
+  ],
+  berserk: [
+    '💢 {a}は怒りに我を忘れた！攻撃力が暴走的に上昇！',
+    '💢 {a}「もう失うものは何もない...全部壊してやる！」',
+    '💢 {a}は{b}の分まで戦うと叫び、暴走を始めた！',
+    '💢 {a}の身体から禍々しいオーラが溢れ出す。仲間の制止も聞こえない',
+    '💢 {a}は泣きながら剣を振るう。もはや正気ではない...',
+  ],
+  berserkAttack: [
+    '{name}が狂ったように斬りかかる！',
+    '{name}が絶叫しながら攻撃！',
+    '{name}の渾身の一撃！{b}の仇ッ！',
+    '{name}が涙を流しながら武器を振り下ろす！',
+  ],
+  berserkSelfDamage: [
+    '💢 {a}は自分の身体すら省みない無謀な攻撃で自身も傷ついた！',
+    '💢 {a}の身体が悲鳴を上げている...しかし止まらない',
+    '💢 反動で{a}にもダメージが！それでも止まれない...！',
+  ],
+  berserkEnd: [
+    '...{a}は力尽き、{b}の名を呟きながら倒れた。二人は再び一緒になれるだろうか...',
+    '...{a}は{b}の隣に崩れ落ちた。「やっと...追いつけた...」',
+    '...{a}は静かに目を閉じた。その顔は、穏やかだった。{b}の元へ行けるのだろう',
+  ],
+
+  // === 愛の力 ===
+  lovePower: [
+    '✨ {a}「{b}がいるから...俺は負けない！」愛の力で攻撃力が上昇！',
+    '✨ {b}「{a}を守りたい...！」二人の絆が力に変わった！',
+    '✨ {a}と{b}の想いがシンクロした！合体攻撃が発動！',
+    '✨ 「{b}の隣にいるために！」{a}の一撃に愛の力が宿る！',
+    '✨ {a}が{b}を庇って前に出た！愛が盾となる！防御力大幅UP！',
+  ],
+  lovePowerCombo: [
+    '💫 {a}と{b}の連携攻撃！！息の合った二人の一撃が敵を貫く！',
+    '💫 「「いくよ！」」{a}と{b}が同時に叫び、渾身の合体攻撃！',
+    '💫 {a}が切り開いた隙に{b}が必殺の一撃！完璧な連携だ！',
+  ],
+
+  // === 喧嘩 ===
+  quarrel: [
+    '😠 {a}と{b}が言い争いを始めた！「お前のせいだろ！」「はぁ!?」',
+    '😠 {a}が{b}に掴みかかった！「いい加減にしろ！」パーティーが騒然...',
+    '😠 {a}「もうお前とはやっていけない！」{b}「こっちのセリフだ！」',
+    '😠 {a}と{b}の間に険悪な空気が...言葉の応酬がエスカレート！',
+    '😠 {a}が{b}を殴った！{b}「...殴ったな？殴り返す！」大喧嘩勃発！',
+    '😠 {a}「足を引っ張るなら出ていけ！」{b}「それはこっちのセリフだ！」',
+  ],
+  quarrelPenalty: [
+    '連携が完全に崩壊！{a}と{b}の攻撃力・防御力が大幅低下！',
+    '{a}と{b}はお互い背を向けている。連携なんて不可能な状態だ',
+    'パーティーの士気が最低レベルに...このままでは危険だ',
+  ],
+  makeUp: [
+    '🤝 {a}「...さっきは悪かった」{b}「...俺もだ」ぎこちなく握手',
+    '🤝 「お前がいないと困るんだよ...」{a}がぽつりと呟いた。{b}が微笑んだ',
+    '🤝 戦闘中、{a}が{b}を庇った。「...まだ怒ってるけど、死なれたら困る」',
+    '🤝 {b}「背中は預けるよ」{a}「...ああ、任せろ」和解の瞬間',
+    '🤝 危機を乗り越えた{a}と{b}。「お前がいてよかった...」「...うん」',
+  ],
+  makeUpBonus: [
+    '絆が深まった！{a}と{b}の能力が喧嘩前より上昇！',
+    '困難を乗り越えた二人の絆は、以前より強くなった！',
+  ],
+
+  // === 嫉妬（三角関係） ===
+  jealousLove: [
+    '😤💔 {c}は{a}と{b}のイチャつきを見て拳を握りしめた...「俺だって...」',
+    '😤💔 {c}「あいつら見てるとイライラする...」{a}と{b}への複雑な感情',
+    '😤💔 {c}は{a}のことが気になっていたのに...{b}に取られた。やけ酒したい気分だ',
+  ],
+
   // === 同職嫉妬 ===
   jealousy: [
     '😤 {names}の間にピリッとした空気が...（能力低下）',
@@ -1502,7 +1586,7 @@ document.getElementById('card-detail-overlay').addEventListener('click', (e) => 
 function startDungeon() {
   party = selected.map(uid => {
     const c = characters.find(x=>x.uid===uid);
-    return {...c, hp: c.baseHp, maxHp: c.baseHp, alive: true, buffs: {}, loveTarget: null, loveStage: 0};
+    return {...c, hp: c.baseHp, maxHp: c.baseHp, alive: true, buffs: {}, loveTarget: null, loveStage: 0, berserk: false, berserkTarget: null, quarrelWith: null, quarrelTimer: 0, lovePowerUsed: false};
   });
   floor = 0; deathLog = []; loveStates = {}; mvpDamage = {};
   party.forEach(p => mvpDamage[p.uid] = 0);
@@ -1704,9 +1788,16 @@ async function processFloor() {
   // 恋愛進行
   advanceLove();
 
+  // 喧嘩チェック
+  tryQuarrel();
+  processQuarrels();
+
+  // バーサーク自傷処理
+  processBerserk();
+
   // フィールド状態更新
   updateAdventureField();
-  
+
   // 掛け合いイベント（探索中）
   triggerBanter('explore');
 
@@ -1932,12 +2023,37 @@ function renderSpritePositions(timestamp) {
     el.style.top = `${sprite.y}%`;
     el.style.transform = 'translate(-50%, -50%)';
 
+    // バーサーク・喧嘩・恋愛の視覚エフェクト
+    const p = party[i];
+    if (p.berserk) {
+      body.style.borderColor = '#ff0000';
+      body.style.boxShadow = `0 0 ${12 + Math.sin(timestamp/100)*8}px rgba(255,0,0,0.7)`;
+      body.style.filter = `hue-rotate(${Math.sin(timestamp/200)*20}deg) brightness(1.2)`;
+    } else if (p.quarrelWith) {
+      body.style.borderColor = '#ff8800';
+      body.style.boxShadow = '0 0 8px rgba(255,136,0,0.4)';
+      body.style.filter = '';
+    } else if (p.loveStage >= 3) {
+      body.style.borderColor = '#ff69b4';
+      body.style.boxShadow = `0 0 ${8 + Math.sin(timestamp/300)*5}px rgba(255,105,180,0.4)`;
+      body.style.filter = '';
+    } else if (p.loveStage >= 1) {
+      body.style.borderColor = '#ff8ec4';
+      body.style.boxShadow = '';
+      body.style.filter = '';
+    } else {
+      body.style.borderColor = '';
+      body.style.boxShadow = '';
+      body.style.filter = '';
+    }
+
     // ボブアニメーション
     if (body && sprite.state !== 'dashing') {
-      const bobAmount = sys.mode === 'explore' ? 5 : sys.mode === 'rest' ? 2 : 3;
+      const berserkShake = p.berserk ? Math.sin(timestamp/50) * 2 : 0;
+      const bobAmount = p.berserk ? 8 : sys.mode === 'explore' ? 5 : sys.mode === 'rest' ? 2 : 3;
       const bobY = Math.sin(sprite.bobPhase) * bobAmount;
-      const tiltDeg = sys.mode === 'explore' ? Math.sin(sprite.bobPhase) * 3 : 0;
-      body.style.transform = `translateY(${-Math.abs(bobY)}px) rotate(${tiltDeg}deg) scaleX(${sprite.facing})`;
+      const tiltDeg = p.berserk ? Math.sin(sprite.bobPhase * 2) * 5 : sys.mode === 'explore' ? Math.sin(sprite.bobPhase) * 3 : 0;
+      body.style.transform = `translateY(${-Math.abs(bobY)}px) translateX(${berserkShake}px) rotate(${tiltDeg}deg) scaleX(${sprite.facing})`;
     }
   });
 
@@ -2362,23 +2478,49 @@ async function battleEvent() {
   // 戦闘中の掛け合い
   triggerBanter('battle');
 
+  // 愛の力コンボ攻撃チェック
+  const loveCombo = tryLovePowerCombo(alive);
+  if (loveCombo && mHp > 0) {
+    mHp -= loveCombo.damage;
+    loveCombo.attackers.forEach(a => mvpDamage[a.uid] += Math.floor(loveCombo.damage / 2));
+    // 両キャラの攻撃アニメーション
+    for (const a of loveCombo.attackers) {
+      const ci = party.findIndex(m => m.uid === a.uid);
+      await performAttackAnimation(ci, 'enemy');
+    }
+    const enemySlot = document.getElementById('stageEnemy');
+    if (enemySlot) showDamageNumber(enemySlot, loveCombo.damage, 'damage');
+    updateEnemyHP(mHp, maxHp);
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+
   // パーティー攻撃（順番にアニメーション付きで）
   for (let i = 0; i < alive.length; i++) {
     const p = alive[i];
     const charIndex = party.findIndex(member => member.uid === p.uid);
-    
+
+    // バーサーク中の特別セリフ
+    if (p.berserk) {
+      addLog(`  💢 ${pick(TEXTS.berserkAttack).replace(/{name}/g, p.name).replace(/{b}/g, p.berserkTarget)}`, 'battle');
+    } else {
       // キャラ固有セリフ
-    const cry = getCharBattleCry(p);
-    if (cry) {
-      addLog(`  💬 ${cry}`, 'talk');
-      // スピーチバブルでも表示
-      const speechText = cry.replace(/.*「(.*)」.*/, '$1');
-      showSpeechBubble(p.name, speechText);
+      const cry = getCharBattleCry(p);
+      if (cry) {
+        addLog(`  💬 ${cry}`, 'talk');
+        const speechText = cry.replace(/.*「(.*)」.*/, '$1');
+        showSpeechBubble(p.name, speechText);
+      }
     }
-    
-    // ダメージ計算
-    const lovePenalty = p.loveStage >= 3 ? 0.3 : p.loveStage >= 2 ? 0.7 : 1;
-    const dmg = Math.max(1, Math.floor((p.atk + Math.random()*10) * lovePenalty));
+
+    // ダメージ計算（バーサーク中は恋愛ペナルティなし＆ダメージ大）
+    let dmg;
+    if (p.berserk) {
+      dmg = Math.max(1, Math.floor((p.atk + Math.random()*20) * 1.5));
+    } else {
+      const lovePenalty = p.loveStage >= 3 ? 0.5 : p.loveStage >= 2 ? 0.8 : 1;
+      const quarrelPenalty = p.quarrelWith ? 0.7 : 1;
+      dmg = Math.max(1, Math.floor((p.atk + Math.random()*10) * lovePenalty * quarrelPenalty));
+    }
     mHp -= dmg;
     mvpDamage[p.uid] += dmg;
     
@@ -2460,7 +2602,7 @@ async function battleEvent() {
   await new Promise(resolve => setTimeout(resolve, 500));
 
   // ヒーラー回復（アニメーション付き）
-  const healers = alive.filter(p=>p.classId==='healer' && p.alive && p.loveStage<3);
+  const healers = alive.filter(p=>p.classId==='healer' && p.alive);
   for (const h of healers) {
     const mult = h.buffs.healMult || 1;
     const wounded = party.filter(p=>p.alive && p.hp < p.maxHp);
@@ -2487,7 +2629,7 @@ async function battleEvent() {
   }
 
   // 僧侶バフ（アニメーション付き）
-  const priests = alive.filter(p=>p.classId==='priest' && p.alive && p.loveStage<3);
+  const priests = alive.filter(p=>p.classId==='priest' && p.alive);
   for (const pr of priests) {
     if (Math.random() < 0.4) {
       const t = alive[Math.floor(Math.random()*alive.length)];
@@ -2540,7 +2682,7 @@ function trapEvent() {
   const scale = 1 + floor * 0.05;
   const baseDmg = Math.floor(trap.dmg * scale);
 
-  const thieves = party.filter(p=>p.classId==='thief' && p.alive && p.loveStage<3);
+  const thieves = party.filter(p=>p.classId==='thief' && p.alive);
   if (thieves.length > 0 && Math.random() < 0.75) {
     addLog(`🔧 ${pick(TEXTS.trapFound).replace(/{trap}/g, trap.name).replace(/{thief}/g, thieves[0].name)}`, 'trap');
     if (thieves[0].personality && thieves[0].personality.trapLine && Math.random() < 0.4) {
@@ -2621,13 +2763,27 @@ function advanceLove() {
   Object.entries(loveStates).forEach(([key, state]) => {
     const pa = party.find(p=>p.uid===state.a);
     const pb = party.find(p=>p.uid===state.b);
-    if (!pa || !pb || !pa.alive || !pb.alive) return;
+    if (!pa || !pb) return;
+
+    // 恋人の死 → 発狂チェック
+    if (state.stage >= 2) {
+      if (pa.alive && !pb.alive && !pa.berserk && !state.berserkTriggered) {
+        triggerBerserk(pa, pb, state);
+        return;
+      }
+      if (pb.alive && !pa.alive && !pb.berserk && !state.berserkTriggered) {
+        triggerBerserk(pb, pa, state);
+        return;
+      }
+    }
+
+    if (!pa.alive || !pb.alive) return;
 
     state.timer--;
     if (state.timer > 0) return;
 
     state.stage++;
-    state.timer = 2 + Math.floor(Math.random()*3);
+    state.timer = 1 + Math.floor(Math.random()*2); // 早めに進行
     pa.loveStage = Math.max(pa.loveStage, state.stage);
     pb.loveStage = Math.max(pb.loveStage, state.stage);
 
@@ -2641,6 +2797,22 @@ function advanceLove() {
     if (state.stage <= 4) {
       const [pool, cls] = loveMsgSets[Math.min(state.stage-1, loveMsgSets.length-1)];
       addLog(pick(pool).replace(/{a}/g, pa.name).replace(/{b}/g, pb.name), cls);
+
+      // ステージ3: 愛の力発動チャンス
+      if (state.stage === 3 && Math.random() < 0.6) {
+        triggerLovePower(pa, pb);
+      }
+
+      // 三角関係：他のメンバーが嫉妬
+      if (state.stage >= 2 && Math.random() < 0.3) {
+        const others = party.filter(p => p.alive && p.uid !== pa.uid && p.uid !== pb.uid);
+        if (others.length > 0) {
+          const jealous = pick(others);
+          addLog(pick(TEXTS.jealousLove)
+            .replace(/{a}/g, pa.name).replace(/{b}/g, pb.name).replace(/{c}/g, jealous.name), 'love');
+          jealous.atk = Math.max(5, jealous.atk - 3);
+        }
+      }
     }
 
     if (state.stage >= 4) {
@@ -2653,12 +2825,181 @@ function advanceLove() {
   });
 }
 
+// ===== 発狂（バーサーク）システム =====
+function triggerBerserk(survivor, dead, state) {
+  state.berserkTriggered = true;
+  survivor.berserk = true;
+  survivor.berserkTarget = dead.name;
+  survivor.atk = Math.floor(survivor.atk * 2.5); // 攻撃力暴走
+  survivor.def = Math.floor(survivor.def * 0.3);  // 防御ガタ落ち
+
+  addLog(pick(TEXTS.loverDeath).replace(/{a}/g, survivor.name).replace(/{b}/g, dead.name), 'death');
+  addLog(pick(TEXTS.berserk).replace(/{a}/g, survivor.name).replace(/{b}/g, dead.name), 'battle');
+
+  // ステージ上で赤く光らせる
+  const idx = party.findIndex(p => p.uid === survivor.uid);
+  if (idx >= 0) {
+    const charEl = document.getElementById(`char${idx}`);
+    if (charEl) {
+      charEl.style.borderColor = '#ff0000';
+      charEl.style.boxShadow = '0 0 20px rgba(255,0,0,0.6)';
+      charEl.style.animation = 'shake 0.5s infinite';
+    }
+  }
+}
+
+// バーサーク中の自傷処理（毎フロア）
+function processBerserk() {
+  party.filter(p => p.alive && p.berserk).forEach(p => {
+    // 毎フロア自傷ダメージ
+    const selfDmg = Math.floor(p.maxHp * 0.08);
+    p.hp -= selfDmg;
+    if (Math.random() < 0.5) {
+      addLog(pick(TEXTS.berserkSelfDamage).replace(/{a}/g, p.name), 'battle');
+    }
+
+    // HP尽きたら追い死に
+    if (p.hp <= 0) {
+      p.hp = 0; p.alive = false;
+      addLog(pick(TEXTS.berserkEnd).replace(/{a}/g, p.name).replace(/{b}/g, p.berserkTarget), 'death');
+      deathLog.push({name: p.name, floor, cause: `${p.berserkTarget}の後を追った`});
+    }
+  });
+}
+
+// ===== 愛の力システム =====
+function triggerLovePower(pa, pb) {
+  addLog(pick(TEXTS.lovePower).replace(/{a}/g, pa.name).replace(/{b}/g, pb.name), 'synergy');
+  // 両方にバフ
+  const atkBoost = 8 + Math.floor(Math.random() * 8);
+  const defBoost = 5 + Math.floor(Math.random() * 5);
+  pa.atk += atkBoost;
+  pb.def += defBoost;
+  pa.lovePowerUsed = true;
+  pb.lovePowerUsed = true;
+}
+
+// 戦闘中の愛の力連携攻撃（battleEvent内で呼ばれる）
+function tryLovePowerCombo(alive) {
+  for (const [key, state] of Object.entries(loveStates)) {
+    if (state.stage >= 3) {
+      const pa = alive.find(p => p.uid === state.a);
+      const pb = alive.find(p => p.uid === state.b);
+      if (pa && pb && pa.alive && pb.alive && Math.random() < 0.35) {
+        const comboDmg = Math.floor((pa.atk + pb.atk) * 1.5);
+        addLog(pick(TEXTS.lovePowerCombo).replace(/{a}/g, pa.name).replace(/{b}/g, pb.name), 'synergy');
+        return { damage: comboDmg, attackers: [pa, pb] };
+      }
+    }
+  }
+  return null;
+}
+
+// ===== 喧嘩システム =====
+function tryQuarrel() {
+  const alive = party.filter(p => p.alive && !p.berserk);
+  if (alive.length < 2) return;
+  if (Math.random() > 0.12) return; // 12%の確率
+
+  // 喧嘩相手を選ぶ（同職ペアや嫉妬中が優先）
+  let a, b;
+  const sameClassPairs = [];
+  for (let i = 0; i < alive.length; i++) {
+    for (let j = i+1; j < alive.length; j++) {
+      if (alive[i].classId === alive[j].classId) {
+        sameClassPairs.push([alive[i], alive[j]]);
+      }
+    }
+  }
+  if (sameClassPairs.length > 0 && Math.random() < 0.6) {
+    [a, b] = pick(sameClassPairs);
+  } else {
+    a = pick(alive);
+    b = pick(alive.filter(p => p.uid !== a.uid));
+    if (!b) return;
+  }
+
+  // 既に喧嘩中なら仲直りチャンス
+  if (a.quarrelWith === b.uid || b.quarrelWith === a.uid) {
+    triggerMakeUp(a, b);
+    return;
+  }
+
+  // 恋人同士は喧嘩しにくい
+  for (const [key, state] of Object.entries(loveStates)) {
+    if (state.stage >= 2 && ((state.a === a.uid && state.b === b.uid) || (state.a === b.uid && state.b === a.uid))) {
+      if (Math.random() < 0.8) return; // 恋人は80%で喧嘩回避
+    }
+  }
+
+  // 喧嘩発生！
+  a.quarrelWith = b.uid;
+  b.quarrelWith = a.uid;
+  a.quarrelTimer = 3 + Math.floor(Math.random() * 3);
+  b.quarrelTimer = a.quarrelTimer;
+
+  // ペナルティ
+  const atkPenalty = 5 + Math.floor(Math.random() * 5);
+  const defPenalty = 3 + Math.floor(Math.random() * 3);
+  a.atk = Math.max(5, a.atk - atkPenalty);
+  a.def = Math.max(3, a.def - defPenalty);
+  b.atk = Math.max(5, b.atk - atkPenalty);
+  b.def = Math.max(3, b.def - defPenalty);
+
+  // 保存（仲直り時にボーナスとして戻す）
+  a._quarrelLoss = { atk: atkPenalty, def: defPenalty };
+  b._quarrelLoss = { atk: atkPenalty, def: defPenalty };
+
+  addLog(pick(TEXTS.quarrel).replace(/{a}/g, a.name).replace(/{b}/g, b.name), 'love');
+  addLog(`  → ${pick(TEXTS.quarrelPenalty).replace(/{a}/g, a.name).replace(/{b}/g, b.name)}`, 'love');
+}
+
+function processQuarrels() {
+  party.filter(p => p.alive && p.quarrelWith).forEach(p => {
+    p.quarrelTimer--;
+    if (p.quarrelTimer <= 0) {
+      const other = party.find(o => o.uid === p.quarrelWith && o.alive);
+      if (other) {
+        triggerMakeUp(p, other);
+      } else {
+        p.quarrelWith = null;
+      }
+    }
+  });
+}
+
+function triggerMakeUp(a, b) {
+  a.quarrelWith = null;
+  b.quarrelWith = null;
+  a.quarrelTimer = 0;
+  b.quarrelTimer = 0;
+
+  // 能力を回復 + ボーナス
+  const bonusAtk = 3;
+  const bonusDef = 2;
+  if (a._quarrelLoss) {
+    a.atk += a._quarrelLoss.atk + bonusAtk;
+    a.def += a._quarrelLoss.def + bonusDef;
+    delete a._quarrelLoss;
+  }
+  if (b._quarrelLoss) {
+    b.atk += b._quarrelLoss.atk + bonusAtk;
+    b.def += b._quarrelLoss.def + bonusDef;
+    delete b._quarrelLoss;
+  }
+
+  addLog(pick(TEXTS.makeUp).replace(/{a}/g, a.name).replace(/{b}/g, b.name), 'synergy');
+  addLog(`  → ${pick(TEXTS.makeUpBonus).replace(/{a}/g, a.name).replace(/{b}/g, b.name)}`, 'synergy');
+}
+
 // ===== UI =====
 const CLASS_ICONS = {knight:'🛡️',mage:'🔮',healer:'💚',thief:'🗡️',archer:'🏹',priest:'📿'};
 
 function getStatusIcons(p) {
   let icons = '';
   if (!p.alive) return '☠️';
+  if (p.berserk) icons += '🔥';
+  if (p.quarrelWith) icons += '😠';
   if (p.loveStage >= 3) icons += '💕';
   else if (p.loveStage >= 1) icons += '💗';
   // 嫉妬チェック（同職がいるか）
