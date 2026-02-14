@@ -365,141 +365,94 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   justify-content:center;
   margin:20px 0;
 }
-/* === 関係性パネル === */
-.relationships-panel{
+/* === パーティー関係性パネル === */
+.party-relationships-panel{
   background:rgba(22,33,62,0.6);
   border:1px solid #334155;
-  border-radius:10px;
-  margin:15px 0;
+  border-radius:8px;
+  margin-top:15px;
   overflow:hidden;
 }
-.panel-tabs{
+.party-panel-tabs{
   display:flex;
   background:rgba(16,33,62,0.8);
   border-bottom:1px solid #334155;
 }
-.panel-tab{
+.party-panel-tab{
   flex:1;
   background:transparent;
   border:none;
   color:#aaa;
-  padding:8px 5px;
+  padding:6px 4px;
   cursor:pointer;
   transition:all 0.2s;
-  font-size:1.2em;
+  font-size:1em;
 }
-.panel-tab:hover{
+.party-panel-tab:hover{
   background:rgba(51,65,85,0.3);
   color:#e2e8f0;
 }
-.panel-tab.active{
+.party-panel-tab.active{
   background:rgba(51,65,85,0.6);
   color:#ffd700;
 }
-.relationship-content{
-  padding:12px;
-  max-height:200px;
+.party-relationship-content{
+  padding:10px;
+  max-height:160px;
   overflow-y:auto;
-}
-.relationship-title{
-  font-size:0.9em;
-  color:#ffd700;
-  margin-bottom:8px;
-  text-align:center;
-  font-weight:bold;
-}
-.love-pairs{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-.love-pair{
-  background:rgba(13,17,23,0.6);
-  border:1px solid #553c60;
-  border-radius:8px;
-  padding:8px;
   font-size:0.8em;
-  transition:all 0.3s ease;
 }
-.love-pair.stage-1{
-  border-color:#ff8a65;
-  background:rgba(255,138,101,0.1);
+.party-relationship-view{
+  min-height:40px;
 }
-.love-pair.stage-2{
-  border-color:#f783ac;
-  background:rgba(247,131,172,0.1);
-}
-.love-pair.stage-3{
-  border-color:#e91e63;
-  background:rgba(233,30,99,0.1);
-  box-shadow:0 0 8px rgba(233,30,99,0.3);
-}
-.love-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:4px;
-}
-.love-names{
-  color:#fff;
-  font-weight:bold;
-}
-.love-stage{
-  font-size:1.2em;
-}
-.love-progress{
-  font-size:0.75em;
-  color:#aaa;
-  font-style:italic;
-}
-.synergy-list, .rivalry-list{
+.party-love-pairs{
   display:flex;
   flex-direction:column;
   gap:6px;
 }
-.synergy-item{
+.party-love-pair{
+  background:rgba(13,17,23,0.6);
+  border:1px solid #553c60;
+  border-radius:6px;
+  padding:6px;
+  font-size:0.75em;
+  transition:all 0.3s ease;
+}
+.party-love-pair.stage-1{
+  border-color:#ff8a65;
+  background:rgba(255,138,101,0.1);
+}
+.party-love-pair.stage-2{
+  border-color:#f783ac;
+  background:rgba(247,131,172,0.1);
+}
+.party-love-pair.stage-3{
+  border-color:#e91e63;
+  background:rgba(233,30,99,0.1);
+  box-shadow:0 0 6px rgba(233,30,99,0.3);
+}
+/* 古いクラス削除済み */
+.party-synergy-list, .party-rivalry-list{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+.party-synergy-item{
   background:rgba(255,215,0,0.1);
   border:1px solid #ffd700;
-  border-radius:6px;
-  padding:6px 8px;
-  font-size:0.8em;
-}
-.synergy-name{
-  color:#ffd700;
-  font-weight:bold;
-  font-size:0.85em;
-}
-.synergy-members{
-  color:#e2e8f0;
+  border-radius:5px;
+  padding:5px 7px;
   font-size:0.75em;
 }
-.synergy-effect{
-  color:#aaa;
-  font-size:0.7em;
-  font-style:italic;
-}
-.rivalry-item{
+/* 古いシナジークラス削除済み */
+.party-rivalry-item{
   background:rgba(255,107,107,0.1);
   border:1px solid #ff6b6b;
-  border-radius:6px;
-  padding:6px 8px;
-  font-size:0.8em;
-}
-.rivalry-classes{
-  color:#ff8a65;
-  font-weight:bold;
-}
-.rivalry-penalty{
-  color:#aaa;
+  border-radius:5px;
+  padding:5px 7px;
   font-size:0.75em;
 }
-.empty-relationship{
-  text-align:center;
-  color:#666;
-  font-style:italic;
-  font-size:0.8em;
-  padding:20px 10px;
-}
+/* 古いライバル関係クラス削除済み */
 .environment-info{
   margin-top:auto;
   font-size:0.8em;
@@ -958,20 +911,20 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
     max-width:280px;
     padding:8px 12px;
   }
-  .relationships-panel{
+  .party-relationships-panel{
     margin:10px 0;
   }
-  .relationship-content{
-    max-height:150px;
+  .party-relationship-content{
+    max-height:120px;
     padding:8px;
   }
-  .panel-tab{
-    padding:6px 3px;
-    font-size:1em;
+  .party-panel-tab{
+    padding:5px 3px;
+    font-size:0.9em;
   }
-  .love-pair, .synergy-item, .rivalry-item{
-    padding:6px;
-    font-size:0.75em;
+  .party-love-pair, .party-synergy-item, .party-rivalry-item{
+    padding:5px;
+    font-size:0.7em;
   }
 }
 
@@ -1086,6 +1039,29 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
         </div>
       </div>
     </div>
+    
+    <!-- パーティー関係性パネル -->
+    <div class="party-relationships-panel" id="partyRelationshipsPanel">
+      <div class="party-panel-tabs">
+        <button class="party-panel-tab active" onclick="switchRelationTab('love')" id="party-tab-love">💕</button>
+        <button class="party-panel-tab" onclick="switchRelationTab('synergy')" id="party-tab-synergy">✨</button>
+        <button class="party-panel-tab" onclick="switchRelationTab('rivalry')" id="party-tab-rivalry">⚡</button>
+      </div>
+      
+      <div class="party-relationship-content" id="partyRelationshipContent">
+        <div class="party-relationship-view" id="party-love-view">
+          <div class="party-love-pairs" id="partyLovePairs"></div>
+        </div>
+        
+        <div class="party-relationship-view" id="party-synergy-view" style="display:none;">
+          <div class="party-synergy-list" id="partySynergyList"></div>
+        </div>
+        
+        <div class="party-relationship-view" id="party-rivalry-view" style="display:none;">
+          <div class="party-rivalry-list" id="partyRivalryList"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 中央：イベント表示エリア -->
@@ -1130,31 +1106,7 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
       </div>
     </div>
     
-    <!-- 関係性パネル -->
-    <div class="relationships-panel" id="relationshipsPanel">
-      <div class="panel-tabs">
-        <button class="panel-tab active" onclick="switchRelationTab('love')" id="tab-love">💕</button>
-        <button class="panel-tab" onclick="switchRelationTab('synergy')" id="tab-synergy">✨</button>
-        <button class="panel-tab" onclick="switchRelationTab('rivalry')" id="tab-rivalry">⚡</button>
-      </div>
-      
-      <div class="relationship-content" id="relationshipContent">
-        <div class="relationship-view" id="love-view">
-          <div class="relationship-title">💕 恋愛関係</div>
-          <div class="love-pairs" id="lovePairs"></div>
-        </div>
-        
-        <div class="relationship-view" id="synergy-view" style="display:none;">
-          <div class="relationship-title">✨ シナジー効果</div>
-          <div class="synergy-list" id="synergyList"></div>
-        </div>
-        
-        <div class="relationship-view" id="rivalry-view" style="display:none;">
-          <div class="relationship-title">⚡ 同職ライバル</div>
-          <div class="rivalry-list" id="rivalryList"></div>
-        </div>
-      </div>
-    </div>
+    <!-- 関係性パネルは左側のパーティーエリアに移動 -->
     
     <div class="environment-info" id="envInfo">
       <div class="env-description">冷たい石の壁に囲まれた通路</div>
@@ -2683,16 +2635,16 @@ function switchRelationTab(tabName) {
   currentRelationTab = tabName;
   
   // タブの見た目更新
-  document.querySelectorAll('.panel-tab').forEach(tab => {
+  document.querySelectorAll('.party-panel-tab').forEach(tab => {
     tab.classList.remove('active');
   });
-  document.getElementById(`tab-${tabName}`).classList.add('active');
+  document.getElementById(`party-tab-${tabName}`).classList.add('active');
   
   // ビューの表示切り替え
-  document.querySelectorAll('.relationship-view').forEach(view => {
+  document.querySelectorAll('.party-relationship-view').forEach(view => {
     view.style.display = 'none';
   });
-  document.getElementById(`${tabName}-view`).style.display = 'block';
+  document.getElementById(`party-${tabName}-view`).style.display = 'block';
   
   // データ更新
   updateRelationships();
@@ -2709,14 +2661,14 @@ function updateRelationships() {
 }
 
 function updateLoveRelationships() {
-  const lovePairsEl = document.getElementById('lovePairs');
+  const lovePairsEl = document.getElementById('partyLovePairs');
   if (!lovePairsEl) return;
   
   lovePairsEl.innerHTML = '';
   
   const loveEntries = Object.entries(loveStates);
   if (loveEntries.length === 0) {
-    lovePairsEl.innerHTML = '<div class="empty-relationship">恋愛関係はまだありません</div>';
+    lovePairsEl.innerHTML = '<div class="empty-relationship" style="text-align:center;color:#666;font-style:italic;padding:15px 5px;">恋愛関係なし</div>';
     return;
   }
   
@@ -2733,16 +2685,16 @@ function updateLoveRelationships() {
     
     const stageEmoji = ['', '💗', '💕', '💖'][state.stage] || '';
     const stageText = ['', '好意', '恋心', '愛情'][state.stage] || '';
-    const progressText = state.timer > 0 ? `${state.timer}ターン後に進展` : '進展中...';
+    const progressText = state.timer > 0 ? `${state.timer}T後進展` : '進展中';
     
     const pairDiv = document.createElement('div');
-    pairDiv.className = `love-pair stage-${state.stage}`;
+    pairDiv.className = `party-love-pair stage-${state.stage}`;
     pairDiv.innerHTML = `
-      <div class="love-header">
-        <div class="love-names">${charA.icon} ${charA.name} ↔ ${charB.icon} ${charB.name}</div>
-        <div class="love-stage">${stageEmoji}</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
+        <div style="color:#fff; font-weight:bold; font-size:0.8em;">${charA.icon}${charA.name} ↔ ${charB.icon}${charB.name}</div>
+        <div style="font-size:1.1em;">${stageEmoji}</div>
       </div>
-      <div class="love-progress">${stageText} (${progressText})</div>
+      <div style="color:#aaa; font-size:0.7em; font-style:italic;">${stageText} (${progressText})</div>
     `;
     
     lovePairsEl.appendChild(pairDiv);
@@ -2750,35 +2702,35 @@ function updateLoveRelationships() {
 }
 
 function updateSynergyRelationships() {
-  const synergyListEl = document.getElementById('synergyList');
+  const synergyListEl = document.getElementById('partySynergyList');
   if (!synergyListEl) return;
   
   synergyListEl.innerHTML = '';
   
   if (activesynergies.length === 0) {
-    synergyListEl.innerHTML = '<div class="empty-relationship">発動中のシナジーはありません</div>';
+    synergyListEl.innerHTML = '<div class="empty-relationship" style="text-align:center;color:#666;font-style:italic;padding:15px 5px;">シナジーなし</div>';
     return;
   }
   
   activesynergies.forEach(synergy => {
     const synergyDiv = document.createElement('div');
-    synergyDiv.className = 'synergy-item';
+    synergyDiv.className = 'party-synergy-item';
     
     const members = synergy.members.map(classId => {
       const cls = CLASSES.find(c => c.id === classId);
       const member = party.find(p => p.classId === classId);
-      return member ? `${cls.icon} ${member.name}` : cls.name;
+      return member ? `${cls.icon}${member.name}` : cls.name;
     }).join(' + ');
     
-    const effectText = synergy.effect === 'defUp' ? `防御力+${synergy.value}` :
-                      synergy.effect === 'atkUp' ? `攻撃力+${synergy.value}` :
-                      synergy.effect === 'spdUp' ? `素早さ+${synergy.value}` :
-                      synergy.effect === 'healUp' ? `回復力×${synergy.value}` : '';
+    const effectText = synergy.effect === 'defUp' ? `防御+${synergy.value}` :
+                      synergy.effect === 'atkUp' ? `攻撃+${synergy.value}` :
+                      synergy.effect === 'spdUp' ? `速度+${synergy.value}` :
+                      synergy.effect === 'healUp' ? `回復×${synergy.value}` : '';
     
     synergyDiv.innerHTML = `
-      <div class="synergy-name">${synergy.name}</div>
-      <div class="synergy-members">${members}</div>
-      <div class="synergy-effect">${effectText}</div>
+      <div style="color:#ffd700; font-weight:bold; font-size:0.8em;">${synergy.name}</div>
+      <div style="color:#e2e8f0; font-size:0.7em;">${members}</div>
+      <div style="color:#aaa; font-size:0.65em; font-style:italic;">${effectText}</div>
     `;
     
     synergyListEl.appendChild(synergyDiv);
@@ -2786,7 +2738,7 @@ function updateSynergyRelationships() {
 }
 
 function updateRivalryRelationships() {
-  const rivalryListEl = document.getElementById('rivalryList');
+  const rivalryListEl = document.getElementById('partyRivalryList');
   if (!rivalryListEl) return;
   
   rivalryListEl.innerHTML = '';
@@ -2801,7 +2753,7 @@ function updateRivalryRelationships() {
   const rivalries = Object.entries(classCount).filter(([classId, count]) => count >= 2);
   
   if (rivalries.length === 0) {
-    rivalryListEl.innerHTML = '<div class="empty-relationship">同職によるライバル関係はありません</div>';
+    rivalryListEl.innerHTML = '<div class="empty-relationship" style="text-align:center;color:#666;font-style:italic;padding:15px 5px;">ライバルなし</div>';
     return;
   }
   
@@ -2810,14 +2762,14 @@ function updateRivalryRelationships() {
     const members = party.filter(p => p.classId === classId && p.alive);
     
     const rivalryDiv = document.createElement('div');
-    rivalryDiv.className = 'rivalry-item';
+    rivalryDiv.className = 'party-rivalry-item';
     
-    const memberNames = members.map(m => `${cls.icon} ${m.name}`).join(' vs ');
+    const memberNames = members.map(m => `${cls.icon}${m.name}`).join(' vs ');
     
     rivalryDiv.innerHTML = `
-      <div class="rivalry-classes">${cls.name} × ${count}</div>
-      <div class="synergy-members">${memberNames}</div>
-      <div class="rivalry-penalty">攻撃力 -2 (嫉妬効果)</div>
+      <div style="color:#ff8a65; font-weight:bold; font-size:0.8em;">${cls.name} × ${count}</div>
+      <div style="color:#e2e8f0; font-size:0.7em;">${memberNames}</div>
+      <div style="color:#aaa; font-size:0.65em;">攻撃-2 (嫉妬)</div>
     `;
     
     rivalryListEl.appendChild(rivalryDiv);
@@ -3916,7 +3868,7 @@ updateContinueButton();
 updateLogDisplay();
 
 // 関係性パネル初期化
-if (document.getElementById('relationshipsPanel')) {
+if (document.getElementById('partyRelationshipsPanel')) {
   switchRelationTab('love');
 }
 
