@@ -85,7 +85,7 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 .hp-bar.mid{background:linear-gradient(90deg,#ff9800,#ffcc02)}
 
 /* ログエリア */
-.log-area{background:#0d1117;border:1px solid #333;border-radius:8px;padding:12px;height:calc(100vh - 220px);overflow-y:auto;font-size:.82em;line-height:1.6;scroll-behavior:smooth}
+.log-area{background:#0d1117;border:1px solid #333;border-radius:8px;padding:12px;height:calc(100vh - 380px);overflow-y:auto;font-size:.82em;line-height:1.6;scroll-behavior:smooth}
 .log-line{animation:fadeIn .3s;padding:2px 4px;border-radius:4px;margin:1px 0}
 .log-line.battle{color:#ff6b6b}
 .log-line.heal{color:#69db7c}
@@ -98,6 +98,147 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 .log-line.system{color:#aaa}
 .log-line.talk{color:#7ecfcf;background:#7ecfcf0a;padding:4px 10px;margin:2px 0;border-radius:8px;border:1px solid #7ecfcf15;position:relative}
 .log-line.talk-bubble{background:#1a2e3e;border:1px solid #2a4e5e;border-radius:12px;padding:6px 12px;margin:3px 0 3px 16px;color:#a0dede;position:relative}
+
+/* === 戦闘フィールド === */
+.battle-field{
+  background:linear-gradient(45deg,#1a1a2e 0%,#16213e 50%,#1a1a2e 100%);
+  border:2px solid #4a5568;
+  border-radius:12px;
+  padding:20px;
+  margin:10px 12px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  min-height:140px;
+  position:relative;
+  overflow:hidden;
+}
+.battle-field::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at center,rgba(255,215,0,0.1) 0%,transparent 60%);
+  pointer-events:none;
+}
+.party-side{display:flex;gap:10px;flex-wrap:wrap;max-width:45%}
+.enemy-side{display:flex;justify-content:center;max-width:45%}
+.vs-separator{
+  color:#ffd700;
+  font-size:2em;
+  font-weight:bold;
+  text-shadow:0 0 10px #ffd70066;
+  animation:pulse 2s infinite;
+}
+.character-slot{display:flex;flex-direction:column;align-items:center;gap:4px}
+.character-sprite{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:2em;
+  background:linear-gradient(135deg,#2d3748,#4a5568);
+  border:3px solid #5588ff;
+  position:relative;
+  transition:all 0.3s ease;
+  cursor:pointer;
+}
+.character-sprite.dead{
+  opacity:0.3;
+  filter:grayscale(1);
+  border-color:#666;
+}
+.character-sprite.attacking{
+  transform:scale(1.1) translateX(15px);
+  box-shadow:0 0 20px #ffd70088;
+}
+.character-sprite.defending{
+  transform:scale(0.95);
+  filter:brightness(0.7);
+}
+.enemy-sprite{
+  width:80px;
+  height:80px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:2.5em;
+  background:linear-gradient(135deg,#744210,#975a16);
+  border:3px solid #ff6b6b;
+  position:relative;
+  transition:all 0.3s ease;
+  animation:breathe 3s ease-in-out infinite;
+}
+.enemy-sprite.attacking{
+  animation:enemyAttack 0.5s ease-in-out;
+}
+.enemy-sprite.damaged{
+  animation:shake 0.5s ease-in-out;
+}
+.char-status,.enemy-status{
+  text-align:center;
+  position:relative;
+}
+.char-name-mini,.enemy-name-mini{
+  font-size:0.7em;
+  color:#aaa;
+  font-weight:bold;
+}
+.enemy-hp-mini{
+  font-size:0.65em;
+  color:#ff6b6b;
+  margin-top:2px;
+}
+.damage-numbers{
+  position:absolute;
+  top:-20px;
+  left:50%;
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+.damage-popup{
+  position:absolute;
+  font-weight:bold;
+  font-size:1.1em;
+  animation:damageFloat 1.5s ease-out forwards;
+  text-shadow:1px 1px 2px rgba(0,0,0,0.8);
+}
+.damage-popup.damage{color:#ff4444}
+.damage-popup.heal{color:#44ff44}
+.damage-popup.miss{color:#888;font-size:0.9em}
+.hit-flash{animation:flash 0.3s ease-in-out}
+
+/* アニメーション */
+@keyframes pulse{
+  0%,100%{opacity:1}
+  50%{opacity:0.6}
+}
+@keyframes breathe{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.05)}
+}
+@keyframes enemyAttack{
+  0%{transform:scale(1)}
+  25%{transform:scale(1.15) translateX(-10px)}
+  75%{transform:scale(1.15) translateX(-10px)}
+  100%{transform:scale(1)}
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0)}
+  10%,30%,50%,70%,90%{transform:translateX(-2px)}
+  20%,40%,60%,80%{transform:translateX(2px)}
+}
+@keyframes damageFloat{
+  0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+  20%{transform:translateX(-50%) translateY(-10px) scale(1.2)}
+  100%{opacity:0;transform:translateX(-50%) translateY(-40px) scale(0.8)}
+}
+@keyframes flash{
+  0%,100%{filter:brightness(1)}
+  50%{filter:brightness(2.5) saturate(0) contrast(2)}
+}
 .log-line.talk-bubble::before{content:'';position:absolute;left:-8px;top:10px;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:8px solid #2a4e5e}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
@@ -131,6 +272,14 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 @media(max-width:380px){
   .char-grid{grid-template-columns:1fr 1fr;gap:6px}
   .party-hp{grid-template-columns:1fr}
+  .battle-field{
+    padding:15px 10px;
+    margin:5px;
+    min-height:100px;
+  }
+  .character-sprite{width:45px;height:45px;font-size:1.5em}
+  .enemy-sprite{width:60px;height:60px;font-size:2em}
+  .party-side{gap:8px}
 }
 </style>
 </head>
@@ -173,6 +322,52 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 </div>
 <div class="party-hp" id="party-hp"></div>
 </div>
+
+<!-- 戦闘フィールド -->
+<div class="battle-field" id="battleField" style="display:flex;">
+  <div class="party-side">
+    <div class="character-slot" data-index="0">
+      <div class="character-sprite" id="char0"></div>
+      <div class="char-status">
+        <div class="char-name-mini"></div>
+        <div class="damage-numbers"></div>
+      </div>
+    </div>
+    <div class="character-slot" data-index="1">
+      <div class="character-sprite" id="char1"></div>
+      <div class="char-status">
+        <div class="char-name-mini"></div>
+        <div class="damage-numbers"></div>
+      </div>
+    </div>
+    <div class="character-slot" data-index="2">
+      <div class="character-sprite" id="char2"></div>
+      <div class="char-status">
+        <div class="char-name-mini"></div>
+        <div class="damage-numbers"></div>
+      </div>
+    </div>
+    <div class="character-slot" data-index="3">
+      <div class="character-sprite" id="char3"></div>
+      <div class="char-status">
+        <div class="char-name-mini"></div>
+        <div class="damage-numbers"></div>
+      </div>
+    </div>
+  </div>
+  <div class="vs-separator">⚔</div>
+  <div class="enemy-side">
+    <div class="enemy-slot">
+      <div class="enemy-sprite" id="currentEnemy"></div>
+      <div class="enemy-status">
+        <div class="enemy-name-mini"></div>
+        <div class="enemy-hp-mini"></div>
+        <div class="damage-numbers"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="log-area" id="log-area"></div>
 </div>
 
@@ -1163,6 +1358,10 @@ function startDungeon() {
   });
 
   running = true;
+  
+  // 戦闘フィールド初期化
+  initBattleField();
+  
   scheduleNextFloor();
 }
 
@@ -1198,7 +1397,7 @@ function checkSynergies() {
 // ===== フロア進行 =====
 function scheduleNextFloor() {
   if (!running) return;
-  intervalId = setTimeout(() => processFloor(), speedMs[currentSpeed]);
+  intervalId = setTimeout(async () => await processFloor(), speedMs[currentSpeed]);
 }
 
 // ===== 掛け合い発生システム =====
@@ -1303,7 +1502,7 @@ function getCharBattleCry(p) {
   return null;
 }
 
-function processFloor() {
+async function processFloor() {
   if (!running) return;
   floor++;
   document.getElementById('floor-display').textContent = `B${floor}F`;
@@ -1331,7 +1530,7 @@ function processFloor() {
   if (alive.length === 0) { endGame(); return; }
 
   if (r < 0.55) {
-    battleEvent();
+    await battleEvent(); // 非同期戦闘
   } else if (r < 0.75) {
     trapEvent();
   } else if (r < 0.90) {
@@ -1360,8 +1559,141 @@ function processFloor() {
   scheduleNextFloor();
 }
 
+// ===== 戦闘ビジュアル機能 =====
+function initBattleField() {
+  // パーティーメンバーをスプライトに表示
+  party.forEach((member, index) => {
+    const sprite = document.getElementById(`char${index}`);
+    const nameEl = sprite.parentElement.querySelector('.char-name-mini');
+    if (sprite && member.alive) {
+      sprite.textContent = member.icon;
+      sprite.className = `character-sprite ${member.alive ? '' : 'dead'}`;
+      if (nameEl) nameEl.textContent = member.name;
+    } else if (sprite) {
+      sprite.textContent = '';
+      sprite.className = 'character-sprite dead';
+      if (nameEl) nameEl.textContent = '';
+    }
+  });
+}
+
+function showEnemySprite(monsterName) {
+  const enemySprite = document.getElementById('currentEnemy');
+  const enemyNameEl = document.querySelector('.enemy-name-mini');
+  
+  // モンスターアイコンを設定
+  const monsterIcons = {
+    'ゴブリンの群れ': '👹',
+    'スケルトン戦士': '💀',
+    'オーク': '👺',
+    'ダークエルフ': '🧝‍♀️',
+    'ミノタウロス': '🐂',
+    'ワイバーン': '🐉',
+    'リッチ': '☠️',
+    'ドラゴン': '🐲',
+    'デーモンロード': '👹',
+    '深淵の使徒': '🌑',
+  };
+  
+  enemySprite.textContent = monsterIcons[monsterName] || '👿';
+  if (enemyNameEl) enemyNameEl.textContent = monsterName;
+}
+
+function updateEnemyHP(currentHp, maxHp) {
+  const hpEl = document.querySelector('.enemy-hp-mini');
+  if (hpEl) {
+    hpEl.textContent = `${Math.max(0, currentHp)}/${maxHp}`;
+    hpEl.style.color = currentHp <= maxHp * 0.3 ? '#ff4444' : '#ff6b6b';
+  }
+}
+
+function showDamageNumber(targetElement, damage, type = 'damage') {
+  const damageContainer = targetElement.querySelector('.damage-numbers');
+  if (!damageContainer) return;
+  
+  const popup = document.createElement('div');
+  popup.className = `damage-popup ${type}`;
+  
+  if (type === 'damage') {
+    popup.textContent = `-${damage}`;
+  } else if (type === 'heal') {
+    popup.textContent = `+${damage}`;
+  } else if (type === 'miss') {
+    popup.textContent = 'Miss!';
+  }
+  
+  damageContainer.appendChild(popup);
+  
+  // 1.5秒後に削除
+  setTimeout(() => {
+    if (popup.parentNode) popup.parentNode.removeChild(popup);
+  }, 1500);
+}
+
+function performAttackAnimation(attackerIndex, target = 'enemy') {
+  const attacker = document.getElementById(`char${attackerIndex}`);
+  if (!attacker) return;
+  
+  return new Promise((resolve) => {
+    // 攻撃アニメーション開始
+    attacker.classList.add('attacking');
+    
+    setTimeout(() => {
+      // ヒットエフェクト
+      if (target === 'enemy') {
+        const enemy = document.getElementById('currentEnemy');
+        if (enemy) enemy.classList.add('damaged');
+        
+        setTimeout(() => {
+          if (enemy) enemy.classList.remove('damaged');
+        }, 500);
+      } else {
+        // パーティーメンバーが攻撃される場合
+        const targetEl = document.getElementById(`char${target}`);
+        if (targetEl) {
+          targetEl.classList.add('hit-flash');
+          setTimeout(() => targetEl.classList.remove('hit-flash'), 300);
+        }
+      }
+      
+      // 攻撃アニメーション終了
+      attacker.classList.remove('attacking');
+      resolve();
+    }, 300);
+  });
+}
+
+function performEnemyAttackAnimation() {
+  const enemy = document.getElementById('currentEnemy');
+  if (!enemy) return Promise.resolve();
+  
+  return new Promise((resolve) => {
+    enemy.classList.add('attacking');
+    
+    setTimeout(() => {
+      enemy.classList.remove('attacking');
+      resolve();
+    }, 500);
+  });
+}
+
+function showBattleField() {
+  const battleField = document.getElementById('battleField');
+  if (battleField) {
+    battleField.style.display = 'flex';
+    initBattleField();
+  }
+}
+
+function hideBattleField() {
+  const battleField = document.getElementById('battleField');
+  if (battleField) {
+    battleField.style.display = 'none';
+  }
+}
+
 // ===== イベント =====
-function battleEvent() {
+async function battleEvent() {
   const monsters = [
     {name:'ゴブリンの群れ',atk:15,hp:60,tier:1},
     {name:'スケルトン戦士',atk:22,hp:80,tier:1},
@@ -1382,27 +1714,60 @@ function battleEvent() {
   const scale = 1 + floor * 0.08;
   const mAtk = Math.floor(mon.atk * scale);
   let mHp = Math.floor(mon.hp * scale);
+  const maxHp = mHp;
 
   // 敵出現メッセージ
   const appearMsgs = TEXTS.monsterAppear[mon.name] || TEXTS.monsterAppear._default;
   addLog(`⚔ ${pick(appearMsgs).replace(/{name}/g, mon.name)}`, 'battle');
 
+  // 戦闘フィールド表示
+  showBattleField();
+  showEnemySprite(mon.name);
+  updateEnemyHP(mHp, maxHp);
+
   const alive = party.filter(p=>p.alive);
   // 戦闘中の掛け合い
   triggerBanter('battle');
 
-  // パーティー攻撃（職業別メッセージ + キャラ固有セリフ）
-  alive.forEach(p => {
+  // パーティー攻撃（順番にアニメーション付きで）
+  for (let i = 0; i < alive.length; i++) {
+    const p = alive[i];
+    const charIndex = party.findIndex(member => member.uid === p.uid);
+    
+    // キャラ固有セリフ
     const cry = getCharBattleCry(p);
     if (cry) addLog(`  💬 ${cry}`, 'talk');
+    
+    // ダメージ計算
     const lovePenalty = p.loveStage >= 3 ? 0.3 : p.loveStage >= 2 ? 0.7 : 1;
     const dmg = Math.max(1, Math.floor((p.atk + Math.random()*10) * lovePenalty));
     mHp -= dmg;
     mvpDamage[p.uid] += dmg;
+    
+    // 攻撃メッセージ
     const atkMsgs = TEXTS.attack[p.classId] || TEXTS.attack.knight;
     addLog(`  → ${pick(atkMsgs).replace(/{name}/g, p.name)} ${dmg}ダメージ！`, 'battle');
-  });
+    
+    // 攻撃アニメーション実行
+    await performAttackAnimation(charIndex, 'enemy');
+    
+    // 敵にダメージ表示
+    const enemySlot = document.querySelector('.enemy-slot');
+    if (enemySlot) {
+      showDamageNumber(enemySlot, dmg, 'damage');
+    }
+    
+    // 敵HP更新
+    updateEnemyHP(mHp, maxHp);
+    
+    // 0.5秒待機（次の攻撃まで）
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // 敵が死亡した場合は攻撃終了
+    if (mHp <= 0) break;
+  }
 
+  // 戦闘結果の処理
   if (mHp <= 0) {
     addLog(`  → ${pick(TEXTS.victory).replace(/{name}/g, mon.name)}`, 'battle');
     // 勝利時キャラセリフ
@@ -1414,42 +1779,102 @@ function battleEvent() {
     }
   } else {
     addLog(`  → ${pick(TEXTS.counterattack).replace(/{name}/g, mon.name)}`, 'battle');
+    
+    // 敵の攻撃アニメーション
+    await performEnemyAttackAnimation();
+    
     // 敵攻撃：タンクがいれば集中、いなければランダム
     const knights = alive.filter(p=>p.classId==='knight');
     const targets = knights.length > 0 && Math.random()<0.6 ? knights : alive;
     const numHits = 1 + Math.floor(Math.random()*2);
-    for (let i=0;i<numHits;i++) {
+    
+    for (let i = 0; i < numHits; i++) {
       const t = targets[Math.floor(Math.random()*targets.length)];
+      const charIndex = party.findIndex(member => member.uid === t.uid);
       const dmg = Math.max(1, mAtk - t.def + Math.floor(Math.random()*8));
       t.hp -= dmg;
+      
       addLog(`  → ${pick(TEXTS.takeDamage).replace(/{name}/g, t.name).replace(/{dmg}/g, dmg)} (HP:${Math.max(0,t.hp)}/${t.maxHp})`, 'battle');
+      
+      // パーティーメンバーにダメージ表示
+      const charSlot = document.querySelector(`[data-index="${charIndex}"]`);
+      if (charSlot) {
+        showDamageNumber(charSlot, dmg, 'damage');
+        // ヒットフラッシュ
+        const charSprite = charSlot.querySelector('.character-sprite');
+        if (charSprite) {
+          charSprite.classList.add('hit-flash');
+          setTimeout(() => charSprite.classList.remove('hit-flash'), 300);
+        }
+      }
+      
+      // 0.3秒待機（次のヒットまで）
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
+    
     if (mHp > 0) addLog(`  → ${pick(TEXTS.monsterFlee).replace(/{name}/g, mon.name)}`, 'battle');
   }
 
-  // ヒーラー回復
+  // 少し待ってから戦闘フィールドを更新
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  // ヒーラー回復（アニメーション付き）
   const healers = alive.filter(p=>p.classId==='healer' && p.alive && p.loveStage<3);
-  healers.forEach(h => {
+  for (const h of healers) {
     const mult = h.buffs.healMult || 1;
     const wounded = party.filter(p=>p.alive && p.hp < p.maxHp);
     if (wounded.length > 0) {
       const t = wounded.sort((a,b)=>a.hp/a.maxHp-b.hp/b.maxHp)[0];
       const heal = Math.floor((25 + Math.random()*15) * mult);
       t.hp = Math.min(t.maxHp, t.hp + heal);
+      
       addLog(`  💚 ${pick(TEXTS.heal).replace(/{healer}/g, h.name).replace(/{target}/g, t.name).replace(/{val}/g, heal)} (HP:${t.hp}/${t.maxHp})`, 'heal');
+      
+      // 回復対象にヒールエフェクト表示
+      const targetIndex = party.findIndex(member => member.uid === t.uid);
+      const targetSlot = document.querySelector(`[data-index="${targetIndex}"]`);
+      if (targetSlot) {
+        showDamageNumber(targetSlot, heal, 'heal');
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
-  });
+  }
 
-  // 僧侶バフ
+  // 僧侶バフ（アニメーション付き）
   const priests = alive.filter(p=>p.classId==='priest' && p.alive && p.loveStage<3);
-  priests.forEach(pr => {
+  for (const pr of priests) {
     if (Math.random() < 0.4) {
       const t = alive[Math.floor(Math.random()*alive.length)];
       const buff = Math.floor(3 + Math.random()*5);
       t.def += buff;
+      
       addLog(`  📿 ${pick(TEXTS.priestBuff).replace(/{priest}/g, pr.name).replace(/{target}/g, t.name).replace(/{val}/g, buff)}`, 'synergy');
+      
+      // バフ対象にエフェクト表示
+      const targetIndex = party.findIndex(member => member.uid === t.uid);
+      const targetSlot = document.querySelector(`[data-index="${targetIndex}"]`);
+      if (targetSlot) {
+        const targetSprite = targetSlot.querySelector('.character-sprite');
+        if (targetSprite) {
+          targetSprite.style.boxShadow = '0 0 15px #ffd700';
+          setTimeout(() => {
+            targetSprite.style.boxShadow = '';
+          }, 1000);
+        }
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
-  });
+  }
+
+  // 戦闘フィールドの最終状態更新
+  initBattleField(); // 死亡状態などを反映
+  
+  // 2秒後に戦闘フィールドを非表示
+  setTimeout(() => {
+    hideBattleField();
+  }, 2000);
 }
 
 function trapEvent() {
