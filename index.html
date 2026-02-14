@@ -365,6 +365,170 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   justify-content:center;
   margin:20px 0;
 }
+/* === 階層選択画面 === */
+.choice-container{
+  max-width:900px;
+  margin:0 auto;
+  padding:20px;
+  background:rgba(13,17,23,0.9);
+  border-radius:15px;
+  border:2px solid #334155;
+}
+.choice-header{
+  text-align:center;
+  margin-bottom:25px;
+  padding-bottom:15px;
+  border-bottom:2px solid #334155;
+}
+.choice-header h2{
+  color:#ffd700;
+  margin-bottom:10px;
+  font-size:1.8em;
+}
+.current-status{
+  display:flex;
+  justify-content:center;
+  gap:30px;
+  font-size:1.1em;
+  color:#e2e8f0;
+}
+.choice-description{
+  text-align:center;
+  margin-bottom:25px;
+  color:#b8b8d0;
+  font-size:1em;
+}
+.route-options{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+  margin-bottom:25px;
+}
+.route-option{
+  background:linear-gradient(145deg,rgba(22,33,62,0.7),rgba(16,25,50,0.8));
+  border:2px solid #334155;
+  border-radius:12px;
+  padding:20px;
+  text-align:center;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  position:relative;
+}
+.route-option:hover{
+  transform:translateY(-5px);
+  box-shadow:0 8px 25px rgba(255,215,0,0.2);
+  border-color:#ffd700;
+}
+.route-option.selected{
+  border-color:#4caf50;
+  box-shadow:0 0 20px rgba(76,175,80,0.4);
+  background:linear-gradient(145deg,rgba(76,175,80,0.2),rgba(56,142,60,0.3));
+}
+.route-icon{
+  font-size:3em;
+  margin-bottom:15px;
+}
+.route-title{
+  font-size:1.3em;
+  font-weight:bold;
+  color:#ffd700;
+  margin-bottom:15px;
+}
+.route-description{
+  font-size:0.9em;
+  color:#e2e8f0;
+  line-height:1.6;
+  margin-bottom:15px;
+  text-align:left;
+}
+.route-risk{
+  position:absolute;
+  top:15px;
+  right:15px;
+  padding:5px 10px;
+  border-radius:15px;
+  font-size:0.8em;
+  font-weight:bold;
+}
+.route-option:nth-child(1) .route-risk{
+  background:#4caf50;
+  color:white;
+}
+.route-option:nth-child(2) .route-risk{
+  background:#ff9800;
+  color:white;
+}
+.route-option:nth-child(3) .route-risk{
+  background:#f44336;
+  color:white;
+}
+.enhancement-section{
+  background:rgba(22,33,62,0.5);
+  border:2px solid #334155;
+  border-radius:10px;
+  padding:20px;
+  margin:25px 0;
+}
+.enhancement-section h3{
+  color:#ffd700;
+  text-align:center;
+  margin-bottom:20px;
+}
+.enhancement-options{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:15px;
+}
+.enhancement-option{
+  background:rgba(13,17,23,0.6);
+  border:2px solid #555;
+  border-radius:8px;
+  padding:15px;
+  cursor:pointer;
+  transition:all 0.3s ease;
+}
+.enhancement-option:hover{
+  border-color:#ffd700;
+  box-shadow:0 0 15px rgba(255,215,0,0.3);
+}
+.enhancement-option.selected{
+  border-color:#4caf50;
+  background:rgba(76,175,80,0.2);
+}
+.enhancement-title{
+  color:#ffd700;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+.enhancement-effect{
+  color:#e2e8f0;
+  font-size:0.9em;
+}
+.choice-actions{
+  text-align:center;
+  margin-top:25px;
+}
+.choice-btn{
+  padding:12px 30px;
+  font-size:1.1em;
+  background:linear-gradient(145deg,#4caf50,#45a049);
+  border:none;
+  border-radius:8px;
+  color:white;
+  cursor:pointer;
+  transition:all 0.3s ease;
+}
+.choice-btn:disabled{
+  background:#555;
+  cursor:not-allowed;
+  opacity:0.6;
+}
+.choice-btn:not(:disabled):hover{
+  background:linear-gradient(145deg,#45a049,#4caf50);
+  transform:translateY(-2px);
+  box-shadow:0 4px 15px rgba(76,175,80,0.4);
+}
+
 /* === パーティー関係性パネル === */
 .party-relationships-panel{
   background:rgba(22,33,62,0.6);
@@ -926,6 +1090,32 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
     padding:5px;
     font-size:0.7em;
   }
+  .choice-container{
+    padding:15px;
+    margin:10px;
+  }
+  .route-options{
+    grid-template-columns:1fr;
+    gap:15px;
+  }
+  .route-option{
+    padding:15px;
+  }
+  .route-icon{
+    font-size:2.5em;
+    margin-bottom:10px;
+  }
+  .current-status{
+    flex-direction:column;
+    gap:10px;
+  }
+  .enhancement-options{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+  .enhancement-option{
+    padding:12px;
+  }
 }
 
 @media(max-width:480px){
@@ -1211,6 +1401,71 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   <button class="btn" onclick="backToSelect()" style="margin: 5px;">🔄 もう一度挑戦</button>
   <button class="btn" onclick="shareResult()" style="margin: 5px; background:#1da1f2;">📤 結果をシェア</button>
 </div>
+</div>
+
+<!-- 階層選択画面 -->
+<div class="screen" id="floor-choice-screen">
+  <div class="choice-container">
+    <div class="choice-header">
+      <h2>🗺️ 進路選択</h2>
+      <div class="current-status">
+        <div>現在: <span id="choiceCurrentFloor">B3F</span></div>
+        <div>パーティー: <span id="choicePartySurvivors">4/4</span>人生存</div>
+      </div>
+    </div>
+    
+    <div class="choice-description">
+      <p>次の3階層の進路を選択してください。それぞれ異なる特徴があります。</p>
+    </div>
+    
+    <div class="route-options" id="routeOptions">
+      <div class="route-option" onclick="selectRoute('safe')">
+        <div class="route-icon">🛡️</div>
+        <div class="route-title">安全な道</div>
+        <div class="route-description">
+          • 敵が弱い (ダメージ -20%)<br>
+          • 罠が少ない<br>
+          • 経験値は普通<br>
+          • 宝物は期待薄
+        </div>
+        <div class="route-risk">リスク: 低</div>
+      </div>
+      
+      <div class="route-option" onclick="selectRoute('balanced')">
+        <div class="route-icon">⚖️</div>
+        <div class="route-title">バランス型</div>
+        <div class="route-description">
+          • 通常の難易度<br>
+          • 様々なイベント<br>
+          • 標準的な報酬<br>
+          • 安定した成長
+        </div>
+        <div class="route-risk">リスク: 中</div>
+      </div>
+      
+      <div class="route-option" onclick="selectRoute('dangerous')">
+        <div class="route-icon">⚔️</div>
+        <div class="route-title">危険な道</div>
+        <div class="route-description">
+          • 強敵が出現 (ダメージ +30%)<br>
+          • 罠も多い<br>
+          • 高い経験値<br>
+          • レア装備の可能性
+        </div>
+        <div class="route-risk">リスク: 高</div>
+      </div>
+    </div>
+    
+    <!-- キャラクター強化選択 -->
+    <div class="enhancement-section" id="enhancementSection" style="display:none;">
+      <h3>🌟 パーティー強化</h3>
+      <div class="enhancement-options" id="enhancementOptions"></div>
+    </div>
+    
+    <div class="choice-actions">
+      <button class="btn choice-btn" id="confirmChoice" onclick="confirmRouteChoice()" disabled>選択を確定</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -2261,6 +2516,18 @@ function startDungeon() {
   });
   floor = 0; deathLog = []; loveStates = {}; mvpDamage = {};
   party.forEach(p => mvpDamage[p.uid] = 0);
+  
+  // 階層選択システム初期化
+  currentRoute = null;
+  routeProgress = 0;
+  routeModifiers = {
+    enemyDamageMultiplier: 1.0,
+    trapChance: 1.0,
+    treasureChance: 1.0,
+    expMultiplier: 1.0
+  };
+  selectedEnhancement = null;
+  availableEnhancements = [];
 
   // 恋愛ペアチェック
   initLovePairs();
@@ -2464,6 +2731,25 @@ async function processFloor() {
   floor++;
   document.getElementById('floor-display').textContent = `B${floor}F`;
   addLog(`\n━━━ B${floor}F ━━━`, 'floor');
+  
+  // 3階層ごとに選択画面を表示（5階層以降）
+  if (floor > 5 && floor % 3 === 0 && routeProgress <= 0) {
+    running = false;
+    if (intervalId) clearTimeout(intervalId);
+    showFloorChoice();
+    return;
+  }
+  
+  // ルート効果の残り回数を減らす
+  if (routeProgress > 0) {
+    routeProgress--;
+    if (routeProgress === 0) {
+      addLog('🗺️ 選択した進路の効果が終了しました', 'system');
+      // ルート効果をリセット（基本効果以外）
+      routeModifiers.treasureChance = Math.max(1.0, routeModifiers.treasureChance - 0.5);
+      routeModifiers.expMultiplier = Math.max(1.0, routeModifiers.expMultiplier - 0.3);
+    }
+  }
 
   // フロア節目メッセージ
   if (TEXTS.floorMilestone[floor]) {
@@ -2492,11 +2778,15 @@ async function processFloor() {
   // 基本的には探索モード
   setExploringMode();
 
+  // ルート効果を適用した確率計算
+  const trapThreshold = 0.55 + (0.20 * routeModifiers.trapChance);
+  const treasureThreshold = 0.90 - (0.05 * (routeModifiers.treasureChance - 1));
+
   if (r < 0.55) {
     await battleEvent(); // 非同期戦闘
-  } else if (r < 0.75) {
+  } else if (r < trapThreshold) {
     trapEvent();
-  } else if (r < 0.90) {
+  } else if (r < treasureThreshold) {
     restEvent();
   } else {
     treasureEvent();
@@ -2592,6 +2882,18 @@ let battleDamageTaken = 0;
 let currentRelationTab = 'love';
 let activesynergies = [];
 let rivalryData = {};
+
+// === 階層選択システム ===
+let currentRoute = null;
+let routeProgress = 0;
+let routeModifiers = {
+  enemyDamageMultiplier: 1.0,
+  trapChance: 1.0,
+  treasureChance: 1.0,
+  expMultiplier: 1.0
+};
+let selectedEnhancement = null;
+let availableEnhancements = [];
 
 function startBattleUI() {
   battleTurn++;
@@ -2988,7 +3290,7 @@ async function battleEvent() {
   const pool = monsters.filter(m => m.tier <= maxTier);
   const mon = pool[Math.floor(Math.random()*pool.length)];
   const scale = Math.pow(1.06, floor - 1); // より滑らかな成長
-  const mAtk = Math.floor(mon.atk * scale);
+  const mAtk = Math.floor(mon.atk * scale * routeModifiers.enemyDamageMultiplier);
   let mHp = Math.floor(mon.hp * scale);
   const maxHp = mHp;
 
@@ -3540,6 +3842,222 @@ function clearLog() {
     logData = [];
     updateLogDisplay();
   }
+}
+
+// === 階層選択システム ===
+function showFloorChoice() {
+  const survivors = party.filter(p => p.alive).length;
+  
+  document.getElementById('choiceCurrentFloor').textContent = `B${floor}F`;
+  document.getElementById('choicePartySurvivors').textContent = `${survivors}/${party.length}`;
+  
+  // ルート選択をリセット
+  currentRoute = null;
+  selectedEnhancement = null;
+  document.querySelectorAll('.route-option').forEach(option => {
+    option.classList.remove('selected');
+  });
+  document.getElementById('confirmChoice').disabled = true;
+  document.getElementById('enhancementSection').style.display = 'none';
+  
+  showScreen('floor-choice-screen');
+}
+
+function selectRoute(routeType) {
+  currentRoute = routeType;
+  routeProgress = 0;
+  
+  // 見た目更新
+  document.querySelectorAll('.route-option').forEach(option => {
+    option.classList.remove('selected');
+  });
+  event.target.closest('.route-option').classList.add('selected');
+  
+  // ルート効果を設定
+  switch(routeType) {
+    case 'safe':
+      routeModifiers = {
+        enemyDamageMultiplier: 0.8,
+        trapChance: 0.6,
+        treasureChance: 0.8,
+        expMultiplier: 1.0
+      };
+      break;
+    case 'balanced':
+      routeModifiers = {
+        enemyDamageMultiplier: 1.0,
+        trapChance: 1.0,
+        treasureChance: 1.0,
+        expMultiplier: 1.0
+      };
+      break;
+    case 'dangerous':
+      routeModifiers = {
+        enemyDamageMultiplier: 1.3,
+        trapChance: 1.4,
+        treasureChance: 1.5,
+        expMultiplier: 1.3
+      };
+      break;
+  }
+  
+  // 強化選択を表示
+  showEnhancementOptions();
+  document.getElementById('confirmChoice').disabled = false;
+}
+
+function showEnhancementOptions() {
+  const enhancementSection = document.getElementById('enhancementSection');
+  const enhancementOptions = document.getElementById('enhancementOptions');
+  
+  enhancementSection.style.display = 'block';
+  enhancementOptions.innerHTML = '';
+  
+  availableEnhancements = generateEnhancementOptions();
+  
+  availableEnhancements.forEach((enhancement, index) => {
+    const optionDiv = document.createElement('div');
+    optionDiv.className = 'enhancement-option';
+    optionDiv.onclick = () => selectEnhancement(index);
+    
+    optionDiv.innerHTML = `
+      <div class="enhancement-title">${enhancement.title}</div>
+      <div class="enhancement-effect">${enhancement.description}</div>
+    `;
+    
+    enhancementOptions.appendChild(optionDiv);
+  });
+}
+
+function generateEnhancementOptions() {
+  const options = [
+    {
+      title: '💊 回復薬配布',
+      description: '全員のHPを50回復',
+      type: 'heal',
+      value: 50
+    },
+    {
+      title: '⚔️ 武器強化',
+      description: '全員の攻撃力+5（永続）',
+      type: 'atkBoost',
+      value: 5
+    },
+    {
+      title: '🛡️ 防具改良',
+      description: '全員の防御力+3（永続）',
+      type: 'defBoost',
+      value: 3
+    },
+    {
+      title: '🏃 訓練強化',
+      description: '全員の素早さ+3（永続）',
+      type: 'spdBoost',
+      value: 3
+    },
+    {
+      title: '💰 賞金稼ぎ',
+      description: '次の3階層で宝物発見率+50%',
+      type: 'treasureBoost',
+      value: 1.5
+    },
+    {
+      title: '🔮 経験値ブースト',
+      description: '次の3階層で経験値+30%',
+      type: 'expBoost',
+      value: 1.3
+    }
+  ];
+  
+  // 3つをランダム選択
+  const shuffled = options.sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 3);
+}
+
+function selectEnhancement(index) {
+  selectedEnhancement = index;
+  
+  document.querySelectorAll('.enhancement-option').forEach(option => {
+    option.classList.remove('selected');
+  });
+  document.querySelectorAll('.enhancement-option')[index].classList.add('selected');
+}
+
+function confirmRouteChoice() {
+  if (!currentRoute) return;
+  
+  const routeNames = {
+    safe: '安全な道',
+    balanced: 'バランス型',
+    dangerous: '危険な道'
+  };
+  
+  addLog(`🗺️ ${routeNames[currentRoute]}を選択しました`, 'system');
+  
+  // 選択した強化を適用
+  if (selectedEnhancement !== null) {
+    applyEnhancement(availableEnhancements[selectedEnhancement]);
+  }
+  
+  // 3階層分の効果を設定
+  routeProgress = 3;
+  
+  showScreen('dungeon-screen');
+  
+  // 少し待ってから次のフロアへ
+  setTimeout(() => {
+    scheduleNextFloor();
+  }, 1000);
+}
+
+function applyEnhancement(enhancement) {
+  addLog(`🌟 ${enhancement.title}を適用`, 'system');
+  
+  switch(enhancement.type) {
+    case 'heal':
+      party.forEach(member => {
+        const oldHp = member.hp;
+        member.hp = Math.min(member.maxHp, member.hp + enhancement.value);
+        if (member.hp > oldHp) {
+          addLog(`  → ${member.name}のHPが${member.hp - oldHp}回復 (${member.hp}/${member.maxHp})`, 'heal');
+        }
+      });
+      break;
+      
+    case 'atkBoost':
+      party.forEach(member => {
+        member.atk += enhancement.value;
+        addLog(`  → ${member.name}の攻撃力が${enhancement.value}上昇 (${member.atk})`, 'system');
+      });
+      updateStats('totalDamageDealt', enhancement.value * party.length);
+      break;
+      
+    case 'defBoost':
+      party.forEach(member => {
+        member.def += enhancement.value;
+        addLog(`  → ${member.name}の防御力が${enhancement.value}上昇 (${member.def})`, 'system');
+      });
+      break;
+      
+    case 'spdBoost':
+      party.forEach(member => {
+        member.spd += enhancement.value;
+        addLog(`  → ${member.name}の素早さが${enhancement.value}上昇 (${member.spd})`, 'system');
+      });
+      break;
+      
+    case 'treasureBoost':
+      routeModifiers.treasureChance *= enhancement.value;
+      addLog(`  → 宝物発見率が${Math.round((enhancement.value - 1) * 100)}%上昇`, 'system');
+      break;
+      
+    case 'expBoost':
+      routeModifiers.expMultiplier *= enhancement.value;
+      addLog(`  → 経験値が${Math.round((enhancement.value - 1) * 100)}%上昇`, 'system');
+      break;
+  }
+  
+  updateAdventureField();
 }
 
 function showScreen(id) {
