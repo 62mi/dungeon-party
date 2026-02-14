@@ -99,50 +99,174 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 .log-line.talk{color:#7ecfcf;background:#7ecfcf0a;padding:4px 10px;margin:2px 0;border-radius:8px;border:1px solid #7ecfcf15;position:relative}
 .log-line.talk-bubble{background:#1a2e3e;border:1px solid #2a4e5e;border-radius:12px;padding:6px 12px;margin:3px 0 3px 16px;color:#a0dede;position:relative}
 
-/* === 戦闘フィールド === */
-.battle-field{
-  background:linear-gradient(45deg,#1a1a2e 0%,#16213e 50%,#1a1a2e 100%);
+/* === 冒険フィールド === */
+.adventure-field{
+  background:linear-gradient(135deg,#1a1a2e 0%,#16213e 30%,#0d1117 70%,#1a1a2e 100%);
   border:2px solid #4a5568;
-  border-radius:12px;
+  border-radius:15px;
   padding:20px;
   margin:10px 12px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  min-height:140px;
+  display:grid;
+  grid-template-columns:300px 1fr 250px;
+  gap:20px;
+  min-height:300px;
   position:relative;
   overflow:hidden;
 }
-.battle-field::before{
+.adventure-field::before{
   content:'';
   position:absolute;
   inset:0;
-  background:radial-gradient(circle at center,rgba(255,215,0,0.1) 0%,transparent 60%);
+  background:
+    radial-gradient(circle at 20% 80%, rgba(255,215,0,0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(138,43,226,0.03) 0%, transparent 50%);
   pointer-events:none;
 }
-.party-side{display:flex;gap:10px;flex-wrap:wrap;max-width:45%}
-.enemy-side{display:flex;justify-content:center;max-width:45%}
-.vs-separator{
-  color:#ffd700;
-  font-size:2em;
-  font-weight:bold;
-  text-shadow:0 0 10px #ffd70066;
-  animation:pulse 2s infinite;
+
+/* パーティーエリア */
+.party-area{
+  background:rgba(22,33,62,0.6);
+  border:1px solid #334155;
+  border-radius:10px;
+  padding:15px;
 }
-.character-slot{display:flex;flex-direction:column;align-items:center;gap:4px}
+.party-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-top:10px;
+}
+.area-title{
+  color:#ffd700;
+  font-size:0.9em;
+  font-weight:bold;
+  text-align:center;
+  margin-bottom:10px;
+  border-bottom:1px solid #334155;
+  padding-bottom:5px;
+}
+
+/* イベント表示エリア */
+.event-display{
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  align-items:center;
+  text-align:center;
+  position:relative;
+}
+.floor-info{
+  background:rgba(26,26,46,0.8);
+  border:2px solid #ffd700;
+  border-radius:10px;
+  padding:10px 20px;
+  margin-bottom:15px;
+}
+.floor-number{
+  font-size:1.5em;
+  color:#ffd700;
+  font-weight:bold;
+  text-shadow:0 0 8px #ffd70055;
+}
+.event-status{
+  font-size:0.8em;
+  color:#aaa;
+  margin-top:3px;
+}
+.action-description{
+  font-size:1.1em;
+  color:#e2e8f0;
+  background:rgba(16,33,62,0.7);
+  padding:15px 20px;
+  border-radius:10px;
+  border:1px solid #334155;
+  margin:10px 0;
+  max-width:400px;
+  line-height:1.4;
+}
+.speech-bubble{
+  background:#1a2e3e;
+  border:2px solid #2a4e5e;
+  border-radius:15px;
+  padding:12px 18px;
+  margin:10px 0;
+  max-width:350px;
+  position:relative;
+  color:#7ecfcf;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}
+.speech-bubble::before{
+  content:'💬';
+  position:absolute;
+  top:-8px;
+  left:15px;
+  font-size:1.2em;
+}
+.event-messages{
+  background:rgba(13,17,23,0.7);
+  border:1px solid #21262d;
+  border-radius:8px;
+  padding:10px;
+  max-height:100px;
+  overflow-y:auto;
+  font-size:0.8em;
+  width:100%;
+  margin-top:auto;
+}
+
+/* 環境・敵エリア */
+.environment-area{
+  background:rgba(35,25,50,0.6);
+  border:1px solid #553c60;
+  border-radius:10px;
+  padding:15px;
+  display:flex;
+  flex-direction:column;
+}
+.enemy-container{
+  display:flex;
+  justify-content:center;
+  margin:20px 0;
+}
+.environment-info{
+  margin-top:auto;
+  font-size:0.8em;
+  color:#b8b8d0;
+  text-align:center;
+  padding:10px;
+  background:rgba(16,16,30,0.5);
+  border-radius:6px;
+}
+.character-slot{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  background:rgba(13,17,23,0.4);
+  border:1px solid #21262d;
+  border-radius:8px;
+  padding:8px;
+  min-height:120px;
+  transition:all 0.3s ease;
+}
+.character-slot:hover{
+  background:rgba(13,17,23,0.6);
+  border-color:#334155;
+}
 .character-sprite{
-  width:60px;
-  height:60px;
+  width:50px;
+  height:50px;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:2em;
+  font-size:1.8em;
   background:linear-gradient(135deg,#2d3748,#4a5568);
-  border:3px solid #5588ff;
+  border:2px solid #5588ff;
   position:relative;
   transition:all 0.3s ease;
   cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,0.3);
 }
 .character-sprite.dead{
   opacity:0.3;
@@ -150,26 +274,59 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   border-color:#666;
 }
 .character-sprite.attacking{
-  transform:scale(1.1) translateX(15px);
+  transform:scale(1.15);
   box-shadow:0 0 20px #ffd70088;
+  border-color:#ffd700;
 }
 .character-sprite.defending{
-  transform:scale(0.95);
-  filter:brightness(0.7);
+  transform:scale(0.9);
+  filter:brightness(0.8);
+}
+.char-hp-bar{
+  width:100%;
+  height:8px;
+  background:#333;
+  border-radius:4px;
+  overflow:hidden;
+  border:1px solid #555;
+  position:relative;
+}
+.hp-fill{
+  height:100%;
+  background:linear-gradient(90deg,#4caf50,#8bc34a);
+  transition:width 0.5s ease;
+  border-radius:3px;
+}
+.hp-fill.low{
+  background:linear-gradient(90deg,#f44336,#ff9800);
+}
+.hp-fill.mid{
+  background:linear-gradient(90deg,#ff9800,#ffc107);
+}
+.hp-text{
+  position:absolute;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:0.6em;
+  color:#fff;
+  text-shadow:1px 1px 2px rgba(0,0,0,0.8);
+  line-height:8px;
 }
 .enemy-sprite{
-  width:80px;
-  height:80px;
+  width:90px;
+  height:90px;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:2.5em;
+  font-size:2.8em;
   background:linear-gradient(135deg,#744210,#975a16);
   border:3px solid #ff6b6b;
   position:relative;
   transition:all 0.3s ease;
   animation:breathe 3s ease-in-out infinite;
+  box-shadow:0 4px 15px rgba(255,107,107,0.3);
 }
 .enemy-sprite.attacking{
   animation:enemyAttack 0.5s ease-in-out;
@@ -177,19 +334,54 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 .enemy-sprite.damaged{
   animation:shake 0.5s ease-in-out;
 }
+.enemy-hp-bar{
+  width:120px;
+  height:10px;
+  background:#333;
+  border-radius:5px;
+  overflow:hidden;
+  border:1px solid #666;
+  margin-top:5px;
+  position:relative;
+}
+.enemy-hp-fill{
+  height:100%;
+  background:linear-gradient(90deg,#ff6b6b,#ff8a65);
+  transition:width 0.5s ease;
+  border-radius:4px;
+}
+.enemy-hp-text{
+  position:absolute;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:0.7em;
+  color:#fff;
+  text-shadow:1px 1px 2px rgba(0,0,0,0.8);
+  line-height:10px;
+}
 .char-status,.enemy-status{
   text-align:center;
   position:relative;
+  width:100%;
 }
-.char-name-mini,.enemy-name-mini{
-  font-size:0.7em;
-  color:#aaa;
-  font-weight:bold;
-}
-.enemy-hp-mini{
+.char-name-mini{
   font-size:0.65em;
-  color:#ff6b6b;
-  margin-top:2px;
+  color:#e2e8f0;
+  font-weight:bold;
+  margin-bottom:3px;
+  text-shadow:1px 1px 2px rgba(0,0,0,0.5);
+}
+.enemy-name-mini{
+  font-size:0.75em;
+  color:#ff8a65;
+  font-weight:bold;
+  margin-bottom:3px;
+  text-shadow:1px 1px 2px rgba(0,0,0,0.8);
+}
+.env-description{
+  line-height:1.3;
+  font-style:italic;
 }
 .damage-numbers{
   position:absolute;
@@ -269,17 +461,49 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   .screen{padding:8px}
   h1{font-size:1.3em}
 }
-@media(max-width:380px){
-  .char-grid{grid-template-columns:1fr 1fr;gap:6px}
-  .party-hp{grid-template-columns:1fr}
-  .battle-field{
+@media(max-width:768px){
+  .adventure-field{
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto auto;
+    gap:10px;
     padding:15px 10px;
     margin:5px;
-    min-height:100px;
+    min-height:auto;
   }
-  .character-sprite{width:45px;height:45px;font-size:1.5em}
-  .enemy-sprite{width:60px;height:60px;font-size:2em}
-  .party-side{gap:8px}
+  .party-grid{
+    grid-template-columns:repeat(4, 1fr);
+    gap:8px;
+  }
+  .character-slot{
+    min-height:90px;
+    padding:5px;
+  }
+  .character-sprite{
+    width:40px;
+    height:40px;
+    font-size:1.4em;
+  }
+  .enemy-sprite{
+    width:70px;
+    height:70px;
+    font-size:2.2em;
+  }
+  .action-description{
+    font-size:0.9em;
+    padding:10px 15px;
+  }
+  .speech-bubble{
+    max-width:280px;
+    padding:8px 12px;
+  }
+}
+
+@media(max-width:480px){
+  .char-grid{grid-template-columns:1fr 1fr;gap:6px}
+  .party-hp{grid-template-columns:1fr}
+  .party-grid{grid-template-columns:1fr 1fr}
+  .character-sprite{width:35px;height:35px;font-size:1.2em}
+  .enemy-sprite{width:60px;height:60px;font-size:1.8em}
 }
 </style>
 </head>
@@ -323,47 +547,90 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 <div class="party-hp" id="party-hp"></div>
 </div>
 
-<!-- 戦闘フィールド -->
-<div class="battle-field" id="battleField" style="display:flex;">
-  <div class="party-side">
-    <div class="character-slot" data-index="0">
-      <div class="character-sprite" id="char0"></div>
-      <div class="char-status">
-        <div class="char-name-mini"></div>
-        <div class="damage-numbers"></div>
+<!-- 探索＆戦闘フィールド -->
+<div class="adventure-field" id="adventureField">
+  <!-- 左側：パーティー -->
+  <div class="party-area">
+    <div class="area-title">🛡️ パーティー</div>
+    <div class="party-grid">
+      <div class="character-slot" data-index="0">
+        <div class="character-sprite" id="char0"></div>
+        <div class="char-status">
+          <div class="char-name-mini"></div>
+          <div class="char-hp-bar">
+            <div class="hp-fill" id="charHp0"></div>
+            <div class="hp-text" id="charHpText0"></div>
+          </div>
+          <div class="damage-numbers"></div>
+        </div>
       </div>
-    </div>
-    <div class="character-slot" data-index="1">
-      <div class="character-sprite" id="char1"></div>
-      <div class="char-status">
-        <div class="char-name-mini"></div>
-        <div class="damage-numbers"></div>
+      <div class="character-slot" data-index="1">
+        <div class="character-sprite" id="char1"></div>
+        <div class="char-status">
+          <div class="char-name-mini"></div>
+          <div class="char-hp-bar">
+            <div class="hp-fill" id="charHp1"></div>
+            <div class="hp-text" id="charHpText1"></div>
+          </div>
+          <div class="damage-numbers"></div>
+        </div>
       </div>
-    </div>
-    <div class="character-slot" data-index="2">
-      <div class="character-sprite" id="char2"></div>
-      <div class="char-status">
-        <div class="char-name-mini"></div>
-        <div class="damage-numbers"></div>
+      <div class="character-slot" data-index="2">
+        <div class="character-sprite" id="char2"></div>
+        <div class="char-status">
+          <div class="char-name-mini"></div>
+          <div class="char-hp-bar">
+            <div class="hp-fill" id="charHp2"></div>
+            <div class="hp-text" id="charHpText2"></div>
+          </div>
+          <div class="damage-numbers"></div>
+        </div>
       </div>
-    </div>
-    <div class="character-slot" data-index="3">
-      <div class="character-sprite" id="char3"></div>
-      <div class="char-status">
-        <div class="char-name-mini"></div>
-        <div class="damage-numbers"></div>
+      <div class="character-slot" data-index="3">
+        <div class="character-sprite" id="char3"></div>
+        <div class="char-status">
+          <div class="char-name-mini"></div>
+          <div class="char-hp-bar">
+            <div class="hp-fill" id="charHp3"></div>
+            <div class="hp-text" id="charHpText3"></div>
+          </div>
+          <div class="damage-numbers"></div>
+        </div>
       </div>
     </div>
   </div>
-  <div class="vs-separator">⚔</div>
-  <div class="enemy-side">
-    <div class="enemy-slot">
-      <div class="enemy-sprite" id="currentEnemy"></div>
-      <div class="enemy-status">
-        <div class="enemy-name-mini"></div>
-        <div class="enemy-hp-mini"></div>
-        <div class="damage-numbers"></div>
+
+  <!-- 中央：イベント表示エリア -->
+  <div class="event-display" id="eventDisplay">
+    <div class="floor-info">
+      <div class="floor-number" id="fieldFloorDisplay">B1F</div>
+      <div class="event-status" id="eventStatus">探索中...</div>
+    </div>
+    <div class="speech-bubble" id="speechBubble" style="display:none;">
+      <div class="speech-content" id="speechContent"></div>
+    </div>
+    <div class="action-description" id="actionDesc">ダンジョンを探索している</div>
+    <div class="event-messages" id="eventMessages"></div>
+  </div>
+
+  <!-- 右側：敵・環境 -->
+  <div class="environment-area">
+    <div class="area-title" id="envTitle">🌑 深淵の闇</div>
+    <div class="enemy-container" id="enemyContainer" style="display:none;">
+      <div class="enemy-slot">
+        <div class="enemy-sprite" id="currentEnemy"></div>
+        <div class="enemy-status">
+          <div class="enemy-name-mini" id="enemyName"></div>
+          <div class="enemy-hp-bar">
+            <div class="enemy-hp-fill" id="enemyHpFill"></div>
+            <div class="enemy-hp-text" id="enemyHpText"></div>
+          </div>
+          <div class="damage-numbers"></div>
+        </div>
       </div>
+    </div>
+    <div class="environment-info" id="envInfo">
+      <div class="env-description">冷たい石の壁に囲まれた通路</div>
     </div>
   </div>
 </div>
@@ -1359,8 +1626,8 @@ function startDungeon() {
 
   running = true;
   
-  // 戦闘フィールド初期化
-  initBattleField();
+  // 冒険フィールド初期化
+  initAdventureField();
   
   scheduleNextFloor();
 }
@@ -1521,6 +1788,9 @@ async function processFloor() {
   // 恋愛進行
   advanceLove();
 
+  // フィールド状態更新
+  updateAdventureField();
+  
   // 掛け合いイベント（探索中）
   triggerBanter('explore');
 
@@ -1528,6 +1798,9 @@ async function processFloor() {
   const r = Math.random();
   const alive = party.filter(p=>p.alive);
   if (alive.length === 0) { endGame(); return; }
+  
+  // 基本的には探索モード
+  setExploringMode();
 
   if (r < 0.55) {
     await battleEvent(); // 非同期戦闘
@@ -1559,27 +1832,50 @@ async function processFloor() {
   scheduleNextFloor();
 }
 
-// ===== 戦闘ビジュアル機能 =====
-function initBattleField() {
+// ===== 冒険フィールド機能 =====
+function updateAdventureField() {
   // パーティーメンバーをスプライトに表示
   party.forEach((member, index) => {
     const sprite = document.getElementById(`char${index}`);
-    const nameEl = sprite.parentElement.querySelector('.char-name-mini');
-    if (sprite && member.alive) {
+    const nameEl = sprite?.parentElement.querySelector('.char-name-mini');
+    const hpFill = document.getElementById(`charHp${index}`);
+    const hpText = document.getElementById(`charHpText${index}`);
+    
+    if (sprite) {
       sprite.textContent = member.icon;
       sprite.className = `character-sprite ${member.alive ? '' : 'dead'}`;
+      
+      // 名前表示
       if (nameEl) nameEl.textContent = member.name;
-    } else if (sprite) {
-      sprite.textContent = '';
-      sprite.className = 'character-sprite dead';
-      if (nameEl) nameEl.textContent = '';
+      
+      // HPバー更新
+      if (hpFill && hpText) {
+        const hpPercent = Math.max(0, member.hp / member.maxHp * 100);
+        hpFill.style.width = `${hpPercent}%`;
+        hpText.textContent = `${Math.max(0,member.hp)}/${member.maxHp}`;
+        
+        // HPバーの色変更
+        hpFill.className = 'hp-fill';
+        if (hpPercent <= 25) hpFill.classList.add('low');
+        else if (hpPercent <= 50) hpFill.classList.add('mid');
+      }
     }
   });
+  
+  // フロア表示更新
+  const floorDisplay = document.getElementById('fieldFloorDisplay');
+  if (floorDisplay) {
+    floorDisplay.textContent = `B${floor}F`;
+  }
 }
 
-function showEnemySprite(monsterName) {
+function showEnemy(monsterName, currentHp, maxHp) {
+  const enemyContainer = document.getElementById('enemyContainer');
   const enemySprite = document.getElementById('currentEnemy');
-  const enemyNameEl = document.querySelector('.enemy-name-mini');
+  const enemyNameEl = document.getElementById('enemyName');
+  const enemyHpFill = document.getElementById('enemyHpFill');
+  const enemyHpText = document.getElementById('enemyHpText');
+  const envTitle = document.getElementById('envTitle');
   
   // モンスターアイコンを設定
   const monsterIcons = {
@@ -1595,15 +1891,77 @@ function showEnemySprite(monsterName) {
     '深淵の使徒': '🌑',
   };
   
-  enemySprite.textContent = monsterIcons[monsterName] || '👿';
+  // 敵を表示
+  if (enemyContainer) enemyContainer.style.display = 'block';
+  if (enemySprite) enemySprite.textContent = monsterIcons[monsterName] || '👿';
   if (enemyNameEl) enemyNameEl.textContent = monsterName;
+  if (envTitle) envTitle.textContent = '⚔️ 戦闘中';
+  
+  updateEnemyHP(currentHp, maxHp);
+}
+
+function hideEnemy() {
+  const enemyContainer = document.getElementById('enemyContainer');
+  const envTitle = document.getElementById('envTitle');
+  
+  if (enemyContainer) enemyContainer.style.display = 'none';
+  if (envTitle) envTitle.textContent = '🌑 深淵の闇';
 }
 
 function updateEnemyHP(currentHp, maxHp) {
-  const hpEl = document.querySelector('.enemy-hp-mini');
-  if (hpEl) {
-    hpEl.textContent = `${Math.max(0, currentHp)}/${maxHp}`;
-    hpEl.style.color = currentHp <= maxHp * 0.3 ? '#ff4444' : '#ff6b6b';
+  const enemyHpFill = document.getElementById('enemyHpFill');
+  const enemyHpText = document.getElementById('enemyHpText');
+  
+  if (enemyHpFill && enemyHpText) {
+    const hpPercent = Math.max(0, currentHp / maxHp * 100);
+    enemyHpFill.style.width = `${hpPercent}%`;
+    enemyHpText.textContent = `${Math.max(0, currentHp)}/${maxHp}`;
+  }
+}
+
+function showEventMessage(message, type = 'normal') {
+  const actionDesc = document.getElementById('actionDesc');
+  const eventMessages = document.getElementById('eventMessages');
+  
+  if (actionDesc) {
+    actionDesc.textContent = message;
+    actionDesc.className = `action-description ${type}`;
+  }
+  
+  // イベントログに追加
+  if (eventMessages) {
+    const msgEl = document.createElement('div');
+    msgEl.className = `event-msg ${type}`;
+    msgEl.textContent = message;
+    eventMessages.appendChild(msgEl);
+    eventMessages.scrollTop = eventMessages.scrollHeight;
+    
+    // 古いメッセージを削除（最新5件のみ保持）
+    while (eventMessages.children.length > 5) {
+      eventMessages.removeChild(eventMessages.firstChild);
+    }
+  }
+}
+
+function showSpeechBubble(character, text) {
+  const speechBubble = document.getElementById('speechBubble');
+  const speechContent = document.getElementById('speechContent');
+  
+  if (speechBubble && speechContent) {
+    speechContent.textContent = `${character}：${text}`;
+    speechBubble.style.display = 'block';
+    
+    // 3秒後に非表示
+    setTimeout(() => {
+      speechBubble.style.display = 'none';
+    }, 3000);
+  }
+}
+
+function updateEventStatus(status) {
+  const eventStatus = document.getElementById('eventStatus');
+  if (eventStatus) {
+    eventStatus.textContent = status;
   }
 }
 
@@ -1677,19 +2035,30 @@ function performEnemyAttackAnimation() {
   });
 }
 
-function showBattleField() {
-  const battleField = document.getElementById('battleField');
-  if (battleField) {
-    battleField.style.display = 'flex';
-    initBattleField();
-  }
+function initAdventureField() {
+  updateAdventureField();
+  updateEventStatus('探索準備完了');
+  showEventMessage('ダンジョンの奥深くへ向かう');
 }
 
-function hideBattleField() {
-  const battleField = document.getElementById('battleField');
-  if (battleField) {
-    battleField.style.display = 'none';
-  }
+function setExploringMode() {
+  hideEnemy();
+  updateEventStatus('探索中...');
+  
+  // ランダムな探索メッセージ
+  const exploreMessages = [
+    '暗い通路を慎重に進んでいる',
+    '石の壁に古い文字が刻まれている',
+    'かすかな風の音が聞こえる',
+    '足音が静寂に響く',
+    '何かの気配を感じる...'
+  ];
+  showEventMessage(exploreMessages[Math.floor(Math.random() * exploreMessages.length)]);
+}
+
+function setBattleMode(monsterName) {
+  updateEventStatus('戦闘中！');
+  showEventMessage(`${monsterName} と戦闘開始！`, 'battle');
 }
 
 // ===== イベント =====
@@ -1718,12 +2087,12 @@ async function battleEvent() {
 
   // 敵出現メッセージ
   const appearMsgs = TEXTS.monsterAppear[mon.name] || TEXTS.monsterAppear._default;
-  addLog(`⚔ ${pick(appearMsgs).replace(/{name}/g, mon.name)}`, 'battle');
+  const appearMsg = pick(appearMsgs).replace(/{name}/g, mon.name);
+  addLog(`⚔ ${appearMsg}`, 'battle');
 
-  // 戦闘フィールド表示
-  showBattleField();
-  showEnemySprite(mon.name);
-  updateEnemyHP(mHp, maxHp);
+  // 戦闘モード設定
+  setBattleMode(mon.name);
+  showEnemy(mon.name, mHp, maxHp);
 
   const alive = party.filter(p=>p.alive);
   // 戦闘中の掛け合い
@@ -1734,9 +2103,14 @@ async function battleEvent() {
     const p = alive[i];
     const charIndex = party.findIndex(member => member.uid === p.uid);
     
-    // キャラ固有セリフ
+      // キャラ固有セリフ
     const cry = getCharBattleCry(p);
-    if (cry) addLog(`  💬 ${cry}`, 'talk');
+    if (cry) {
+      addLog(`  💬 ${cry}`, 'talk');
+      // スピーチバブルでも表示
+      const speechText = cry.replace(/.*「(.*)」.*/, '$1');
+      showSpeechBubble(p.name, speechText);
+    }
     
     // ダメージ計算
     const lovePenalty = p.loveStage >= 3 ? 0.3 : p.loveStage >= 2 ? 0.7 : 1;
@@ -1759,6 +2133,9 @@ async function battleEvent() {
     
     // 敵HP更新
     updateEnemyHP(mHp, maxHp);
+    
+    // フィールド状態更新
+    updateAdventureField();
     
     // 0.5秒待機（次の攻撃まで）
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -1868,12 +2245,13 @@ async function battleEvent() {
     }
   }
 
-  // 戦闘フィールドの最終状態更新
-  initBattleField(); // 死亡状態などを反映
+  // フィールド状態更新
+  updateAdventureField(); // 死亡状態などを反映
   
-  // 2秒後に戦闘フィールドを非表示
+  // 2秒後に探索モードに戻る
   setTimeout(() => {
-    hideBattleField();
+    setExploringMode();
+    showEventMessage(mHp <= 0 ? '戦闘に勝利した' : '敵を退けた');
   }, 2000);
 }
 
