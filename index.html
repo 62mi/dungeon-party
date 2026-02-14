@@ -304,12 +304,13 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 20%,black 100%);
 }
 .field-msg{
-  animation:fieldMsgIn .4s ease;
+  animation:fieldMsgIn .4s ease, fieldMsgFade .8s ease 8s forwards;
   padding:5px 10px;border-radius:8px;
   font-size:.78em;line-height:1.3;
   text-align:left;word-break:break-word;
   backdrop-filter:blur(6px);
 }
+@keyframes fieldMsgFade{from{opacity:1}to{opacity:0.3}}
 .field-msg.event{background:rgba(13,17,23,0.75);border:1px solid #21262d;color:#b8b8d0;text-align:center}
 .field-msg.battle-msg{background:rgba(255,107,107,0.15);border:1px solid rgba(255,107,107,0.25);color:#ff8a8a}
 .field-msg.heal-msg{background:rgba(105,219,124,0.15);border:1px solid rgba(105,219,124,0.25);color:#69db7c}
@@ -408,6 +409,52 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   15%{opacity:1;transform:translate(-50%,-50%) scale(1.4)}
   30%{transform:translate(-50%,-50%) scale(1)}
   100%{opacity:0;transform:translate(-50%,-80%) translateY(-40px) scale(.8)}
+}
+
+/* パーティー状況パネル */
+.party-status-panel{
+  margin:0 12px;
+  background:#0d1117;border:1px solid #333;border-radius:8px;
+  padding:8px 10px;
+  display:none;
+}
+.party-status-panel.show{display:block}
+.party-status-toggle{
+  display:flex;align-items:center;justify-content:space-between;
+  background:#16213e;border:1px solid #333;border-radius:8px;
+  padding:5px 14px;cursor:pointer;user-select:none;
+  color:#888;font-size:.75em;margin:6px 12px 0;transition:.2s;
+}
+.party-status-toggle:hover{background:#1a2a4e;color:#aaa}
+.party-status-toggle .toggle-arrow{transition:transform .3s;font-size:1.2em}
+.party-status-toggle .toggle-arrow.collapsed{transform:rotate(180deg)}
+.status-grid{display:flex;flex-wrap:wrap;gap:6px}
+.status-card{
+  flex:1 1 calc(50% - 6px);min-width:180px;
+  background:#16213e;border:1px solid #2a3a5e;border-radius:8px;
+  padding:6px 10px;font-size:.72em;line-height:1.5;
+}
+.status-card.dead-card{opacity:.4;filter:grayscale(.7)}
+.status-card .sc-header{
+  display:flex;align-items:center;gap:6px;
+  margin-bottom:3px;font-weight:bold;color:#e2e8f0;font-size:1.05em;
+}
+.status-card .sc-header .sc-icon{font-size:1.3em}
+.status-card .sc-relations{display:flex;flex-direction:column;gap:2px}
+.sc-tag{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:1px 6px;border-radius:10px;font-size:.9em;
+  white-space:nowrap;
+}
+.sc-tag.love{background:rgba(247,131,172,0.2);color:#f783ac;border:1px solid rgba(247,131,172,0.3)}
+.sc-tag.berserk{background:rgba(255,50,50,0.2);color:#ff4444;border:1px solid rgba(255,50,50,0.3);animation:berserkPulse 1s infinite}
+.sc-tag.quarrel{background:rgba(255,136,0,0.2);color:#ff8800;border:1px solid rgba(255,136,0,0.3)}
+.sc-tag.buff{background:rgba(100,200,255,0.15);color:#74c0fc;border:1px solid rgba(100,200,255,0.2)}
+.sc-tag.jealous{background:rgba(180,180,100,0.15);color:#cccc66;border:1px solid rgba(180,180,100,0.2)}
+@keyframes berserkPulse{0%,100%{opacity:1}50%{opacity:.6}}
+@media(max-width:480px){
+  .status-card{flex:1 1 100%;min-width:0}
+  .status-card .sc-header{font-size:.95em}
 }
 
 /* バトル中はフィードを隠す */
@@ -595,6 +642,14 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
     <div class="stage-center-event" id="actionDesc" style="display:none;">ダンジョンを探索している</div>
     <div class="field-dialogue-feed" id="fieldDialogueFeed"></div>
   </div>
+</div>
+
+<div class="party-status-toggle" id="statusToggle" onclick="toggleStatusPanel()">
+  <span>💕 パーティー状況</span>
+  <span class="toggle-arrow collapsed" id="statusToggleArrow">▲</span>
+</div>
+<div class="party-status-panel" id="partyStatusPanel">
+  <div class="status-grid" id="statusGrid"></div>
 </div>
 
 <div class="log-wrapper">
@@ -2249,12 +2304,19 @@ function showEventMessage(message, type = 'normal') {
   if (actionDesc) {
     actionDesc.textContent = message;
     actionDesc.style.display = 'block';
+    actionDesc.style.opacity = '1';
     actionDesc.className = 'stage-center-event';
-    // 3秒後にフェードアウト
+    // 5秒表示 → フェードアウト
     clearTimeout(actionDesc._hideTimer);
+    clearTimeout(actionDesc._fadeTimer);
+    actionDesc._fadeTimer = setTimeout(() => {
+      actionDesc.style.opacity = '0';
+      actionDesc.style.transition = 'opacity 0.6s';
+    }, 4500);
     actionDesc._hideTimer = setTimeout(() => {
       actionDesc.style.display = 'none';
-    }, 3000);
+      actionDesc.style.transition = '';
+    }, 5200);
   }
 }
 
@@ -2304,6 +2366,7 @@ function showDamageNumber(targetElement, damage, type = 'damage') {
 }
 
 // ステージ上にキャラの吹き出しを表示
+const _activeBubbles = {}; // charIndex → {el, timer}
 function showStageBubble(charIndex, text, bubbleType = '') {
   const layer = document.getElementById('effectsLayer');
   if (!layer || charIndex < 0) return;
@@ -2312,13 +2375,38 @@ function showStageBubble(charIndex, text, bubbleType = '') {
   const p = party[charIndex];
   if (!p) return;
 
+  // 同じキャラの既存吹き出しを即削除（重なり防止）
+  if (_activeBubbles[charIndex]) {
+    _activeBubbles[charIndex].el.remove();
+    clearTimeout(_activeBubbles[charIndex].timer);
+    delete _activeBubbles[charIndex];
+  }
+
+  // 全体の吹き出し数を制限（最大3つ）
+  const allBubbles = layer.querySelectorAll('.stage-speech-bubble');
+  if (allBubbles.length >= 3) {
+    allBubbles[0].remove();
+  }
+
+  // Y位置をキャラごとにオフセット（上下にずらして被り軽減）
+  const yOffsets = [-16, -20, -14, -18];
+  const xOffsets = [-3, 3, -2, 2];
+  const yOff = yOffsets[charIndex % 4] || -16;
+  const xOff = xOffsets[charIndex % 4] || 0;
+
   const bubble = document.createElement('div');
   bubble.className = `stage-speech-bubble ${bubbleType}`;
+  bubble.setAttribute('data-char', charIndex);
   bubble.innerHTML = `<div class="bubble-body"><div class="bubble-name">${p.name}</div>${escapeHtml(text)}</div><div class="bubble-tail"></div>`;
-  bubble.style.left = `${sprite.x}%`;
-  bubble.style.top = `${sprite.y - 12}%`;
+  bubble.style.left = `${sprite.x + xOff}%`;
+  bubble.style.top = `${sprite.y + yOff}%`;
   layer.appendChild(bubble);
-  setTimeout(() => bubble.remove(), 3000);
+
+  const timer = setTimeout(() => {
+    bubble.remove();
+    if (_activeBubbles[charIndex]?.el === bubble) delete _activeBubbles[charIndex];
+  }, 3000);
+  _activeBubbles[charIndex] = { el: bubble, timer };
 }
 
 // キャラがダッシュして敵を攻撃するアニメーション
@@ -2496,6 +2584,71 @@ function setStageMode(mode) {
   });
 }
 
+// ===== パーティー状況パネル =====
+function toggleStatusPanel() {
+  const panel = document.getElementById('partyStatusPanel');
+  const arrow = document.getElementById('statusToggleArrow');
+  const isHidden = !panel.classList.contains('show');
+  panel.classList.toggle('show');
+  arrow.classList.toggle('collapsed');
+  if (isHidden) updateStatusPanel();
+}
+
+function updateStatusPanel() {
+  const grid = document.getElementById('statusGrid');
+  if (!grid || !party.length) return;
+
+  grid.innerHTML = party.map((p, i) => {
+    const tags = [];
+
+    // 恋愛状態チェック
+    Object.entries(loveStates).forEach(([key, state]) => {
+      if (state.a === p.uid || state.b === p.uid) {
+        const partnerId = state.a === p.uid ? state.b : state.a;
+        const partner = party.find(m => m.uid === partnerId);
+        if (!partner) return;
+        const stageLabels = ['', '気になる', '好意', '恋人', '駆け落ち'];
+        if (state.stage >= 1 && state.stage <= 4) {
+          const hearts = state.stage >= 3 ? '💕' : state.stage >= 2 ? '💗' : '💓';
+          tags.push(`<span class="sc-tag love">${hearts} ${partner.name}（${stageLabels[state.stage]}）</span>`);
+        }
+      }
+    });
+
+    // バーサーク
+    if (p.berserk) {
+      tags.push(`<span class="sc-tag berserk">🔥 発狂中（${p.berserkTarget}の仇）</span>`);
+    }
+
+    // 喧嘩
+    if (p.quarrelWith) {
+      const rival = party.find(m => m.uid === p.quarrelWith);
+      if (rival) tags.push(`<span class="sc-tag quarrel">😠 ${rival.name}と喧嘩中</span>`);
+    }
+
+    // 同職嫉妬
+    const sameClass = party.filter(x => x.uid !== p.uid && x.classId === p.classId && x.alive);
+    if (sameClass.length > 0 && p.alive) {
+      tags.push(`<span class="sc-tag jealous">😤 ${sameClass[0].name}とライバル</span>`);
+    }
+
+    // ステータス変化
+    if (p.alive && p.buffs) {
+      if (p.buffs.loveAtk) tags.push(`<span class="sc-tag buff">⚔ ATK+${p.buffs.loveAtk}</span>`);
+      if (p.buffs.loveDef) tags.push(`<span class="sc-tag buff">🛡 DEF+${p.buffs.loveDef}</span>`);
+    }
+
+    const statusText = !p.alive ? '<span style="color:#ff4444">☠ 戦闘不能</span>' :
+      `HP ${Math.max(0,p.hp)}/${p.maxHp} | ATK ${p.atk} | DEF ${p.def}`;
+
+    return `<div class="status-card${p.alive?'':' dead-card'}">
+      <div class="sc-header"><span class="sc-icon">${p.icon}</span>${p.name}<span style="color:#888;font-weight:normal;font-size:.85em">（${CLASSES.find(c=>c.id===p.classId)?.name||''}）</span></div>
+      <div style="color:#999;font-size:.9em;margin-bottom:2px">${statusText}</div>
+      <div class="sc-relations">${tags.length > 0 ? tags.join('') : '<span style="color:#555;font-size:.9em">特になし</span>'}</div>
+    </div>`;
+  }).join('');
+}
+
 // ===== ログ折りたたみ =====
 function toggleLog() {
   const logArea = document.getElementById('log-area');
@@ -2518,7 +2671,14 @@ function addFieldMsg(text, type = 'event') {
   el.textContent = text;
   feed.appendChild(el);
   feed.scrollTop = feed.scrollHeight;
-  while (feed.children.length > 25) feed.removeChild(feed.firstChild);
+  // 古いメッセージを段階的に削除
+  while (feed.children.length > 30) feed.removeChild(feed.firstChild);
+  // 12秒後に完全フェードアウトして削除
+  setTimeout(() => {
+    el.style.opacity = '0';
+    el.style.transition = 'opacity .5s';
+    setTimeout(() => el.remove(), 500);
+  }, 12000);
 }
 
 function addFieldDialogue(speakerName, speakerIcon, text) {
@@ -3247,6 +3407,9 @@ function renderHP() {
       <div class="hp-bar-bg"><div class="hp-bar ${cls}" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
+  // 状況パネルが開いていたら更新
+  const panel = document.getElementById('partyStatusPanel');
+  if (panel && panel.classList.contains('show')) updateStatusPanel();
 }
 
 function addLog(text, cls='') {
