@@ -2619,8 +2619,15 @@ function checkSynergies() {
 
 // ===== フロア進行 =====
 function scheduleNextFloor() {
-  if (!running) return;
-  intervalId = setTimeout(async () => await processFloor(), speedMs[currentSpeed]);
+  if (!running) {
+    console.log('scheduleNextFloor: ゲーム停止中のためスキップ');
+    return;
+  }
+  console.log(`scheduleNextFloor: ${speedMs[currentSpeed]}ms後に次のフロアを処理`);
+  intervalId = setTimeout(async () => {
+    console.log('processFloor 実行開始');
+    await processFloor();
+  }, speedMs[currentSpeed]);
 }
 
 // ===== 掛け合い発生システム =====
@@ -2732,11 +2739,14 @@ async function processFloor() {
   document.getElementById('floor-display').textContent = `B${floor}F`;
   addLog(`\n━━━ B${floor}F ━━━`, 'floor');
   
-  // 3階層ごとに選択画面を表示（5階層以降）
-  if (floor > 5 && floor % 3 === 0 && routeProgress <= 0) {
+  // 3階層ごとに選択画面を表示（6階層以降、3の倍数で）
+  if (floor >= 6 && floor % 3 === 0 && routeProgress <= 0) {
     running = false;
     if (intervalId) clearTimeout(intervalId);
-    showFloorChoice();
+    addLog(`🛑 進路選択のため探索を一時中断...`, 'system');
+    setTimeout(() => {
+      showFloorChoice();
+    }, 500);
     return;
   }
   
@@ -3846,6 +3856,7 @@ function clearLog() {
 
 // === 階層選択システム ===
 function showFloorChoice() {
+  console.log(`階層選択画面を表示: B${floor}F`);
   const survivors = party.filter(p => p.alive).length;
   
   document.getElementById('choiceCurrentFloor').textContent = `B${floor}F`;
@@ -3858,9 +3869,11 @@ function showFloorChoice() {
     option.classList.remove('selected');
   });
   document.getElementById('confirmChoice').disabled = true;
+  document.getElementById('confirmChoice').textContent = '進路を選択してください';
   document.getElementById('enhancementSection').style.display = 'none';
   
   showScreen('floor-choice-screen');
+  console.log('階層選択画面表示完了');
 }
 
 function selectRoute(routeType) {
@@ -3903,7 +3916,10 @@ function selectRoute(routeType) {
   
   // 強化選択を表示
   showEnhancementOptions();
+  
+  // ボタンを有効化（強化選択は任意）
   document.getElementById('confirmChoice').disabled = false;
+  document.getElementById('confirmChoice').textContent = '選択を確定';
 }
 
 function showEnhancementOptions() {
@@ -3981,10 +3997,16 @@ function selectEnhancement(index) {
     option.classList.remove('selected');
   });
   document.querySelectorAll('.enhancement-option')[index].classList.add('selected');
+  
+  // ボタンテキストを更新
+  document.getElementById('confirmChoice').textContent = '強化を適用して確定';
 }
 
 function confirmRouteChoice() {
-  if (!currentRoute) return;
+  if (!currentRoute) {
+    alert('進路を選択してください');
+    return;
+  }
   
   const routeNames = {
     safe: '安全な道',
@@ -3993,21 +4015,34 @@ function confirmRouteChoice() {
   };
   
   addLog(`🗺️ ${routeNames[currentRoute]}を選択しました`, 'system');
+  addLog(`📋 効果: 次の3階層に適用`, 'system');
   
   // 選択した強化を適用
   if (selectedEnhancement !== null) {
     applyEnhancement(availableEnhancements[selectedEnhancement]);
+  } else {
+    addLog(`⏭️ 強化なしで進行`, 'system');
   }
   
   // 3階層分の効果を設定
   routeProgress = 3;
   
+  // 画面切り替え
   showScreen('dungeon-screen');
+  
+  // ゲーム状態を再開
+  running = true;
+  addLog(`🎮 探索を再開します...`, 'system');
   
   // 少し待ってから次のフロアへ
   setTimeout(() => {
-    scheduleNextFloor();
-  }, 1000);
+    if (running) {
+      addLog(`⏰ スケジューラー開始`, 'system');
+      scheduleNextFloor();
+    } else {
+      addLog(`❌ ゲームが停止状態です`, 'system');
+    }
+  }, 1500);
 }
 
 function applyEnhancement(enhancement) {
