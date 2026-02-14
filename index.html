@@ -16,7 +16,7 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 
 /* === キャラ選択 === */
 .char-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:10px;margin-bottom:16px}
-.char-card{background:#16213e;border:2px solid #333;border-radius:10px;padding:12px 10px 10px;cursor:pointer;transition:.2s;text-align:center;user-select:none;position:relative}
+.char-card{background:#16213e;border:2px solid #333;border-radius:10px;padding:12px 10px 10px;cursor:pointer;transition:.2s;text-align:center;user-select:none;position:relative;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .char-card:hover{border-color:#5588ff;transform:translateY(-3px);box-shadow:0 4px 16px #5588ff22}
 .char-card.selected{border-color:#ffd700;background:#1a2a4e;box-shadow:0 0 16px #ffd70044}
 .char-card.disabled{opacity:.35;pointer-events:none}
@@ -65,7 +65,7 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 .party-preview-empty{width:100px;height:48px;border:1px dashed #555;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#555;font-size:.8em}
 .party-hint{text-align:center;font-size:.72em;color:#f783ac;margin-top:4px;min-height:1.2em}
 
-.btn{display:block;margin:10px auto;padding:12px 40px;font-family:inherit;font-size:1.1em;background:#ffd700;color:#1a1a2e;border:none;border-radius:6px;cursor:pointer;font-weight:bold;transition:.2s}
+.btn{display:block;margin:10px auto;padding:12px 40px;font-family:inherit;font-size:1.1em;background:#ffd700;color:#1a1a2e;border:none;border-radius:6px;cursor:pointer;font-weight:bold;transition:.2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .btn:hover{background:#ffed4a;transform:scale(1.05)}
 .btn:disabled{opacity:.4;cursor:default;transform:none}
 
@@ -684,13 +684,14 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 <div class="subtitle">相性の良い組み合わせを見つけて、より深い階層を目指そう</div>
 <div class="party-info" id="party-info">0 / 4 人選択中</div>
 <div class="char-grid" id="char-grid"></div>
-<button class="btn" id="start-btn" disabled onclick="startDungeon()" style="margin-bottom:80px">⚔️ 出発！</button>
+<div style="height:140px"></div>
 </div>
-<!-- パーティープレビュー（固定下部） -->
+<!-- パーティープレビュー（固定下部）＋出発ボタン -->
 <div class="party-preview" id="party-preview">
 <div class="party-preview-inner">
 <div class="party-preview-members" id="party-preview-members"></div>
 <div class="party-hint" id="party-hint"></div>
+<button class="btn" id="start-btn" disabled onclick="startDungeon()" style="margin:8px auto 0;padding:10px 36px;font-size:1em">⚔️ 出発！</button>
 </div>
 </div>
 <!-- キャラ詳細ポップアップ -->
@@ -1636,12 +1637,30 @@ function renderSelect() {
         ${makeStatBar('DEF',c.def,STAT_MAX.def,'def')}
         ${makeStatBar('SPD',c.spd,STAT_MAX.spd,'spd')}
       </div>`;
-    div.onclick = (e) => { e.stopPropagation(); toggleSelect(c.uid); };
-    // 長押しで詳細表示
+    // タッチ対応：タップで選択、長押しで詳細
     let pressTimer = null;
-    div.addEventListener('pointerdown', () => { pressTimer = setTimeout(() => showDetail(c.uid), 500); });
-    div.addEventListener('pointerup', () => clearTimeout(pressTimer));
+    let didLongPress = false;
+    div.addEventListener('pointerdown', (e) => {
+      didLongPress = false;
+      pressTimer = setTimeout(() => { didLongPress = true; showDetail(c.uid); }, 500);
+    });
+    div.addEventListener('pointerup', (e) => {
+      clearTimeout(pressTimer);
+      // 長押しでなければ選択トグル
+      if (!didLongPress) {
+        e.stopPropagation();
+        toggleSelect(c.uid);
+      }
+    });
     div.addEventListener('pointerleave', () => clearTimeout(pressTimer));
+    div.addEventListener('pointermove', (e) => {
+      // 指が大きく動いたらキャンセル
+      if (pressTimer && (Math.abs(e.movementX) > 5 || Math.abs(e.movementY) > 5)) {
+        clearTimeout(pressTimer);
+      }
+    });
+    // click抑制（pointerupで処理するため）
+    div.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); });
     // PC: ダブルクリックで詳細
     div.addEventListener('dblclick', (e) => { e.preventDefault(); showDetail(c.uid); });
     grid.appendChild(div);
@@ -1682,7 +1701,6 @@ function renderPartyPreview() {
   const preview = document.getElementById('party-preview');
   const members = document.getElementById('party-preview-members');
   const hint = document.getElementById('party-hint');
-  if (selected.length === 0) { preview.classList.remove('show'); return; }
   preview.classList.add('show');
   let html = '';
   for (let i=0; i<4; i++) {
