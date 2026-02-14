@@ -365,6 +365,136 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   justify-content:center;
   margin:20px 0;
 }
+/* === キャラクターツールチップ === */
+.character-tooltip{
+  position:fixed;
+  background:linear-gradient(145deg,rgba(13,17,23,0.95),rgba(22,33,62,0.9));
+  border:2px solid #ffd700;
+  border-radius:12px;
+  padding:15px;
+  min-width:280px;
+  max-width:320px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.8);
+  backdrop-filter:blur(10px);
+  z-index:1000;
+  pointer-events:none;
+  font-size:0.9em;
+}
+.tooltip-header{
+  display:flex;
+  align-items:center;
+  margin-bottom:15px;
+  padding-bottom:12px;
+  border-bottom:1px solid #334155;
+}
+.tooltip-icon{
+  font-size:2.5em;
+  margin-right:12px;
+}
+.tooltip-name{
+  font-size:1.3em;
+  font-weight:bold;
+  color:#ffd700;
+  margin-bottom:3px;
+}
+.tooltip-class{
+  color:#b8b8d0;
+  font-size:0.9em;
+  margin-bottom:3px;
+}
+.tooltip-level{
+  color:#4caf50;
+  font-weight:bold;
+}
+.tooltip-stats{
+  margin-bottom:12px;
+}
+.stat-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:6px 0;
+  padding:4px 8px;
+  background:rgba(255,255,255,0.05);
+  border-radius:6px;
+}
+.stat-label{
+  color:#e2e8f0;
+  font-size:0.9em;
+}
+.stat-value{
+  color:#ffd700;
+  font-weight:bold;
+  font-size:1em;
+}
+.tooltip-exp{
+  margin-bottom:12px;
+}
+.exp-bar{
+  background:rgba(0,0,0,0.5);
+  border:1px solid #4a5568;
+  border-radius:10px;
+  height:16px;
+  position:relative;
+  overflow:hidden;
+}
+.exp-fill{
+  background:linear-gradient(90deg,#4caf50,#81c784);
+  height:100%;
+  transition:width 0.3s ease;
+  border-radius:8px;
+}
+.exp-text{
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:0.75em;
+  font-weight:bold;
+  color:white;
+  text-shadow:1px 1px 2px rgba(0,0,0,0.8);
+}
+.equipment-title{
+  color:#ffd700;
+  font-weight:bold;
+  margin-bottom:8px;
+  font-size:0.95em;
+}
+.equipment-list{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.equipment-item{
+  background:rgba(255,255,255,0.08);
+  border-left:3px solid #4caf50;
+  padding:6px 10px;
+  border-radius:4px;
+  font-size:0.85em;
+}
+.equipment-item.rare{
+  border-left-color:#2196f3;
+  background:rgba(33,150,243,0.1);
+}
+.equipment-item.legendary{
+  border-left-color:#ff9800;
+  background:rgba(255,152,0,0.1);
+}
+.equipment-name{
+  color:#e2e8f0;
+  font-weight:bold;
+  display:block;
+  margin-bottom:2px;
+}
+.equipment-stats{
+  color:#aaa;
+  font-size:0.8em;
+}
+
 /* === 階層選択画面 === */
 .choice-container{
   max-width:900px;
@@ -1116,6 +1246,28 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   .enhancement-option{
     padding:12px;
   }
+  .character-tooltip{
+    position:fixed;
+    left:10px !important;
+    right:10px !important;
+    bottom:20px !important;
+    top:auto !important;
+    width:auto !important;
+    min-width:auto;
+    max-width:none;
+    font-size:0.8em;
+  }
+  .tooltip-header{
+    flex-direction:column;
+    text-align:center;
+  }
+  .tooltip-icon{
+    font-size:2em;
+    margin:0 0 8px 0;
+  }
+  .stat-row{
+    font-size:0.85em;
+  }
 }
 
 @media(max-width:480px){
@@ -1184,7 +1336,7 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   <div class="party-area">
     <div class="area-title">🛡️ パーティー</div>
     <div class="party-grid">
-      <div class="character-slot" data-index="0">
+      <div class="character-slot" data-index="0" onmouseover="showCharacterTooltip(0)" onmouseout="hideCharacterTooltip()" ontouchstart="showCharacterTooltip(0)" ontouchend="setTimeout(() => hideCharacterTooltip(), 3000)">
         <div class="character-sprite" id="char0"></div>
         <div class="char-status">
           <div class="char-name-mini"></div>
@@ -1195,7 +1347,7 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
           <div class="damage-numbers"></div>
         </div>
       </div>
-      <div class="character-slot" data-index="1">
+      <div class="character-slot" data-index="1" onmouseover="showCharacterTooltip(1)" onmouseout="hideCharacterTooltip()" ontouchstart="showCharacterTooltip(1)" ontouchend="setTimeout(() => hideCharacterTooltip(), 3000)">
         <div class="character-sprite" id="char1"></div>
         <div class="char-status">
           <div class="char-name-mini"></div>
@@ -1206,7 +1358,7 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
           <div class="damage-numbers"></div>
         </div>
       </div>
-      <div class="character-slot" data-index="2">
+      <div class="character-slot" data-index="2" onmouseover="showCharacterTooltip(2)" onmouseout="hideCharacterTooltip()" ontouchstart="showCharacterTooltip(2)" ontouchend="setTimeout(() => hideCharacterTooltip(), 3000)">
         <div class="character-sprite" id="char2"></div>
         <div class="char-status">
           <div class="char-name-mini"></div>
@@ -1217,7 +1369,7 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
           <div class="damage-numbers"></div>
         </div>
       </div>
-      <div class="character-slot" data-index="3">
+      <div class="character-slot" data-index="3" onmouseover="showCharacterTooltip(3)" onmouseout="hideCharacterTooltip()" ontouchstart="showCharacterTooltip(3)" ontouchend="setTimeout(() => hideCharacterTooltip(), 3000)">
         <div class="character-sprite" id="char3"></div>
         <div class="char-status">
           <div class="char-name-mini"></div>
@@ -1251,6 +1403,49 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
           <div class="party-rivalry-list" id="partyRivalryList"></div>
         </div>
       </div>
+    </div>
+  </div>
+  
+  <!-- キャラクターツールチップ -->
+  <div class="character-tooltip" id="characterTooltip" style="display:none;">
+    <div class="tooltip-header">
+      <div class="tooltip-icon" id="tooltipIcon"></div>
+      <div class="tooltip-info">
+        <div class="tooltip-name" id="tooltipName"></div>
+        <div class="tooltip-class" id="tooltipClass"></div>
+        <div class="tooltip-level" id="tooltipLevel"></div>
+      </div>
+    </div>
+    
+    <div class="tooltip-stats">
+      <div class="stat-row">
+        <span class="stat-label">💗 HP:</span>
+        <span class="stat-value" id="tooltipHP"></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">⚔️ ATK:</span>
+        <span class="stat-value" id="tooltipATK"></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">🛡️ DEF:</span>
+        <span class="stat-value" id="tooltipDEF"></span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">💨 SPD:</span>
+        <span class="stat-value" id="tooltipSPD"></span>
+      </div>
+    </div>
+    
+    <div class="tooltip-exp" id="tooltipExp">
+      <div class="exp-bar">
+        <div class="exp-fill" id="tooltipExpFill"></div>
+        <div class="exp-text" id="tooltipExpText"></div>
+      </div>
+    </div>
+    
+    <div class="tooltip-equipment" id="tooltipEquipment">
+      <div class="equipment-title">装備品</div>
+      <div class="equipment-list" id="tooltipEquipmentList"></div>
     </div>
   </div>
 
@@ -2771,6 +2966,13 @@ async function processFloor() {
   } else if (Math.random() < 0.3) {
     addLog(pick(TEXTS.floorAmbience), 'system');
   }
+  
+  // 探索経験値（少量）
+  const exploreExp = Math.floor(3 + (floor * 0.5));
+  gainExperience(exploreExp);
+  if (exploreExp > 5) { // 経験値が多い時のみ表示
+    addLog(`🔍 探索経験値+${exploreExp}`, 'system');
+  }
 
   // 同職ペナルティ
   applyJealousy();
@@ -2792,18 +2994,19 @@ async function processFloor() {
   // 基本的には探索モード
   setExploringMode();
 
-  // ルート効果を適用した確率計算
-  const trapThreshold = 0.55 + (0.20 * routeModifiers.trapChance);
-  const treasureThreshold = 0.90 - (0.05 * (routeModifiers.treasureChance - 1));
+  // ルート効果を適用した確率計算（宝物イベント頻度を上げる）
+  const trapThreshold = 0.50 + (0.15 * routeModifiers.trapChance);
+  const restThreshold = trapThreshold + 0.20;
+  const treasureBase = 0.25 * routeModifiers.treasureChance; // 宝物率25%ベース
 
-  if (r < 0.55) {
+  if (r < 0.45) {
     await battleEvent(); // 非同期戦闘
   } else if (r < trapThreshold) {
     trapEvent();
-  } else if (r < treasureThreshold) {
+  } else if (r < restThreshold) {
     restEvent();
   } else {
-    treasureEvent();
+    treasureEvent(); // より頻繁に宝物イベント
   }
 
   // 生存チェック + ピンチ時セリフ
@@ -3377,8 +3580,8 @@ async function battleEvent() {
     updateStats('monstersKilled');
     updateStats('totalDamageDealt', Object.values(mvpDamage).reduce((a,b) => a+b, 0));
     
-    // 経験値獲得
-    const baseExp = Math.floor(20 + (floor * 3));
+    // 経験値獲得（より頻繁なレベルアップのため増量）
+    const baseExp = Math.floor(30 + (floor * 5));
     const expGain = Math.floor(baseExp * routeModifiers.expMultiplier);
     gainExperience(expGain);
     
@@ -3539,6 +3742,24 @@ function restEvent() {
     p.hp = Math.min(p.maxHp, p.hp + heal);
   });
   addLog(`  → ${pick(TEXTS.restRecover)}`, 'rest');
+  
+  // 休憩時経験値（少量）
+  const restExp = Math.floor(8 + (floor * 1.5));
+  gainExperience(restExp);
+  addLog(`  → 休憩中に${restExp}の経験値を獲得`, 'rest');
+  
+  // 20%の確率で訓練によるステータス上昇
+  if (Math.random() < 0.20) {
+    const trainingMember = pick(alive);
+    const statChoices = ['atk', 'def', 'spd'];
+    const stat = pick(statChoices);
+    const gain = rnd(1, 2);
+    
+    trainingMember[stat] += gain;
+    const statNames = {atk: '攻撃力', def: '防御力', spd: '素早さ'};
+    addLog(`  ⚡ ${trainingMember.name}が訓練で${statNames[stat]}+${gain}！`, 'synergy');
+    updateStats('totalDamageDealt', gain); // 統計更新
+  }
 
   // キャラ固有の休憩セリフ
   if (Math.random() < 0.4) {
@@ -4138,6 +4359,91 @@ function applyEnhancement(enhancement) {
   updateAdventureField();
 }
 
+// === キャラクターツールチップシステム ===
+function showCharacterTooltip(index) {
+  const member = party[index];
+  if (!member) return;
+  
+  const tooltip = document.getElementById('characterTooltip');
+  
+  // 基本情報
+  document.getElementById('tooltipIcon').textContent = member.icon;
+  document.getElementById('tooltipName').textContent = member.name;
+  document.getElementById('tooltipClass').textContent = member.className || member.class;
+  document.getElementById('tooltipLevel').textContent = `レベル ${member.level || 1}`;
+  
+  // ステータス
+  document.getElementById('tooltipHP').textContent = `${Math.max(0, member.hp)}/${member.maxHp}`;
+  document.getElementById('tooltipATK').textContent = member.atk;
+  document.getElementById('tooltipDEF').textContent = member.def;
+  document.getElementById('tooltipSPD').textContent = member.spd;
+  
+  // 経験値バー
+  const currentExp = member.exp || 0;
+  const expToNext = member.expToNext || 100;
+  const expPercent = Math.min(100, (currentExp / expToNext) * 100);
+  
+  document.getElementById('tooltipExpFill').style.width = `${expPercent}%`;
+  document.getElementById('tooltipExpText').textContent = `${currentExp}/${expToNext} EXP`;
+  
+  // 装備品
+  updateTooltipEquipment(member);
+  
+  // ツールチップを表示
+  tooltip.style.display = 'block';
+  
+  // マウス位置に追従
+  document.addEventListener('mousemove', updateTooltipPosition);
+}
+
+function updateTooltipEquipment(member) {
+  const equipmentList = document.getElementById('tooltipEquipmentList');
+  equipmentList.innerHTML = '';
+  
+  if (!member.equipment || Object.keys(member.equipment).length === 0) {
+    equipmentList.innerHTML = '<div style="color:#666;font-style:italic;text-align:center;">装備なし</div>';
+    return;
+  }
+  
+  Object.entries(member.equipment).forEach(([slot, item]) => {
+    const equipDiv = document.createElement('div');
+    equipDiv.className = `equipment-item ${item.rarity || 'common'}`;
+    
+    const statText = [];
+    if (item.atk) statText.push(`ATK+${item.atk}`);
+    if (item.def) statText.push(`DEF+${item.def}`);
+    if (item.hp) statText.push(`HP+${item.hp}`);
+    if (item.spd) statText.push(`SPD+${item.spd}`);
+    
+    equipDiv.innerHTML = `
+      <span class="equipment-name">${item.name}</span>
+      <span class="equipment-stats">${statText.join(', ')}</span>
+    `;
+    
+    equipmentList.appendChild(equipDiv);
+  });
+}
+
+function hideCharacterTooltip() {
+  const tooltip = document.getElementById('characterTooltip');
+  tooltip.style.display = 'none';
+  document.removeEventListener('mousemove', updateTooltipPosition);
+}
+
+function updateTooltipPosition(event) {
+  const tooltip = document.getElementById('characterTooltip');
+  const x = event.clientX + 15;
+  const y = event.clientY + 15;
+  
+  // 画面外に出ないように調整
+  const rect = tooltip.getBoundingClientRect();
+  const maxX = window.innerWidth - rect.width - 20;
+  const maxY = window.innerHeight - rect.height - 20;
+  
+  tooltip.style.left = `${Math.min(x, maxX)}px`;
+  tooltip.style.top = `${Math.min(y, maxY)}px`;
+}
+
 // === 経験値・レベルシステム ===
 function gainExperience(baseExp) {
   const survivors = party.filter(p => p.alive);
@@ -4166,7 +4472,7 @@ function gainExperience(baseExp) {
 function levelUp(member) {
   member.level++;
   member.exp -= member.expToNext;
-  member.expToNext = Math.floor(100 * Math.pow(1.3, member.level - 1));
+  member.expToNext = Math.floor(80 * Math.pow(1.2, member.level - 1)); // より緩やかな成長
   
   // ステータス上昇
   const statGain = {
