@@ -356,6 +356,68 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 .hit-flash{animation:flash 0.3s ease-in-out}
 @keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-3px)}20%,40%,60%,80%{transform:translateX(3px)}}
 @keyframes enemyBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+/* キャラ吹き出し（ステージ上） */
+.stage-speech-bubble{
+  position:absolute;
+  z-index:25;pointer-events:none;
+  animation:speechIn .3s ease, speechOut .4s ease 2.6s forwards;
+  max-width:180px;
+}
+.stage-speech-bubble .bubble-body{
+  background:rgba(20,30,50,0.92);
+  border:1.5px solid #7ecfcf;
+  border-radius:10px 10px 10px 2px;
+  padding:5px 10px;
+  font-size:.72em;color:#d0f0f0;
+  line-height:1.3;word-break:break-word;
+  backdrop-filter:blur(6px);
+  box-shadow:0 2px 10px rgba(0,0,0,0.5);
+}
+.stage-speech-bubble .bubble-name{
+  font-size:.6em;color:#7ecfcf;font-weight:bold;margin-bottom:1px;
+}
+.stage-speech-bubble .bubble-tail{
+  width:0;height:0;margin-left:12px;
+  border-left:6px solid transparent;
+  border-right:6px solid transparent;
+  border-top:8px solid rgba(20,30,50,0.92);
+}
+.stage-speech-bubble.love-bubble .bubble-body{border-color:#f783ac;background:rgba(40,20,30,0.92)}
+.stage-speech-bubble.love-bubble .bubble-name{color:#f783ac}
+.stage-speech-bubble.love-bubble .bubble-tail{border-top-color:rgba(40,20,30,0.92)}
+.stage-speech-bubble.battle-bubble .bubble-body{border-color:#ff6b6b;background:rgba(40,20,20,0.92)}
+.stage-speech-bubble.battle-bubble .bubble-name{color:#ff6b6b}
+.stage-speech-bubble.battle-bubble .bubble-tail{border-top-color:rgba(40,20,20,0.92)}
+@keyframes speechIn{from{opacity:0;transform:translateY(8px) scale(.8)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes speechOut{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
+
+/* ステージ上ダメージポップアップ */
+.stage-damage{
+  position:absolute;z-index:22;pointer-events:none;
+  font-weight:bold;font-size:1.3em;
+  text-shadow:2px 2px 4px rgba(0,0,0,0.9), 0 0 8px rgba(0,0,0,0.5);
+  animation:stageDmgFloat 1.2s ease-out forwards;
+}
+.stage-damage.damage{color:#ff4444;font-size:1.4em}
+.stage-damage.heal{color:#44ff88;font-size:1.2em}
+.stage-damage.miss{color:#888;font-size:1em}
+.stage-damage.crit{color:#ffdd00;font-size:1.8em}
+.stage-damage.love-dmg{color:#ff69b4;font-size:1.1em}
+@keyframes stageDmgFloat{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(.5)}
+  15%{opacity:1;transform:translate(-50%,-50%) scale(1.4)}
+  30%{transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-80%) translateY(-40px) scale(.8)}
+}
+
+/* バトル中はフィードを隠す */
+.adventure-field.battle-active .field-dialogue-feed{
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.adventure-field:not(.battle-active) .field-dialogue-feed{
+  opacity:1;transition:opacity .3s .5s;
+}
+
 .speech-bubble{display:none}
 .event-messages{display:none}
 .log-line.talk-bubble::before{content:'';position:absolute;left:-8px;top:10px;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:8px solid #2a4e5e}
@@ -394,6 +456,10 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   .enemy-sprite{width:65px;height:65px;font-size:2.2em}
   .field-dialogue-feed{max-height:30%}
   .stage-center-event{font-size:0.8em;padding:6px 14px}
+  .stage-speech-bubble{max-width:150px}
+  .stage-speech-bubble .bubble-body{font-size:.68em;padding:4px 8px}
+  .stage-damage{font-size:1.1em}
+  .stage-damage.damage{font-size:1.2em}
 }
 @media(max-width:480px){
   .char-grid{grid-template-columns:1fr 1fr;gap:6px}
@@ -405,6 +471,11 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   .enemy-sprite{width:55px;height:55px;font-size:1.8em}
   .enemy-hp-bar{width:70px}
   .field-dialogue-feed{max-height:25%}
+  .stage-speech-bubble{max-width:120px}
+  .stage-speech-bubble .bubble-body{font-size:.62em;padding:3px 6px}
+  .stage-speech-bubble .bubble-name{font-size:.55em}
+  .stage-damage{font-size:.95em}
+  .stage-damage.damage{font-size:1.05em}
 }
 </style>
 </head>
@@ -1847,7 +1918,10 @@ async function processFloor() {
       deathLog.push({name:p.name, floor, cause:'戦闘不能'});
       justDied.push(p);
     } else if (p.alive && p.hp > 0 && p.hp < p.maxHp * 0.25 && p.personality && p.personality.battleHurt && Math.random() < 0.4) {
-      addLog(`  💬 ${p.name}「${pick(p.personality.battleHurt)}」`, 'talk');
+      const hurtLine = pick(p.personality.battleHurt);
+      addLog(`  💬 ${p.name}「${hurtLine}」`, 'talk');
+      const hi = party.findIndex(m => m.uid === p.uid);
+      if (hi >= 0) showStageBubble(hi, hurtLine, 'battle-bubble');
     }
   });
 
@@ -2184,9 +2258,11 @@ function showEventMessage(message, type = 'normal') {
   }
 }
 
-function showSpeechBubble(character, text) {
-  const member = party.find(p => p.name === character);
-  addFieldDialogue(character, member ? member.icon : '💬', text);
+function showSpeechBubble(character, text, bubbleType = '') {
+  const charIndex = party.findIndex(p => p.name === character);
+  if (charIndex >= 0) {
+    showStageBubble(charIndex, text, bubbleType);
+  }
 }
 
 function updateEventStatus(status) {
@@ -2195,15 +2271,54 @@ function updateEventStatus(status) {
 }
 
 function showDamageNumber(targetElement, damage, type = 'damage') {
-  const damageContainer = targetElement?.querySelector('.damage-numbers');
-  if (!damageContainer) return;
+  // ステージ上の座標ベースでダメージポップアップを表示
+  const layer = document.getElementById('effectsLayer');
+  if (!layer) return;
+
+  // ターゲットのステージ座標を取得
+  let x, y;
+  const dataIndex = targetElement?.getAttribute('data-index');
+  if (dataIndex !== null && dataIndex !== undefined && spriteSystem.chars[dataIndex]) {
+    // キャラスプライトの位置
+    const s = spriteSystem.chars[dataIndex];
+    x = s.x + (Math.random() - 0.5) * 6;
+    y = s.y - 5 + (Math.random() - 0.5) * 4;
+  } else if (targetElement?.id === 'stageEnemy') {
+    // 敵の位置
+    x = spriteSystem.enemy.x + (Math.random() - 0.5) * 8;
+    y = spriteSystem.enemy.y - 5 + (Math.random() - 0.5) * 4;
+  } else {
+    // フォールバック
+    x = 50; y = 40;
+  }
+
   const popup = document.createElement('div');
-  popup.className = `damage-popup ${type}`;
+  popup.className = `stage-damage ${type}`;
   if (type === 'damage') popup.textContent = `-${damage}`;
   else if (type === 'heal') popup.textContent = `+${damage}`;
   else if (type === 'miss') popup.textContent = 'Miss!';
-  damageContainer.appendChild(popup);
-  setTimeout(() => { if (popup.parentNode) popup.parentNode.removeChild(popup); }, 1500);
+  popup.style.left = `${x}%`;
+  popup.style.top = `${y}%`;
+  layer.appendChild(popup);
+  setTimeout(() => popup.remove(), 1200);
+}
+
+// ステージ上にキャラの吹き出しを表示
+function showStageBubble(charIndex, text, bubbleType = '') {
+  const layer = document.getElementById('effectsLayer');
+  if (!layer || charIndex < 0) return;
+  const sprite = spriteSystem.chars[charIndex];
+  if (!sprite) return;
+  const p = party[charIndex];
+  if (!p) return;
+
+  const bubble = document.createElement('div');
+  bubble.className = `stage-speech-bubble ${bubbleType}`;
+  bubble.innerHTML = `<div class="bubble-body"><div class="bubble-name">${p.name}</div>${escapeHtml(text)}</div><div class="bubble-tail"></div>`;
+  bubble.style.left = `${sprite.x}%`;
+  bubble.style.top = `${sprite.y - 12}%`;
+  layer.appendChild(bubble);
+  setTimeout(() => bubble.remove(), 3000);
 }
 
 // キャラがダッシュして敵を攻撃するアニメーション
@@ -2453,6 +2568,8 @@ function setExploringMode() {
   setStageMode('explore');
   setEnvEffect(null);
   updateEnvironmentVisual();
+  const field = document.getElementById('adventureField');
+  if (field) field.classList.remove('battle-active');
   const exploreMessages = [
     '暗い通路を慎重に進んでいる',
     '石の壁に古い文字が刻まれている',
@@ -2468,6 +2585,8 @@ function setBattleMode(monsterName) {
   showEventMessage(`${monsterName} と戦闘開始！`, 'battle');
   setStageMode('battle');
   setEnvEffect('battle-env');
+  const field = document.getElementById('adventureField');
+  if (field) field.classList.add('battle-active');
 }
 
 // ===== イベント =====
@@ -2530,14 +2649,18 @@ async function battleEvent() {
 
     // バーサーク中の特別セリフ
     if (p.berserk) {
-      addLog(`  💢 ${pick(TEXTS.berserkAttack).replace(/{name}/g, p.name).replace(/{b}/g, p.berserkTarget)}`, 'battle');
+      const berserkMsg = pick(TEXTS.berserkAttack).replace(/{name}/g, p.name).replace(/{b}/g, p.berserkTarget);
+      addLog(`  💢 ${berserkMsg}`, 'battle');
+      // バーサークセリフも吹き出しで表示
+      const bMatch = berserkMsg.match(/「(.+)」/);
+      if (bMatch) showStageBubble(charIndex, bMatch[1], 'battle-bubble');
     } else {
       // キャラ固有セリフ
       const cry = getCharBattleCry(p);
       if (cry) {
         addLog(`  💬 ${cry}`, 'talk');
         const speechText = cry.replace(/.*「(.*)」.*/, '$1');
-        showSpeechBubble(p.name, speechText);
+        showStageBubble(charIndex, speechText, 'battle-bubble');
       }
     }
 
@@ -2586,7 +2709,10 @@ async function battleEvent() {
     if (Math.random() < 0.35) {
       const speaker = pick(alive);
       if (speaker.personality && speaker.personality.battleWin) {
-        addLog(`  💬 ${speaker.name}「${pick(speaker.personality.battleWin)}」`, 'talk');
+        const winLine = pick(speaker.personality.battleWin);
+        addLog(`  💬 ${speaker.name}「${winLine}」`, 'talk');
+        const spkIdx = party.findIndex(m => m.uid === speaker.uid);
+        if (spkIdx >= 0) showStageBubble(spkIdx, winLine, 'battle-bubble');
       }
     }
   } else {
@@ -2611,6 +2737,8 @@ async function battleEvent() {
                         (ls.b === t.uid) ? alive.find(p=>p.uid===ls.a && p.alive) : null;
           if (lover && lover.uid !== t.uid && Math.random() < 0.3) {
             addLog(`  💕 ${lover.name}が${t.name}を庇って前に出た！`, 'love');
+            const loverIdx = party.findIndex(m => m.uid === lover.uid);
+            if (loverIdx >= 0) showStageBubble(loverIdx, `${t.name}には触らせない！`, 'love-bubble');
             t = lover;
             shielded = true;
             break;
@@ -2742,6 +2870,10 @@ function trapEvent() {
         const dmg = Math.max(1, baseDmg - Math.floor(p.def * 0.3));
         p.hp -= dmg;
         addLog(`  → ${pick(TEXTS.trapDamage).replace(/{name}/g, p.name).replace(/{dmg}/g, dmg).replace(/{trap}/g, trap.name)}`, 'trap');
+        // ステージ上にダメージ表示
+        const ci = party.findIndex(m => m.uid === p.uid);
+        const charSlot = document.querySelector(`[data-index="${ci}"]`);
+        if (charSlot) showDamageNumber(charSlot, dmg, 'damage');
       }
     });
   }
@@ -2762,7 +2894,8 @@ function restEvent() {
   if (Math.random() < 0.4) {
     const speaker = pick(alive);
     if (speaker.personality && speaker.personality.restLine) {
-      addLog(`  💬 ${speaker.name}「${pick(speaker.personality.restLine)}」`, 'talk');
+      const restLine = pick(speaker.personality.restLine);
+      addLog(`  💬 ${speaker.name}「${restLine}」`, 'talk');
     }
   }
 
@@ -3130,19 +3263,45 @@ function addLog(text, cls='') {
   const trimmed = text.trim();
   if (!trimmed) return;
 
-  // セリフ → フィールド吹き出しで表示
+  // セリフ → ステージ上の吹き出しで表示
   if (cls === 'talk' && trimmed.includes('「')) {
     const match = trimmed.replace(/^\s*💬\s*/, '').match(/^(.+?)「(.+)」/);
     if (match) {
       const speaker = match[1].trim();
       const speech = match[2];
-      const member = party.find(p => p.name === speaker);
-      addFieldDialogue(speaker, member ? member.icon : '💬', speech);
+      const charIdx = party.findIndex(p => p.name === speaker);
+      if (charIdx >= 0) {
+        showStageBubble(charIdx, speech, '');
+      } else {
+        // パーティー外（ナレーション等）はフィールドフィードへ
+        addFieldDialogue(speaker, '💬', speech);
+      }
       return;
     }
   }
 
-  // 各種メッセージをフィールドに表示
+  // 恋愛メッセージ → 関係する2キャラの吹き出しで表示
+  if (cls === 'love' && trimmed.includes('「')) {
+    const match = trimmed.match(/(.+?)「(.+)」/);
+    if (match) {
+      const speaker = match[1].replace(/^\s*💕\s*/, '').replace(/^\s*💢\s*/, '').trim();
+      const speech = match[2];
+      const charIdx = party.findIndex(p => p.name === speaker);
+      if (charIdx >= 0) {
+        showStageBubble(charIdx, speech, 'love-bubble');
+        return;
+      }
+    }
+  }
+
+  // バトル中はフィードを使わず、セリフ以外のバトルメッセージもスキップ
+  const inBattle = document.getElementById('adventureField')?.classList.contains('battle-active');
+  if (inBattle && (cls === 'battle' || cls === 'heal')) {
+    // バトル系メッセージはテキストログのみ（ステージ上はダメージ数値と吹き出しで表現）
+    return;
+  }
+
+  // 各種メッセージをフィールドフィードに表示
   const fieldTypeMap = {
     'battle': 'battle',
     'heal': 'heal',
