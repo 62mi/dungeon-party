@@ -84,8 +84,14 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 .hp-bar.low{background:linear-gradient(90deg,#ff5722,#ff8a65)}
 .hp-bar.mid{background:linear-gradient(90deg,#ff9800,#ffcc02)}
 
-/* ログエリア */
-.log-area{background:#0d1117;border:1px solid #333;border-radius:8px;padding:12px;height:calc(100vh - 380px);overflow-y:auto;font-size:.82em;line-height:1.6;scroll-behavior:smooth}
+/* ログエリア（折りたたみ式） */
+.log-wrapper{position:relative;margin:0 12px}
+.log-toggle{display:flex;align-items:center;justify-content:space-between;background:#16213e;border:1px solid #333;border-radius:8px 8px 0 0;padding:6px 14px;cursor:pointer;user-select:none;color:#888;font-size:.78em;transition:.2s}
+.log-toggle:hover{background:#1a2a4e;color:#aaa}
+.log-toggle .toggle-arrow{transition:transform .3s;font-size:1.2em}
+.log-toggle .toggle-arrow.collapsed{transform:rotate(180deg)}
+.log-area{background:#0d1117;border:1px solid #333;border-top:none;border-radius:0 0 8px 8px;padding:10px;height:150px;overflow-y:auto;font-size:.78em;line-height:1.6;scroll-behavior:smooth;transition:height .3s ease,padding .3s ease,opacity .3s ease}
+.log-area.collapsed{height:0;padding:0 10px;opacity:0;overflow:hidden}
 .log-line{animation:fadeIn .3s;padding:2px 4px;border-radius:4px;margin:1px 0}
 .log-line.battle{color:#ff6b6b}
 .log-line.heal{color:#69db7c}
@@ -107,9 +113,9 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   padding:20px;
   margin:10px 12px;
   display:grid;
-  grid-template-columns:300px 1fr 250px;
-  gap:20px;
-  min-height:300px;
+  grid-template-columns:240px 1fr 210px;
+  gap:16px;
+  min-height:60vh;
   position:relative;
   overflow:hidden;
 }
@@ -129,6 +135,8 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   border:1px solid #334155;
   border-radius:10px;
   padding:15px;
+  z-index:2;
+  position:relative;
 }
 .party-grid{
   display:grid;
@@ -150,17 +158,19 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 .event-display{
   display:flex;
   flex-direction:column;
-  justify-content:space-between;
   align-items:center;
   text-align:center;
   position:relative;
+  gap:8px;
+  min-width:0;
+  z-index:2;
 }
 .floor-info{
   background:rgba(26,26,46,0.8);
   border:2px solid #ffd700;
   border-radius:10px;
-  padding:10px 20px;
-  margin-bottom:15px;
+  padding:8px 20px;
+  flex-shrink:0;
 }
 .floor-number{
   font-size:1.5em;
@@ -174,16 +184,140 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   margin-top:3px;
 }
 .action-description{
-  font-size:1.1em;
+  font-size:1em;
   color:#e2e8f0;
   background:rgba(16,33,62,0.7);
-  padding:15px 20px;
+  padding:10px 16px;
   border-radius:10px;
   border:1px solid #334155;
-  margin:10px 0;
-  max-width:400px;
+  max-width:100%;
   line-height:1.4;
+  flex-shrink:0;
 }
+
+/* フィールドダイアログフィード */
+.field-dialogue-feed{
+  flex:1;
+  width:100%;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:4px 2px;
+  scroll-behavior:smooth;
+  min-height:0;
+}
+.field-msg{
+  animation:fieldMsgIn .4s ease;
+  padding:6px 10px;
+  border-radius:10px;
+  font-size:.82em;
+  line-height:1.4;
+  text-align:left;
+  word-break:break-word;
+}
+.field-msg.event{
+  background:rgba(13,17,23,0.6);
+  border:1px solid #21262d;
+  color:#b8b8d0;
+  text-align:center;
+}
+.field-msg.battle-msg{
+  background:rgba(255,107,107,0.1);
+  border:1px solid rgba(255,107,107,0.2);
+  color:#ff8a8a;
+}
+.field-msg.heal-msg{
+  background:rgba(105,219,124,0.1);
+  border:1px solid rgba(105,219,124,0.2);
+  color:#69db7c;
+}
+.field-msg.trap-msg{
+  background:rgba(255,169,77,0.1);
+  border:1px solid rgba(255,169,77,0.2);
+  color:#ffa94d;
+}
+.field-msg.rest-msg{
+  background:rgba(116,192,252,0.1);
+  border:1px solid rgba(116,192,252,0.2);
+  color:#74c0fc;
+}
+.field-msg.treasure-msg{
+  background:rgba(255,215,0,0.1);
+  border:1px solid rgba(255,215,0,0.2);
+  color:#ffd700;
+}
+.field-msg.love-msg{
+  background:rgba(247,131,172,0.1);
+  border:1px solid rgba(247,131,172,0.2);
+  color:#f783ac;
+}
+.field-msg.system-msg{
+  background:rgba(100,100,120,0.1);
+  border:1px solid rgba(100,100,120,0.2);
+  color:#aaa;
+  font-size:.75em;
+}
+.field-msg.floor-msg{
+  background:linear-gradient(90deg,rgba(26,42,78,0.8),rgba(22,33,62,0.8),rgba(26,42,78,0.8));
+  border:1px solid #334;
+  color:#fff;
+  font-weight:bold;
+  font-size:.9em;
+  text-align:center;
+  letter-spacing:1px;
+  padding:8px;
+}
+.field-msg.death-msg{
+  background:rgba(255,51,51,0.1);
+  border:1px solid rgba(255,51,51,0.2);
+  color:#ff3333;
+  font-weight:bold;
+}
+
+/* フィールド内セリフ吹き出し */
+.field-dialogue{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  padding:6px 8px;
+  animation:fieldMsgIn .4s ease;
+}
+.field-dialogue .speaker-icon{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#2d3748,#4a5568);
+  border:2px solid #5588ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.1em;
+  flex-shrink:0;
+}
+.field-dialogue .dialogue-content{
+  background:#1a2e3e;
+  border:1px solid #2a4e5e;
+  border-radius:0 12px 12px 12px;
+  padding:6px 12px;
+  color:#a0dede;
+  font-size:.82em;
+  line-height:1.4;
+  position:relative;
+  max-width:calc(100% - 44px);
+}
+.field-dialogue .speaker-name{
+  font-size:.7em;
+  color:#7ecfcf;
+  font-weight:bold;
+  margin-bottom:2px;
+}
+
+@keyframes fieldMsgIn{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
 .speech-bubble{
   background:#1a2e3e;
   border:2px solid #2a4e5e;
@@ -194,6 +328,7 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   position:relative;
   color:#7ecfcf;
   box-shadow:0 4px 12px rgba(0,0,0,0.3);
+  display:none;
 }
 .speech-bubble::before{
   content:'💬';
@@ -202,17 +337,7 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   left:15px;
   font-size:1.2em;
 }
-.event-messages{
-  background:rgba(13,17,23,0.7);
-  border:1px solid #21262d;
-  border-radius:8px;
-  padding:10px;
-  max-height:100px;
-  overflow-y:auto;
-  font-size:0.8em;
-  width:100%;
-  margin-top:auto;
-}
+.event-messages{display:none}
 
 /* 環境・敵エリア */
 .environment-area{
@@ -222,6 +347,8 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   padding:15px;
   display:flex;
   flex-direction:column;
+  z-index:2;
+  position:relative;
 }
 .enemy-container{
   display:flex;
@@ -402,6 +529,48 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 .damage-popup.miss{color:#888;font-size:0.9em}
 .hit-flash{animation:flash 0.3s ease-in-out}
 
+/* 探索時アニメーション */
+.character-sprite.idle{
+  animation:idleBob 2s ease-in-out infinite;
+}
+.character-sprite.walking{
+  animation:walking 0.6s ease-in-out infinite;
+}
+@keyframes idleBob{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-3px)}
+}
+@keyframes walking{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  25%{transform:translateY(-4px) rotate(-3deg)}
+  75%{transform:translateY(-4px) rotate(3deg)}
+}
+
+/* 環境エフェクト */
+.env-effect{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border-radius:15px;
+  transition:opacity 0.8s ease;
+  opacity:0;
+  z-index:1;
+}
+.env-effect.active{opacity:1}
+.env-effect.battle-env{
+  background:radial-gradient(ellipse at center,rgba(255,50,50,0.06) 0%,transparent 70%);
+  border-color:#ff6b6b44;
+}
+.env-effect.trap-env{
+  background:radial-gradient(ellipse at center,rgba(255,169,77,0.08) 0%,transparent 70%);
+}
+.env-effect.rest-env{
+  background:radial-gradient(ellipse at center,rgba(100,200,255,0.06) 0%,transparent 70%);
+}
+.env-effect.treasure-env{
+  background:radial-gradient(ellipse at center,rgba(255,215,0,0.08) 0%,transparent 70%);
+}
+
 /* アニメーション */
 @keyframes pulse{
   0%,100%{opacity:1}
@@ -454,7 +623,7 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   .floor-display{font-size:1.4em}
   .party-hp{grid-template-columns:1fr 1fr}
   .hp-bar-wrap{padding:5px 7px}
-  .log-area{height:calc(100vh - 200px);font-size:.78em;padding:8px}
+  .log-area{height:120px;font-size:.75em;padding:8px}
   .party-preview-members{gap:6px}
   .party-preview-member{min-width:80px;padding:4px 8px}
   .card-detail{padding:14px;max-width:95vw}
@@ -464,11 +633,11 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 @media(max-width:768px){
   .adventure-field{
     grid-template-columns:1fr;
-    grid-template-rows:auto auto auto;
+    grid-template-rows:auto 1fr auto;
     gap:10px;
     padding:15px 10px;
     margin:5px;
-    min-height:auto;
+    min-height:50vh;
   }
   .party-grid{
     grid-template-columns:repeat(4, 1fr);
@@ -492,9 +661,8 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
     font-size:0.9em;
     padding:10px 15px;
   }
-  .speech-bubble{
-    max-width:280px;
-    padding:8px 12px;
+  .field-dialogue-feed{
+    max-height:200px;
   }
 }
 
@@ -600,18 +768,22 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
     </div>
   </div>
 
-  <!-- 中央：イベント表示エリア -->
+  <!-- 中央：イベント＋ダイアログ表示エリア -->
   <div class="event-display" id="eventDisplay">
     <div class="floor-info">
       <div class="floor-number" id="fieldFloorDisplay">B1F</div>
       <div class="event-status" id="eventStatus">探索中...</div>
     </div>
-    <div class="speech-bubble" id="speechBubble" style="display:none;">
+    <div class="action-description" id="actionDesc">ダンジョンを探索している</div>
+    <div class="field-dialogue-feed" id="fieldDialogueFeed"></div>
+    <div class="speech-bubble" id="speechBubble">
       <div class="speech-content" id="speechContent"></div>
     </div>
-    <div class="action-description" id="actionDesc">ダンジョンを探索している</div>
     <div class="event-messages" id="eventMessages"></div>
   </div>
+
+  <!-- 環境エフェクトオーバーレイ -->
+  <div class="env-effect" id="envEffect"></div>
 
   <!-- 右側：敵・環境 -->
   <div class="environment-area">
@@ -635,7 +807,13 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   </div>
 </div>
 
-<div class="log-area" id="log-area"></div>
+<div class="log-wrapper">
+<div class="log-toggle" id="logToggle" onclick="toggleLog()">
+  <span>📜 テキストログ</span>
+  <span class="toggle-arrow collapsed" id="toggleArrow">▲</span>
+</div>
+<div class="log-area collapsed" id="log-area"></div>
+</div>
 </div>
 
 <!-- 結果画面 -->
@@ -1625,10 +1803,11 @@ function startDungeon() {
   });
 
   running = true;
-  
+
   // 冒険フィールド初期化
   initAdventureField();
-  
+  setPartyAnimation('walking');
+
   scheduleNextFloor();
 }
 
@@ -1761,6 +1940,8 @@ function triggerBanter(context) {
   }
 }
 
+// triggerBanterのフィールド表示用ヘルパー（addLog内で処理）
+
 // ===== キャラ固有セリフ挿入 =====
 function getCharBattleCry(p) {
   if (p.personality && p.personality.battleCry && Math.random() < 0.25) {
@@ -1803,12 +1984,21 @@ async function processFloor() {
   setExploringMode();
 
   if (r < 0.55) {
-    await battleEvent(); // 非同期戦闘
+    await battleEvent();
   } else if (r < 0.75) {
+    setEnvEffect('trap-env');
+    updateEventStatus('⚠ 罠！');
+    showEventMessage('罠を発見！');
     trapEvent();
   } else if (r < 0.90) {
+    setEnvEffect('rest-env');
+    updateEventStatus('🏕 休憩');
+    showEventMessage('安全な場所を見つけた');
     restEvent();
   } else {
+    setEnvEffect('treasure-env');
+    updateEventStatus('💎 宝箱！');
+    showEventMessage('宝箱を発見！');
     treasureEvent();
   }
 
@@ -1900,12 +2090,29 @@ function showEnemy(monsterName, currentHp, maxHp) {
   updateEnemyHP(currentHp, maxHp);
 }
 
+// 環境情報データ（hideEnemyより前に定義）
+const FLOOR_ENVIRONMENTS = [
+  {desc:'冷たい石の壁に囲まれた通路', icon:'🌑'},
+  {desc:'苔むした回廊が続いている', icon:'🌿'},
+  {desc:'壁から水が滲み出している', icon:'💧'},
+  {desc:'古い紋様が刻まれた通路', icon:'🔮'},
+  {desc:'不気味な風が吹き抜ける', icon:'🌬️'},
+  {desc:'松明の火が揺れる暗い通路', icon:'🔥'},
+  {desc:'崩れかけた石橋が見える', icon:'🌉'},
+  {desc:'地下水脈の音が近くで聞こえる', icon:'🌊'},
+  {desc:'天井から光るキノコが垂れている', icon:'🍄'},
+  {desc:'壁に前の冒険者の落書きがある', icon:'📝'},
+];
+
 function hideEnemy() {
   const enemyContainer = document.getElementById('enemyContainer');
   const envTitle = document.getElementById('envTitle');
-  
+
   if (enemyContainer) enemyContainer.style.display = 'none';
-  if (envTitle) envTitle.textContent = '🌑 深淵の闇';
+  if (envTitle) {
+    const env = FLOOR_ENVIRONMENTS[floor % FLOOR_ENVIRONMENTS.length];
+    envTitle.textContent = `${env.icon} 探索中`;
+  }
 }
 
 function updateEnemyHP(currentHp, maxHp) {
@@ -1944,18 +2151,9 @@ function showEventMessage(message, type = 'normal') {
 }
 
 function showSpeechBubble(character, text) {
-  const speechBubble = document.getElementById('speechBubble');
-  const speechContent = document.getElementById('speechContent');
-  
-  if (speechBubble && speechContent) {
-    speechContent.textContent = `${character}：${text}`;
-    speechBubble.style.display = 'block';
-    
-    // 3秒後に非表示
-    setTimeout(() => {
-      speechBubble.style.display = 'none';
-    }, 3000);
-  }
+  // speech bubbleは非表示のまま。フィールドダイアログで表示
+  const member = party.find(p => p.name === character);
+  addFieldDialogue(character, member ? member.icon : '💬', text);
 }
 
 function updateEventStatus(status) {
@@ -2039,13 +2237,99 @@ function initAdventureField() {
   updateAdventureField();
   updateEventStatus('探索準備完了');
   showEventMessage('ダンジョンの奥深くへ向かう');
+  clearFieldFeed();
+  // 初期状態でキャラクターにidleアニメーション
+  setPartyAnimation('idle');
+}
+
+// ===== ログ折りたたみ =====
+function toggleLog() {
+  const logArea = document.getElementById('log-area');
+  const arrow = document.getElementById('toggleArrow');
+  logArea.classList.toggle('collapsed');
+  arrow.classList.toggle('collapsed');
+}
+
+// ===== フィールドダイアログフィード =====
+function clearFieldFeed() {
+  const feed = document.getElementById('fieldDialogueFeed');
+  if (feed) feed.innerHTML = '';
+}
+
+function addFieldMsg(text, type = 'event') {
+  const feed = document.getElementById('fieldDialogueFeed');
+  if (!feed) return;
+
+  const el = document.createElement('div');
+  el.className = `field-msg ${type}-msg`;
+  el.textContent = text;
+  feed.appendChild(el);
+  feed.scrollTop = feed.scrollHeight;
+
+  // 最大30件に制限
+  while (feed.children.length > 30) {
+    feed.removeChild(feed.firstChild);
+  }
+}
+
+function addFieldDialogue(speakerName, speakerIcon, text) {
+  const feed = document.getElementById('fieldDialogueFeed');
+  if (!feed) return;
+
+  const el = document.createElement('div');
+  el.className = 'field-dialogue';
+  el.innerHTML = `<div class="speaker-icon">${speakerIcon || '💬'}</div><div class="dialogue-content"><div class="speaker-name">${speakerName}</div>${escapeHtml(text)}</div>`;
+  feed.appendChild(el);
+  feed.scrollTop = feed.scrollHeight;
+
+  while (feed.children.length > 30) {
+    feed.removeChild(feed.firstChild);
+  }
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// パーティー全体のアニメーション設定
+function setPartyAnimation(state) {
+  party.forEach((member, index) => {
+    const sprite = document.getElementById(`char${index}`);
+    if (!sprite || !member.alive) return;
+    sprite.classList.remove('idle', 'walking', 'attacking');
+    if (state) sprite.classList.add(state);
+  });
+}
+
+// 環境エフェクト
+function setEnvEffect(type) {
+  const envEffect = document.getElementById('envEffect');
+  if (!envEffect) return;
+  envEffect.className = 'env-effect';
+  if (type) {
+    envEffect.classList.add(type, 'active');
+  }
+}
+
+// 環境情報の更新
+function updateEnvironmentVisual() {
+  const envInfo = document.getElementById('envInfo');
+  const envDesc = envInfo?.querySelector('.env-description');
+  if (envDesc) {
+    const env = FLOOR_ENVIRONMENTS[floor % FLOOR_ENVIRONMENTS.length];
+    envDesc.textContent = env.desc;
+  }
 }
 
 function setExploringMode() {
   hideEnemy();
   updateEventStatus('探索中...');
-  
-  // ランダムな探索メッセージ
+  setPartyAnimation('walking');
+  setEnvEffect(null);
+  updateEnvironmentVisual();
+
   const exploreMessages = [
     '暗い通路を慎重に進んでいる',
     '石の壁に古い文字が刻まれている',
@@ -2057,8 +2341,10 @@ function setExploringMode() {
 }
 
 function setBattleMode(monsterName) {
-  updateEventStatus('戦闘中！');
+  updateEventStatus('⚔️ 戦闘中！');
   showEventMessage(`${monsterName} と戦闘開始！`, 'battle');
+  setPartyAnimation('idle');
+  setEnvEffect('battle-env');
 }
 
 // ===== イベント =====
@@ -2251,7 +2537,8 @@ async function battleEvent() {
   // 2秒後に探索モードに戻る
   setTimeout(() => {
     setExploringMode();
-    showEventMessage(mHp <= 0 ? '戦闘に勝利した' : '敵を退けた');
+    setPartyAnimation('walking');
+    showEventMessage(mHp <= 0 ? '戦闘に勝利した。先に進む...' : '敵を退けた。先に進む...');
   }, 2000);
 }
 
@@ -2288,6 +2575,7 @@ function trapEvent() {
 }
 
 function restEvent() {
+  setPartyAnimation('idle');
   addLog(pick(TEXTS.restScene), 'rest');
   const alive = party.filter(p=>p.alive);
   alive.forEach(p => {
@@ -2412,12 +2700,45 @@ function renderHP() {
 function addLog(text, cls='') {
   const area = document.getElementById('log-area');
   const div = document.createElement('div');
-  // セリフは吹き出し風に
   const isTalkBubble = cls === 'talk' && (text.includes('「') || text.trim().startsWith('💬'));
   div.className = 'log-line ' + cls + (isTalkBubble ? ' talk-bubble' : '');
   div.textContent = text;
   area.appendChild(div);
   area.scrollTop = area.scrollHeight;
+
+  // フィールドフィードにも表示（テキストログを見なくてもOK）
+  if (!running) return; // ダンジョン外では不要
+  const trimmed = text.trim();
+  if (!trimmed) return;
+
+  // セリフ → フィールド吹き出しで表示
+  if (cls === 'talk' && trimmed.includes('「')) {
+    const match = trimmed.replace(/^\s*💬\s*/, '').match(/^(.+?)「(.+)」/);
+    if (match) {
+      const speaker = match[1].trim();
+      const speech = match[2];
+      const member = party.find(p => p.name === speaker);
+      addFieldDialogue(speaker, member ? member.icon : '💬', speech);
+      return;
+    }
+  }
+
+  // 各種メッセージをフィールドに表示
+  const fieldTypeMap = {
+    'battle': 'battle',
+    'heal': 'heal',
+    'trap': 'trap',
+    'rest': 'rest',
+    'synergy': 'treasure',
+    'love': 'love',
+    'death': 'death',
+    'floor': 'floor',
+    'system': 'system',
+  };
+  const fieldType = fieldTypeMap[cls];
+  if (fieldType) {
+    addFieldMsg(trimmed, fieldType);
+  }
 }
 
 function clearLog() {
