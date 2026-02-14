@@ -105,501 +105,259 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 .log-line.talk{color:#7ecfcf;background:#7ecfcf0a;padding:4px 10px;margin:2px 0;border-radius:8px;border:1px solid #7ecfcf15;position:relative}
 .log-line.talk-bubble{background:#1a2e3e;border:1px solid #2a4e5e;border-radius:12px;padding:6px 12px;margin:3px 0 3px 16px;color:#a0dede;position:relative}
 
-/* === 冒険フィールド === */
+/* === ゲームステージ（アクション風フィールド） === */
 .adventure-field{
-  background:linear-gradient(135deg,#1a1a2e 0%,#16213e 30%,#0d1117 70%,#1a1a2e 100%);
+  position:relative;
+  width:100%;
+  height:60vh;
+  min-height:420px;
+  background:linear-gradient(180deg,#0a0a1a 0%,#0d1020 25%,#1a1a2e 50%,#1e2a3a 80%,#2a1e1a 100%);
   border:2px solid #4a5568;
   border-radius:15px;
-  padding:20px;
   margin:10px 12px;
-  display:grid;
-  grid-template-columns:240px 1fr 210px;
-  gap:16px;
-  min-height:60vh;
-  position:relative;
   overflow:hidden;
 }
-.adventure-field::before{
-  content:'';
+/* 地面 */
+.stage-ground{
   position:absolute;
-  inset:0;
-  background:
-    radial-gradient(circle at 20% 80%, rgba(255,215,0,0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(138,43,226,0.03) 0%, transparent 50%);
+  bottom:0;left:0;right:0;
+  height:25%;
+  background:linear-gradient(180deg,transparent,rgba(40,30,20,0.5) 30%,rgba(50,35,20,0.7));
+  border-top:1px solid rgba(100,80,60,0.25);
+  z-index:1;
+}
+.stage-ground::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(80,60,40,0.08) 60px,rgba(80,60,40,0.08) 61px);
+}
+/* 背景パーティクル（移動感） */
+.stage-particles{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.stage-particle{
+  position:absolute;
+  width:2px;height:2px;
+  background:rgba(200,200,255,0.15);
+  border-radius:50%;
+  animation:particleDrift linear infinite;
+}
+@keyframes particleDrift{
+  from{transform:translateX(0)}
+  to{transform:translateX(-120vw)}
+}
+
+/* キャラクタースプライト */
+.stage-char{
+  position:absolute;
+  display:flex;flex-direction:column;align-items:center;
+  z-index:10;
+  pointer-events:none;
+  will-change:transform;
+  transition:none;
+}
+.stage-char.dead-char{opacity:0.3;filter:grayscale(0.8)}
+.char-shadow{
+  position:absolute;bottom:-4px;
+  width:40px;height:10px;
+  background:radial-gradient(ellipse,rgba(0,0,0,0.45) 0%,transparent 70%);
+  z-index:-1;
+}
+.character-sprite{
+  width:52px;height:52px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.9em;
+  background:linear-gradient(135deg,#2d3748,#4a5568);
+  border:2px solid #5588ff;
+  position:relative;
+  box-shadow:0 3px 10px rgba(0,0,0,0.4);
+  will-change:transform;
+}
+.character-sprite.dead{opacity:0.3;filter:grayscale(1);border-color:#666}
+.char-hp-bar{
+  width:48px;height:6px;
+  background:#222;border-radius:3px;
+  overflow:hidden;border:1px solid #444;
+  position:relative;margin-top:2px;
+}
+.hp-fill{height:100%;background:linear-gradient(90deg,#4caf50,#8bc34a);transition:width 0.5s ease;border-radius:2px}
+.hp-fill.low{background:linear-gradient(90deg,#f44336,#ff9800)}
+.hp-fill.mid{background:linear-gradient(90deg,#ff9800,#ffc107)}
+.hp-text{position:absolute;top:0;left:50%;transform:translateX(-50%);font-size:0.55em;color:#fff;text-shadow:1px 1px 2px rgba(0,0,0,0.9);line-height:6px}
+.char-status{text-align:center;position:relative;width:100%}
+.char-name-mini{font-size:0.6em;color:#e2e8f0;font-weight:bold;margin-top:1px;text-shadow:1px 1px 3px rgba(0,0,0,0.8);white-space:nowrap}
+.damage-numbers{position:absolute;top:-25px;left:50%;transform:translateX(-50%);pointer-events:none}
+.damage-popup{position:absolute;font-weight:bold;font-size:1.2em;animation:damageFloat 1.5s ease-out forwards;text-shadow:2px 2px 4px rgba(0,0,0,0.9)}
+.damage-popup.damage{color:#ff4444}
+.damage-popup.heal{color:#44ff44}
+.damage-popup.miss{color:#888;font-size:0.9em}
+
+/* 敵スプライト */
+.stage-enemy{
+  position:absolute;
+  display:flex;flex-direction:column;align-items:center;
+  z-index:10;will-change:transform;
   pointer-events:none;
 }
-
-/* パーティーエリア */
-.party-area{
-  background:rgba(22,33,62,0.6);
-  border:1px solid #334155;
-  border-radius:10px;
-  padding:15px;
-  z-index:2;
+.enemy-shadow{
+  position:absolute;bottom:-6px;
+  width:70px;height:16px;
+  background:radial-gradient(ellipse,rgba(0,0,0,0.5) 0%,transparent 70%);
+  z-index:-1;
+}
+.enemy-sprite{
+  width:80px;height:80px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:2.6em;
+  background:linear-gradient(135deg,#744210,#975a16);
+  border:3px solid #ff6b6b;
   position:relative;
+  box-shadow:0 4px 15px rgba(255,107,107,0.3);
+  will-change:transform;
 }
-.party-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px;
-  margin-top:10px;
-}
-.area-title{
-  color:#ffd700;
-  font-size:0.9em;
-  font-weight:bold;
-  text-align:center;
-  margin-bottom:10px;
-  border-bottom:1px solid #334155;
-  padding-bottom:5px;
-}
+.enemy-status{text-align:center;position:relative;width:100%}
+.enemy-name-mini{font-size:0.7em;color:#ff8a65;font-weight:bold;margin-top:3px;text-shadow:1px 1px 2px rgba(0,0,0,0.8)}
+.enemy-hp-bar{width:90px;height:8px;background:#333;border-radius:4px;overflow:hidden;border:1px solid #666;margin-top:3px;position:relative}
+.enemy-hp-fill{height:100%;background:linear-gradient(90deg,#ff6b6b,#ff8a65);transition:width 0.5s ease;border-radius:3px}
+.enemy-hp-text{position:absolute;top:0;left:50%;transform:translateX(-50%);font-size:0.6em;color:#fff;text-shadow:1px 1px 2px rgba(0,0,0,0.8);line-height:8px}
 
-/* イベント表示エリア */
-.event-display{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  text-align:center;
-  position:relative;
-  gap:8px;
-  min-width:0;
-  z-index:2;
+/* エフェクトレイヤー */
+.effects-layer{position:absolute;inset:0;pointer-events:none;z-index:15}
+.fx-projectile{
+  position:absolute;
+  animation:fxFly 0.4s ease-in forwards;
+  font-size:1.4em;
+  filter:drop-shadow(0 0 6px rgba(255,200,50,0.6));
+  z-index:16;
+}
+@keyframes fxFly{
+  0%{opacity:1;transform:scale(1)}
+  100%{opacity:0.5;transform:scale(1.2)}
+}
+.fx-slash{
+  position:absolute;width:60px;height:60px;
+  background:radial-gradient(ellipse,rgba(255,255,200,0.4) 0%,transparent 70%);
+  border-radius:50%;
+  animation:fxSlash 0.3s ease-out forwards;
+  z-index:16;
+}
+@keyframes fxSlash{0%{transform:scale(0.5);opacity:1}100%{transform:scale(1.5);opacity:0}}
+.fx-heal{
+  position:absolute;width:50px;height:50px;
+  background:radial-gradient(ellipse,rgba(100,255,100,0.3) 0%,transparent 70%);
+  border-radius:50%;
+  animation:fxHeal 0.8s ease-out forwards;
+  z-index:16;
+}
+@keyframes fxHeal{0%{transform:scale(0.5) translateY(0);opacity:1}100%{transform:scale(1.5) translateY(-20px);opacity:0}}
+/* 焚き火 */
+.fx-campfire{
+  position:absolute;font-size:2em;
+  animation:campflicker 1s ease-in-out infinite alternate;
+  z-index:8;filter:drop-shadow(0 0 15px rgba(255,150,50,0.5));
+}
+@keyframes campflicker{0%{transform:scale(1);filter:drop-shadow(0 0 15px rgba(255,150,50,0.5))}100%{transform:scale(1.1);filter:drop-shadow(0 0 20px rgba(255,100,30,0.7))}}
+
+/* ステージオーバーレイ（UI情報） */
+.stage-overlay{
+  position:absolute;inset:0;
+  pointer-events:none;z-index:20;
+  display:flex;flex-direction:column;
+}
+.stage-top-bar{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  padding:10px 14px;
 }
 .floor-info{
-  background:rgba(26,26,46,0.8);
+  background:rgba(10,10,26,0.85);
   border:2px solid #ffd700;
-  border-radius:10px;
-  padding:8px 20px;
-  flex-shrink:0;
+  border-radius:8px;
+  padding:4px 14px;
+  backdrop-filter:blur(4px);
 }
-.floor-number{
-  font-size:1.5em;
-  color:#ffd700;
-  font-weight:bold;
-  text-shadow:0 0 8px #ffd70055;
+.floor-number{font-size:1.2em;color:#ffd700;font-weight:bold;text-shadow:0 0 8px #ffd70055}
+.event-status{font-size:0.7em;color:#aaa;text-align:center}
+.env-info-mini{
+  background:rgba(10,10,26,0.7);
+  border:1px solid #334;border-radius:6px;
+  padding:4px 10px;font-size:0.7em;color:#b8b8d0;
+  backdrop-filter:blur(4px);
 }
-.event-status{
-  font-size:0.8em;
-  color:#aaa;
-  margin-top:3px;
-}
-.action-description{
-  font-size:1em;
-  color:#e2e8f0;
-  background:rgba(16,33,62,0.7);
-  padding:10px 16px;
-  border-radius:10px;
-  border:1px solid #334155;
-  max-width:100%;
-  line-height:1.4;
-  flex-shrink:0;
+.env-description{font-style:italic;line-height:1.3}
+.stage-center-event{
+  align-self:center;
+  background:rgba(10,10,30,0.85);
+  border:1px solid #4a5568;border-radius:10px;
+  padding:8px 20px;color:#e2e8f0;
+  font-size:0.9em;margin-top:4px;
+  backdrop-filter:blur(4px);
+  animation:fieldMsgIn 0.4s ease;
 }
 
 /* フィールドダイアログフィード */
 .field-dialogue-feed{
-  flex:1;
-  width:100%;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  padding:4px 2px;
-  scroll-behavior:smooth;
-  min-height:0;
+  position:absolute;bottom:8px;left:8px;right:8px;
+  max-height:35%;overflow-y:auto;
+  display:flex;flex-direction:column;gap:4px;
+  padding:4px;scroll-behavior:smooth;
+  pointer-events:auto;
+  mask-image:linear-gradient(to bottom,transparent 0%,black 20%,black 100%);
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0%,black 20%,black 100%);
 }
 .field-msg{
   animation:fieldMsgIn .4s ease;
-  padding:6px 10px;
-  border-radius:10px;
-  font-size:.82em;
-  line-height:1.4;
-  text-align:left;
-  word-break:break-word;
+  padding:5px 10px;border-radius:8px;
+  font-size:.78em;line-height:1.3;
+  text-align:left;word-break:break-word;
+  backdrop-filter:blur(6px);
 }
-.field-msg.event{
-  background:rgba(13,17,23,0.6);
-  border:1px solid #21262d;
-  color:#b8b8d0;
-  text-align:center;
-}
-.field-msg.battle-msg{
-  background:rgba(255,107,107,0.1);
-  border:1px solid rgba(255,107,107,0.2);
-  color:#ff8a8a;
-}
-.field-msg.heal-msg{
-  background:rgba(105,219,124,0.1);
-  border:1px solid rgba(105,219,124,0.2);
-  color:#69db7c;
-}
-.field-msg.trap-msg{
-  background:rgba(255,169,77,0.1);
-  border:1px solid rgba(255,169,77,0.2);
-  color:#ffa94d;
-}
-.field-msg.rest-msg{
-  background:rgba(116,192,252,0.1);
-  border:1px solid rgba(116,192,252,0.2);
-  color:#74c0fc;
-}
-.field-msg.treasure-msg{
-  background:rgba(255,215,0,0.1);
-  border:1px solid rgba(255,215,0,0.2);
-  color:#ffd700;
-}
-.field-msg.love-msg{
-  background:rgba(247,131,172,0.1);
-  border:1px solid rgba(247,131,172,0.2);
-  color:#f783ac;
-}
-.field-msg.system-msg{
-  background:rgba(100,100,120,0.1);
-  border:1px solid rgba(100,100,120,0.2);
-  color:#aaa;
-  font-size:.75em;
-}
-.field-msg.floor-msg{
-  background:linear-gradient(90deg,rgba(26,42,78,0.8),rgba(22,33,62,0.8),rgba(26,42,78,0.8));
-  border:1px solid #334;
-  color:#fff;
-  font-weight:bold;
-  font-size:.9em;
-  text-align:center;
-  letter-spacing:1px;
-  padding:8px;
-}
-.field-msg.death-msg{
-  background:rgba(255,51,51,0.1);
-  border:1px solid rgba(255,51,51,0.2);
-  color:#ff3333;
-  font-weight:bold;
-}
+.field-msg.event{background:rgba(13,17,23,0.75);border:1px solid #21262d;color:#b8b8d0;text-align:center}
+.field-msg.battle-msg{background:rgba(255,107,107,0.15);border:1px solid rgba(255,107,107,0.25);color:#ff8a8a}
+.field-msg.heal-msg{background:rgba(105,219,124,0.15);border:1px solid rgba(105,219,124,0.25);color:#69db7c}
+.field-msg.trap-msg{background:rgba(255,169,77,0.15);border:1px solid rgba(255,169,77,0.25);color:#ffa94d}
+.field-msg.rest-msg{background:rgba(116,192,252,0.15);border:1px solid rgba(116,192,252,0.25);color:#74c0fc}
+.field-msg.treasure-msg{background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.25);color:#ffd700}
+.field-msg.love-msg{background:rgba(247,131,172,0.15);border:1px solid rgba(247,131,172,0.25);color:#f783ac}
+.field-msg.system-msg{background:rgba(100,100,120,0.15);border:1px solid rgba(100,100,120,0.2);color:#aaa;font-size:.72em}
+.field-msg.floor-msg{background:linear-gradient(90deg,rgba(26,42,78,0.85),rgba(22,33,62,0.85));border:1px solid #334;color:#fff;font-weight:bold;font-size:.85em;text-align:center;letter-spacing:1px;padding:6px}
+.field-msg.death-msg{background:rgba(255,51,51,0.15);border:1px solid rgba(255,51,51,0.25);color:#ff3333;font-weight:bold}
 
 /* フィールド内セリフ吹き出し */
 .field-dialogue{
-  display:flex;
-  align-items:flex-start;
-  gap:8px;
-  padding:6px 8px;
-  animation:fieldMsgIn .4s ease;
+  display:flex;align-items:flex-start;gap:6px;
+  padding:4px 6px;animation:fieldMsgIn .4s ease;
 }
 .field-dialogue .speaker-icon{
-  width:32px;
-  height:32px;
-  border-radius:50%;
+  width:28px;height:28px;border-radius:50%;
   background:linear-gradient(135deg,#2d3748,#4a5568);
   border:2px solid #5588ff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:1.1em;
-  flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1em;flex-shrink:0;
 }
 .field-dialogue .dialogue-content{
-  background:#1a2e3e;
-  border:1px solid #2a4e5e;
-  border-radius:0 12px 12px 12px;
-  padding:6px 12px;
-  color:#a0dede;
-  font-size:.82em;
-  line-height:1.4;
-  position:relative;
-  max-width:calc(100% - 44px);
+  background:rgba(26,46,62,0.85);border:1px solid #2a4e5e;
+  border-radius:0 10px 10px 10px;padding:4px 10px;
+  color:#a0dede;font-size:.78em;line-height:1.3;
+  backdrop-filter:blur(6px);max-width:calc(100% - 38px);
 }
-.field-dialogue .speaker-name{
-  font-size:.7em;
-  color:#7ecfcf;
-  font-weight:bold;
-  margin-bottom:2px;
-}
-
-@keyframes fieldMsgIn{
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-.speech-bubble{
-  background:#1a2e3e;
-  border:2px solid #2a4e5e;
-  border-radius:15px;
-  padding:12px 18px;
-  margin:10px 0;
-  max-width:350px;
-  position:relative;
-  color:#7ecfcf;
-  box-shadow:0 4px 12px rgba(0,0,0,0.3);
-  display:none;
-}
-.speech-bubble::before{
-  content:'💬';
-  position:absolute;
-  top:-8px;
-  left:15px;
-  font-size:1.2em;
-}
-.event-messages{display:none}
-
-/* 環境・敵エリア */
-.environment-area{
-  background:rgba(35,25,50,0.6);
-  border:1px solid #553c60;
-  border-radius:10px;
-  padding:15px;
-  display:flex;
-  flex-direction:column;
-  z-index:2;
-  position:relative;
-}
-.enemy-container{
-  display:flex;
-  justify-content:center;
-  margin:20px 0;
-}
-.environment-info{
-  margin-top:auto;
-  font-size:0.8em;
-  color:#b8b8d0;
-  text-align:center;
-  padding:10px;
-  background:rgba(16,16,30,0.5);
-  border-radius:6px;
-}
-.character-slot{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:6px;
-  background:rgba(13,17,23,0.4);
-  border:1px solid #21262d;
-  border-radius:8px;
-  padding:8px;
-  min-height:120px;
-  transition:all 0.3s ease;
-}
-.character-slot:hover{
-  background:rgba(13,17,23,0.6);
-  border-color:#334155;
-}
-.character-sprite{
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:1.8em;
-  background:linear-gradient(135deg,#2d3748,#4a5568);
-  border:2px solid #5588ff;
-  position:relative;
-  transition:all 0.3s ease;
-  cursor:pointer;
-  box-shadow:0 2px 8px rgba(0,0,0,0.3);
-}
-.character-sprite.dead{
-  opacity:0.3;
-  filter:grayscale(1);
-  border-color:#666;
-}
-.character-sprite.attacking{
-  transform:scale(1.15);
-  box-shadow:0 0 20px #ffd70088;
-  border-color:#ffd700;
-}
-.character-sprite.defending{
-  transform:scale(0.9);
-  filter:brightness(0.8);
-}
-.char-hp-bar{
-  width:100%;
-  height:8px;
-  background:#333;
-  border-radius:4px;
-  overflow:hidden;
-  border:1px solid #555;
-  position:relative;
-}
-.hp-fill{
-  height:100%;
-  background:linear-gradient(90deg,#4caf50,#8bc34a);
-  transition:width 0.5s ease;
-  border-radius:3px;
-}
-.hp-fill.low{
-  background:linear-gradient(90deg,#f44336,#ff9800);
-}
-.hp-fill.mid{
-  background:linear-gradient(90deg,#ff9800,#ffc107);
-}
-.hp-text{
-  position:absolute;
-  top:0;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:0.6em;
-  color:#fff;
-  text-shadow:1px 1px 2px rgba(0,0,0,0.8);
-  line-height:8px;
-}
-.enemy-sprite{
-  width:90px;
-  height:90px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:2.8em;
-  background:linear-gradient(135deg,#744210,#975a16);
-  border:3px solid #ff6b6b;
-  position:relative;
-  transition:all 0.3s ease;
-  animation:breathe 3s ease-in-out infinite;
-  box-shadow:0 4px 15px rgba(255,107,107,0.3);
-}
-.enemy-sprite.attacking{
-  animation:enemyAttack 0.5s ease-in-out;
-}
-.enemy-sprite.damaged{
-  animation:shake 0.5s ease-in-out;
-}
-.enemy-hp-bar{
-  width:120px;
-  height:10px;
-  background:#333;
-  border-radius:5px;
-  overflow:hidden;
-  border:1px solid #666;
-  margin-top:5px;
-  position:relative;
-}
-.enemy-hp-fill{
-  height:100%;
-  background:linear-gradient(90deg,#ff6b6b,#ff8a65);
-  transition:width 0.5s ease;
-  border-radius:4px;
-}
-.enemy-hp-text{
-  position:absolute;
-  top:0;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:0.7em;
-  color:#fff;
-  text-shadow:1px 1px 2px rgba(0,0,0,0.8);
-  line-height:10px;
-}
-.char-status,.enemy-status{
-  text-align:center;
-  position:relative;
-  width:100%;
-}
-.char-name-mini{
-  font-size:0.65em;
-  color:#e2e8f0;
-  font-weight:bold;
-  margin-bottom:3px;
-  text-shadow:1px 1px 2px rgba(0,0,0,0.5);
-}
-.enemy-name-mini{
-  font-size:0.75em;
-  color:#ff8a65;
-  font-weight:bold;
-  margin-bottom:3px;
-  text-shadow:1px 1px 2px rgba(0,0,0,0.8);
-}
-.env-description{
-  line-height:1.3;
-  font-style:italic;
-}
-.damage-numbers{
-  position:absolute;
-  top:-20px;
-  left:50%;
-  transform:translateX(-50%);
-  pointer-events:none;
-}
-.damage-popup{
-  position:absolute;
-  font-weight:bold;
-  font-size:1.1em;
-  animation:damageFloat 1.5s ease-out forwards;
-  text-shadow:1px 1px 2px rgba(0,0,0,0.8);
-}
-.damage-popup.damage{color:#ff4444}
-.damage-popup.heal{color:#44ff44}
-.damage-popup.miss{color:#888;font-size:0.9em}
-.hit-flash{animation:flash 0.3s ease-in-out}
-
-/* 探索時アニメーション */
-.character-sprite.idle{
-  animation:idleBob 2s ease-in-out infinite;
-}
-.character-sprite.walking{
-  animation:walking 0.6s ease-in-out infinite;
-}
-@keyframes idleBob{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-3px)}
-}
-@keyframes walking{
-  0%,100%{transform:translateY(0) rotate(0deg)}
-  25%{transform:translateY(-4px) rotate(-3deg)}
-  75%{transform:translateY(-4px) rotate(3deg)}
-}
+.field-dialogue .speaker-name{font-size:.65em;color:#7ecfcf;font-weight:bold;margin-bottom:1px}
+@keyframes fieldMsgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* 環境エフェクト */
-.env-effect{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  border-radius:15px;
-  transition:opacity 0.8s ease;
-  opacity:0;
-  z-index:1;
-}
+.env-effect{position:absolute;inset:0;pointer-events:none;border-radius:15px;transition:opacity 0.8s ease;opacity:0;z-index:2}
 .env-effect.active{opacity:1}
-.env-effect.battle-env{
-  background:radial-gradient(ellipse at center,rgba(255,50,50,0.06) 0%,transparent 70%);
-  border-color:#ff6b6b44;
-}
-.env-effect.trap-env{
-  background:radial-gradient(ellipse at center,rgba(255,169,77,0.08) 0%,transparent 70%);
-}
-.env-effect.rest-env{
-  background:radial-gradient(ellipse at center,rgba(100,200,255,0.06) 0%,transparent 70%);
-}
-.env-effect.treasure-env{
-  background:radial-gradient(ellipse at center,rgba(255,215,0,0.08) 0%,transparent 70%);
-}
+.env-effect.battle-env{background:radial-gradient(ellipse at center,rgba(255,50,50,0.08) 0%,transparent 70%);border-color:#ff6b6b44}
+.env-effect.trap-env{background:radial-gradient(ellipse at center,rgba(255,169,77,0.1) 0%,transparent 70%)}
+.env-effect.rest-env{background:radial-gradient(ellipse at center,rgba(100,200,255,0.08) 0%,transparent 70%)}
+.env-effect.treasure-env{background:radial-gradient(ellipse at center,rgba(255,215,0,0.1) 0%,transparent 70%)}
 
-/* アニメーション */
-@keyframes pulse{
-  0%,100%{opacity:1}
-  50%{opacity:0.6}
-}
-@keyframes breathe{
-  0%,100%{transform:scale(1)}
-  50%{transform:scale(1.05)}
-}
-@keyframes enemyAttack{
-  0%{transform:scale(1)}
-  25%{transform:scale(1.15) translateX(-10px)}
-  75%{transform:scale(1.15) translateX(-10px)}
-  100%{transform:scale(1)}
-}
-@keyframes shake{
-  0%,100%{transform:translateX(0)}
-  10%,30%,50%,70%,90%{transform:translateX(-2px)}
-  20%,40%,60%,80%{transform:translateX(2px)}
-}
-@keyframes damageFloat{
-  0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
-  20%{transform:translateX(-50%) translateY(-10px) scale(1.2)}
-  100%{opacity:0;transform:translateX(-50%) translateY(-40px) scale(0.8)}
-}
-@keyframes flash{
-  0%,100%{filter:brightness(1)}
-  50%{filter:brightness(2.5) saturate(0) contrast(2)}
-}
+/* ダメージ・エフェクトアニメーション */
+@keyframes damageFloat{0%{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}20%{transform:translateX(-50%) translateY(-12px) scale(1.3)}100%{opacity:0;transform:translateX(-50%) translateY(-45px) scale(0.8)}}
+@keyframes flash{0%,100%{filter:brightness(1)}50%{filter:brightness(2.5) saturate(0) contrast(2)}}
+.hit-flash{animation:flash 0.3s ease-in-out}
+@keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-3px)}20%,40%,60%,80%{transform:translateX(3px)}}
+@keyframes enemyBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.speech-bubble{display:none}
+.event-messages{display:none}
 .log-line.talk-bubble::before{content:'';position:absolute;left:-8px;top:10px;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:8px solid #2a4e5e}
 @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
@@ -631,47 +389,22 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   h1{font-size:1.3em}
 }
 @media(max-width:768px){
-  .adventure-field{
-    grid-template-columns:1fr;
-    grid-template-rows:auto 1fr auto;
-    gap:10px;
-    padding:15px 10px;
-    margin:5px;
-    min-height:50vh;
-  }
-  .party-grid{
-    grid-template-columns:repeat(4, 1fr);
-    gap:8px;
-  }
-  .character-slot{
-    min-height:90px;
-    padding:5px;
-  }
-  .character-sprite{
-    width:40px;
-    height:40px;
-    font-size:1.4em;
-  }
-  .enemy-sprite{
-    width:70px;
-    height:70px;
-    font-size:2.2em;
-  }
-  .action-description{
-    font-size:0.9em;
-    padding:10px 15px;
-  }
-  .field-dialogue-feed{
-    max-height:200px;
-  }
+  .adventure-field{margin:5px;min-height:45vh;height:50vh}
+  .character-sprite{width:42px;height:42px;font-size:1.5em}
+  .enemy-sprite{width:65px;height:65px;font-size:2.2em}
+  .field-dialogue-feed{max-height:30%}
+  .stage-center-event{font-size:0.8em;padding:6px 14px}
 }
-
 @media(max-width:480px){
   .char-grid{grid-template-columns:1fr 1fr;gap:6px}
   .party-hp{grid-template-columns:1fr}
-  .party-grid{grid-template-columns:1fr 1fr}
-  .character-sprite{width:35px;height:35px;font-size:1.2em}
-  .enemy-sprite{width:60px;height:60px;font-size:1.8em}
+  .adventure-field{height:45vh;min-height:350px}
+  .character-sprite{width:36px;height:36px;font-size:1.3em}
+  .char-hp-bar{width:38px;height:5px}
+  .char-name-mini{font-size:0.5em}
+  .enemy-sprite{width:55px;height:55px;font-size:1.8em}
+  .enemy-hp-bar{width:70px}
+  .field-dialogue-feed{max-height:25%}
 }
 </style>
 </head>
@@ -716,95 +449,80 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 <div class="party-hp" id="party-hp"></div>
 </div>
 
-<!-- 探索＆戦闘フィールド -->
+<!-- アクションゲーム風ステージ -->
 <div class="adventure-field" id="adventureField">
-  <!-- 左側：パーティー -->
-  <div class="party-area">
-    <div class="area-title">🛡️ パーティー</div>
-    <div class="party-grid">
-      <div class="character-slot" data-index="0">
-        <div class="character-sprite" id="char0"></div>
-        <div class="char-status">
-          <div class="char-name-mini"></div>
-          <div class="char-hp-bar">
-            <div class="hp-fill" id="charHp0"></div>
-            <div class="hp-text" id="charHpText0"></div>
-          </div>
-          <div class="damage-numbers"></div>
-        </div>
-      </div>
-      <div class="character-slot" data-index="1">
-        <div class="character-sprite" id="char1"></div>
-        <div class="char-status">
-          <div class="char-name-mini"></div>
-          <div class="char-hp-bar">
-            <div class="hp-fill" id="charHp1"></div>
-            <div class="hp-text" id="charHpText1"></div>
-          </div>
-          <div class="damage-numbers"></div>
-        </div>
-      </div>
-      <div class="character-slot" data-index="2">
-        <div class="character-sprite" id="char2"></div>
-        <div class="char-status">
-          <div class="char-name-mini"></div>
-          <div class="char-hp-bar">
-            <div class="hp-fill" id="charHp2"></div>
-            <div class="hp-text" id="charHpText2"></div>
-          </div>
-          <div class="damage-numbers"></div>
-        </div>
-      </div>
-      <div class="character-slot" data-index="3">
-        <div class="character-sprite" id="char3"></div>
-        <div class="char-status">
-          <div class="char-name-mini"></div>
-          <div class="char-hp-bar">
-            <div class="hp-fill" id="charHp3"></div>
-            <div class="hp-text" id="charHpText3"></div>
-          </div>
-          <div class="damage-numbers"></div>
-        </div>
-      </div>
+  <!-- 地面 -->
+  <div class="stage-ground"></div>
+  <!-- 背景パーティクル -->
+  <div class="stage-particles" id="stageParticles"></div>
+
+  <!-- キャラクタースプライト -->
+  <div class="stage-char" data-index="0" id="stageChar0">
+    <div class="char-shadow"></div>
+    <div class="character-sprite" id="char0"></div>
+    <div class="char-status">
+      <div class="char-name-mini"></div>
+      <div class="char-hp-bar"><div class="hp-fill" id="charHp0"></div><div class="hp-text" id="charHpText0"></div></div>
+      <div class="damage-numbers"></div>
+    </div>
+  </div>
+  <div class="stage-char" data-index="1" id="stageChar1">
+    <div class="char-shadow"></div>
+    <div class="character-sprite" id="char1"></div>
+    <div class="char-status">
+      <div class="char-name-mini"></div>
+      <div class="char-hp-bar"><div class="hp-fill" id="charHp1"></div><div class="hp-text" id="charHpText1"></div></div>
+      <div class="damage-numbers"></div>
+    </div>
+  </div>
+  <div class="stage-char" data-index="2" id="stageChar2">
+    <div class="char-shadow"></div>
+    <div class="character-sprite" id="char2"></div>
+    <div class="char-status">
+      <div class="char-name-mini"></div>
+      <div class="char-hp-bar"><div class="hp-fill" id="charHp2"></div><div class="hp-text" id="charHpText2"></div></div>
+      <div class="damage-numbers"></div>
+    </div>
+  </div>
+  <div class="stage-char" data-index="3" id="stageChar3">
+    <div class="char-shadow"></div>
+    <div class="character-sprite" id="char3"></div>
+    <div class="char-status">
+      <div class="char-name-mini"></div>
+      <div class="char-hp-bar"><div class="hp-fill" id="charHp3"></div><div class="hp-text" id="charHpText3"></div></div>
+      <div class="damage-numbers"></div>
     </div>
   </div>
 
-  <!-- 中央：イベント＋ダイアログ表示エリア -->
-  <div class="event-display" id="eventDisplay">
-    <div class="floor-info">
-      <div class="floor-number" id="fieldFloorDisplay">B1F</div>
-      <div class="event-status" id="eventStatus">探索中...</div>
+  <!-- 敵スプライト -->
+  <div class="stage-enemy" id="stageEnemy" style="display:none;">
+    <div class="enemy-shadow"></div>
+    <div class="enemy-sprite" id="currentEnemy"></div>
+    <div class="enemy-status">
+      <div class="enemy-name-mini" id="enemyName"></div>
+      <div class="enemy-hp-bar"><div class="enemy-hp-fill" id="enemyHpFill"></div><div class="enemy-hp-text" id="enemyHpText"></div></div>
+      <div class="damage-numbers"></div>
     </div>
-    <div class="action-description" id="actionDesc">ダンジョンを探索している</div>
-    <div class="field-dialogue-feed" id="fieldDialogueFeed"></div>
-    <div class="speech-bubble" id="speechBubble">
-      <div class="speech-content" id="speechContent"></div>
-    </div>
-    <div class="event-messages" id="eventMessages"></div>
   </div>
 
-  <!-- 環境エフェクトオーバーレイ -->
+  <!-- エフェクトレイヤー -->
+  <div class="effects-layer" id="effectsLayer"></div>
+  <!-- 環境エフェクト -->
   <div class="env-effect" id="envEffect"></div>
 
-  <!-- 右側：敵・環境 -->
-  <div class="environment-area">
-    <div class="area-title" id="envTitle">🌑 深淵の闇</div>
-    <div class="enemy-container" id="enemyContainer" style="display:none;">
-      <div class="enemy-slot">
-        <div class="enemy-sprite" id="currentEnemy"></div>
-        <div class="enemy-status">
-          <div class="enemy-name-mini" id="enemyName"></div>
-          <div class="enemy-hp-bar">
-            <div class="enemy-hp-fill" id="enemyHpFill"></div>
-            <div class="enemy-hp-text" id="enemyHpText"></div>
-          </div>
-          <div class="damage-numbers"></div>
-        </div>
+  <!-- ステージUI オーバーレイ -->
+  <div class="stage-overlay">
+    <div class="stage-top-bar">
+      <div class="floor-info">
+        <div class="floor-number" id="fieldFloorDisplay">B1F</div>
+        <div class="event-status" id="eventStatus">探索中...</div>
+      </div>
+      <div class="env-info-mini" id="envInfo">
+        <span class="env-description">冷たい石の壁に囲まれた通路</span>
       </div>
     </div>
-    <div class="environment-info" id="envInfo">
-      <div class="env-description">冷たい石の壁に囲まれた通路</div>
-    </div>
+    <div class="stage-center-event" id="actionDesc" style="display:none;">ダンジョンを探索している</div>
+    <div class="field-dialogue-feed" id="fieldDialogueFeed"></div>
   </div>
 </div>
 
@@ -1824,7 +1542,6 @@ function startDungeon() {
 
   // 冒険フィールド初期化
   initAdventureField();
-  setPartyAnimation('walking');
 
   scheduleNextFloor();
 }
@@ -2040,75 +1757,45 @@ async function processFloor() {
   scheduleNextFloor();
 }
 
-// ===== 冒険フィールド機能 =====
-function updateAdventureField() {
-  // パーティーメンバーをスプライトに表示
-  party.forEach((member, index) => {
-    const sprite = document.getElementById(`char${index}`);
-    const nameEl = sprite?.parentElement.querySelector('.char-name-mini');
-    const hpFill = document.getElementById(`charHp${index}`);
-    const hpText = document.getElementById(`charHpText${index}`);
-    
-    if (sprite) {
-      sprite.textContent = member.icon;
-      sprite.className = `character-sprite ${member.alive ? '' : 'dead'}`;
-      
-      // 名前表示
-      if (nameEl) nameEl.textContent = member.name;
-      
-      // HPバー更新
-      if (hpFill && hpText) {
-        const hpPercent = Math.max(0, member.hp / member.maxHp * 100);
-        hpFill.style.width = `${hpPercent}%`;
-        hpText.textContent = `${Math.max(0,member.hp)}/${member.maxHp}`;
-        
-        // HPバーの色変更
-        hpFill.className = 'hp-fill';
-        if (hpPercent <= 25) hpFill.classList.add('low');
-        else if (hpPercent <= 50) hpFill.classList.add('mid');
-      }
-    }
-  });
-  
-  // フロア表示更新
-  const floorDisplay = document.getElementById('fieldFloorDisplay');
-  if (floorDisplay) {
-    floorDisplay.textContent = `B${floor}F`;
-  }
-}
+// ===== スプライト移動システム（アクションゲーム風） =====
+const spriteSystem = {
+  chars: [],     // {x, y, targetX, targetY, state, bobPhase, facing, el}
+  enemy: { x: 78, y: 52, targetX: 78, targetY: 52, state: 'idle', visible: false },
+  mode: 'idle',  // 'explore','battle','rest','idle'
+  lastTime: 0,
+  walkCycle: 0,
+  particles: [],
+  campfire: null,
+  animId: null,
+  initialized: false,
+};
 
-function showEnemy(monsterName, currentHp, maxHp) {
-  const enemyContainer = document.getElementById('enemyContainer');
-  const enemySprite = document.getElementById('currentEnemy');
-  const enemyNameEl = document.getElementById('enemyName');
-  const enemyHpFill = document.getElementById('enemyHpFill');
-  const enemyHpText = document.getElementById('enemyHpText');
-  const envTitle = document.getElementById('envTitle');
-  
-  // モンスターアイコンを設定
-  const monsterIcons = {
-    'ゴブリンの群れ': '👹',
-    'スケルトン戦士': '💀',
-    'オーク': '👺',
-    'ダークエルフ': '🧝‍♀️',
-    'ミノタウロス': '🐂',
-    'ワイバーン': '🐉',
-    'リッチ': '☠️',
-    'ドラゴン': '🐲',
-    'デーモンロード': '👹',
-    '深淵の使徒': '🌑',
-  };
-  
-  // 敵を表示
-  if (enemyContainer) enemyContainer.style.display = 'block';
-  if (enemySprite) enemySprite.textContent = monsterIcons[monsterName] || '👿';
-  if (enemyNameEl) enemyNameEl.textContent = monsterName;
-  if (envTitle) envTitle.textContent = '⚔️ 戦闘中';
-  
-  updateEnemyHP(currentHp, maxHp);
-}
+// フォーメーション定義（%座標）
+const FORMATIONS = {
+  explore: [
+    { x: 55, y: 58 },  // リーダー（前方）
+    { x: 40, y: 48 },  // 2番手（上段後方）
+    { x: 40, y: 68 },  // 3番手（下段後方）
+    { x: 25, y: 58 },  // 4番手（最後尾）
+  ],
+  battle: [
+    { x: 28, y: 45 },
+    { x: 18, y: 55 },
+    { x: 28, y: 65 },
+    { x: 12, y: 52 },
+  ],
+  rest: [
+    { x: 38, y: 52 },
+    { x: 55, y: 48 },
+    { x: 38, y: 64 },
+    { x: 55, y: 62 },
+  ],
+};
 
-// 環境情報データ（hideEnemyより前に定義）
+const MELEE_CLASSES = ['knight', 'thief'];
+const RANGED_CLASSES = ['archer', 'mage', 'healer', 'priest'];
+
+// 環境情報データ
 const FLOOR_ENVIRONMENTS = [
   {desc:'冷たい石の壁に囲まれた通路', icon:'🌑'},
   {desc:'苔むした回廊が続いている', icon:'🌿'},
@@ -2122,21 +1809,215 @@ const FLOOR_ENVIRONMENTS = [
   {desc:'壁に前の冒険者の落書きがある', icon:'📝'},
 ];
 
-function hideEnemy() {
-  const enemyContainer = document.getElementById('enemyContainer');
-  const envTitle = document.getElementById('envTitle');
+const monsterIcons = {
+  'ゴブリンの群れ': '👹', 'スケルトン戦士': '💀', 'オーク': '👺',
+  'ダークエルフ': '🧝‍♀️', 'ミノタウロス': '🐂', 'ワイバーン': '🐉',
+  'リッチ': '☠️', 'ドラゴン': '🐲', 'デーモンロード': '👹', '深淵の使徒': '🌑',
+};
 
-  if (enemyContainer) enemyContainer.style.display = 'none';
-  if (envTitle) {
-    const env = FLOOR_ENVIRONMENTS[floor % FLOOR_ENVIRONMENTS.length];
-    envTitle.textContent = `${env.icon} 探索中`;
+function initSpriteSystem() {
+  spriteSystem.chars = [];
+  for (let i = 0; i < 4; i++) {
+    const f = FORMATIONS.explore[i];
+    spriteSystem.chars.push({
+      x: f.x, y: f.y, targetX: f.x, targetY: f.y,
+      state: 'idle', bobPhase: i * 1.2, facing: 1, el: null,
+    });
   }
+  spriteSystem.enemy = { x: 78, y: 52, targetX: 78, targetY: 52, state: 'idle', visible: false };
+  spriteSystem.mode = 'idle';
+  spriteSystem.walkCycle = 0;
+  spriteSystem.initialized = true;
+  createParticles();
+  if (!spriteSystem.animId) startGameLoop();
+}
+
+function createParticles() {
+  const container = document.getElementById('stageParticles');
+  if (!container) return;
+  container.innerHTML = '';
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'stage-particle';
+    p.style.left = `${Math.random() * 120}%`;
+    p.style.top = `${10 + Math.random() * 75}%`;
+    p.style.animationDuration = `${4 + Math.random() * 8}s`;
+    p.style.animationDelay = `${-Math.random() * 10}s`;
+    p.style.opacity = 0.05 + Math.random() * 0.15;
+    p.style.width = p.style.height = `${1 + Math.random() * 2}px`;
+    container.appendChild(p);
+  }
+}
+
+function startGameLoop() {
+  spriteSystem.lastTime = performance.now();
+  function loop(timestamp) {
+    const dt = Math.min((timestamp - spriteSystem.lastTime) / 1000, 0.05);
+    spriteSystem.lastTime = timestamp;
+    updateSpritePositions(dt, timestamp);
+    renderSpritePositions(timestamp);
+    spriteSystem.animId = requestAnimationFrame(loop);
+  }
+  spriteSystem.animId = requestAnimationFrame(loop);
+}
+
+function updateSpritePositions(dt, timestamp) {
+  const sys = spriteSystem;
+  const mode = sys.mode;
+
+  // 探索中：ゆらゆらフォーメーション移動
+  if (mode === 'explore') {
+    sys.walkCycle += dt;
+    const sway = Math.sin(sys.walkCycle * 0.8) * 3;
+    FORMATIONS.explore.forEach((base, i) => {
+      if (!party[i] || !party[i].alive) return;
+      sys.chars[i].targetX = base.x + sway + Math.sin(sys.walkCycle * 1.2 + i * 1.5) * 2;
+      sys.chars[i].targetY = base.y + Math.sin(sys.walkCycle * 0.9 + i * 2) * 2;
+      sys.chars[i].facing = 1; // 右向き
+    });
+  }
+
+  // 休憩中：集まってゆっくり
+  if (mode === 'rest') {
+    FORMATIONS.rest.forEach((base, i) => {
+      if (!party[i] || !party[i].alive) return;
+      sys.chars[i].targetX = base.x + Math.sin(timestamp / 2000 + i) * 1.5;
+      sys.chars[i].targetY = base.y + Math.sin(timestamp / 2500 + i * 1.3) * 1;
+    });
+  }
+
+  // 位置補間
+  sys.chars.forEach((sprite, i) => {
+    if (!party[i] || !party[i].alive) {
+      sprite.state = 'dead';
+      return;
+    }
+    const lerpSpeed = sprite.state === 'dashing' ? 12 : (mode === 'rest' ? 2 : 4);
+    sprite.x += (sprite.targetX - sprite.x) * lerpSpeed * dt;
+    sprite.y += (sprite.targetY - sprite.y) * lerpSpeed * dt;
+    sprite.bobPhase += dt * (mode === 'explore' ? 6 : mode === 'rest' ? 2 : 3);
+  });
+
+  // 敵位置補間
+  if (sys.enemy.visible) {
+    const e = sys.enemy;
+    e.x += (e.targetX - e.x) * 4 * dt;
+    e.y += (e.targetY - e.y) * 4 * dt;
+  }
+}
+
+function renderSpritePositions(timestamp) {
+  const sys = spriteSystem;
+  const field = document.getElementById('adventureField');
+  if (!field) return;
+
+  sys.chars.forEach((sprite, i) => {
+    const el = document.getElementById(`stageChar${i}`);
+    if (!el) return;
+    const body = el.querySelector('.character-sprite');
+
+    // 死亡処理
+    if (!party[i] || !party[i].alive) {
+      el.classList.add('dead-char');
+      el.style.transform = `translate(${sprite.x}%, ${sprite.y}%)`;
+      if (body) body.style.transform = 'rotate(90deg) scale(0.8)';
+      return;
+    }
+    el.classList.remove('dead-char');
+
+    // 位置設定
+    el.style.transform = `translate(${sprite.x}%, ${sprite.y}%)`;
+    // transform ではパーセンテージが自身の大きさ基準なので、left/top使用に変更
+    el.style.left = `${sprite.x}%`;
+    el.style.top = `${sprite.y}%`;
+    el.style.transform = 'translate(-50%, -50%)';
+
+    // ボブアニメーション
+    if (body && sprite.state !== 'dashing') {
+      const bobAmount = sys.mode === 'explore' ? 5 : sys.mode === 'rest' ? 2 : 3;
+      const bobY = Math.sin(sprite.bobPhase) * bobAmount;
+      const tiltDeg = sys.mode === 'explore' ? Math.sin(sprite.bobPhase) * 3 : 0;
+      body.style.transform = `translateY(${-Math.abs(bobY)}px) rotate(${tiltDeg}deg) scaleX(${sprite.facing})`;
+    }
+  });
+
+  // 敵レンダリング
+  const enemyEl = document.getElementById('stageEnemy');
+  if (enemyEl) {
+    if (sys.enemy.visible) {
+      enemyEl.style.display = 'flex';
+      enemyEl.style.left = `${sys.enemy.x}%`;
+      enemyEl.style.top = `${sys.enemy.y}%`;
+      enemyEl.style.transform = 'translate(-50%, -50%)';
+      const enemyBody = enemyEl.querySelector('.enemy-sprite');
+      if (enemyBody) {
+        const breathe = 1 + Math.sin(timestamp / 600) * 0.03;
+        if (sys.enemy.state === 'idle') {
+          enemyBody.style.transform = `scale(${breathe})`;
+        }
+      }
+    } else {
+      enemyEl.style.display = 'none';
+    }
+  }
+}
+
+// ===== 冒険フィールド機能 =====
+function updateAdventureField() {
+  party.forEach((member, index) => {
+    const sprite = document.getElementById(`char${index}`);
+    const el = document.getElementById(`stageChar${index}`);
+    const nameEl = el?.querySelector('.char-name-mini');
+    const hpFill = document.getElementById(`charHp${index}`);
+    const hpText = document.getElementById(`charHpText${index}`);
+
+    if (sprite) {
+      sprite.textContent = member.icon;
+      if (!member.alive) sprite.classList.add('dead');
+      else sprite.classList.remove('dead');
+      if (nameEl) nameEl.textContent = member.name;
+      if (hpFill && hpText) {
+        const hpPercent = Math.max(0, member.hp / member.maxHp * 100);
+        hpFill.style.width = `${hpPercent}%`;
+        hpText.textContent = `${Math.max(0,member.hp)}/${member.maxHp}`;
+        hpFill.className = 'hp-fill';
+        if (hpPercent <= 25) hpFill.classList.add('low');
+        else if (hpPercent <= 50) hpFill.classList.add('mid');
+      }
+    }
+  });
+  const floorDisplay = document.getElementById('fieldFloorDisplay');
+  if (floorDisplay) floorDisplay.textContent = `B${floor}F`;
+}
+
+function showEnemy(monsterName, currentHp, maxHp) {
+  const stageEnemy = document.getElementById('stageEnemy');
+  const enemySprite = document.getElementById('currentEnemy');
+  const enemyNameEl = document.getElementById('enemyName');
+
+  if (stageEnemy) stageEnemy.style.display = 'flex';
+  if (enemySprite) enemySprite.textContent = monsterIcons[monsterName] || '👿';
+  if (enemyNameEl) enemyNameEl.textContent = monsterName;
+
+  spriteSystem.enemy.visible = true;
+  spriteSystem.enemy.x = 90;
+  spriteSystem.enemy.targetX = 75;
+  spriteSystem.enemy.y = 52;
+  spriteSystem.enemy.targetY = 52;
+  spriteSystem.enemy.state = 'idle';
+
+  updateEnemyHP(currentHp, maxHp);
+}
+
+function hideEnemy() {
+  const stageEnemy = document.getElementById('stageEnemy');
+  if (stageEnemy) stageEnemy.style.display = 'none';
+  spriteSystem.enemy.visible = false;
 }
 
 function updateEnemyHP(currentHp, maxHp) {
   const enemyHpFill = document.getElementById('enemyHpFill');
   const enemyHpText = document.getElementById('enemyHpText');
-  
   if (enemyHpFill && enemyHpText) {
     const hpPercent = Math.max(0, currentHp / maxHp * 100);
     enemyHpFill.style.width = `${hpPercent}%`;
@@ -2146,118 +2027,213 @@ function updateEnemyHP(currentHp, maxHp) {
 
 function showEventMessage(message, type = 'normal') {
   const actionDesc = document.getElementById('actionDesc');
-  const eventMessages = document.getElementById('eventMessages');
-  
   if (actionDesc) {
     actionDesc.textContent = message;
-    actionDesc.className = `action-description ${type}`;
-  }
-  
-  // イベントログに追加
-  if (eventMessages) {
-    const msgEl = document.createElement('div');
-    msgEl.className = `event-msg ${type}`;
-    msgEl.textContent = message;
-    eventMessages.appendChild(msgEl);
-    eventMessages.scrollTop = eventMessages.scrollHeight;
-    
-    // 古いメッセージを削除（最新5件のみ保持）
-    while (eventMessages.children.length > 5) {
-      eventMessages.removeChild(eventMessages.firstChild);
-    }
+    actionDesc.style.display = 'block';
+    actionDesc.className = 'stage-center-event';
+    // 3秒後にフェードアウト
+    clearTimeout(actionDesc._hideTimer);
+    actionDesc._hideTimer = setTimeout(() => {
+      actionDesc.style.display = 'none';
+    }, 3000);
   }
 }
 
 function showSpeechBubble(character, text) {
-  // speech bubbleは非表示のまま。フィールドダイアログで表示
   const member = party.find(p => p.name === character);
   addFieldDialogue(character, member ? member.icon : '💬', text);
 }
 
 function updateEventStatus(status) {
   const eventStatus = document.getElementById('eventStatus');
-  if (eventStatus) {
-    eventStatus.textContent = status;
-  }
+  if (eventStatus) eventStatus.textContent = status;
 }
 
 function showDamageNumber(targetElement, damage, type = 'damage') {
-  const damageContainer = targetElement.querySelector('.damage-numbers');
+  const damageContainer = targetElement?.querySelector('.damage-numbers');
   if (!damageContainer) return;
-  
   const popup = document.createElement('div');
   popup.className = `damage-popup ${type}`;
-  
-  if (type === 'damage') {
-    popup.textContent = `-${damage}`;
-  } else if (type === 'heal') {
-    popup.textContent = `+${damage}`;
-  } else if (type === 'miss') {
-    popup.textContent = 'Miss!';
-  }
-  
+  if (type === 'damage') popup.textContent = `-${damage}`;
+  else if (type === 'heal') popup.textContent = `+${damage}`;
+  else if (type === 'miss') popup.textContent = 'Miss!';
   damageContainer.appendChild(popup);
-  
-  // 1.5秒後に削除
-  setTimeout(() => {
-    if (popup.parentNode) popup.parentNode.removeChild(popup);
-  }, 1500);
+  setTimeout(() => { if (popup.parentNode) popup.parentNode.removeChild(popup); }, 1500);
 }
 
+// キャラがダッシュして敵を攻撃するアニメーション
 function performAttackAnimation(attackerIndex, target = 'enemy') {
-  const attacker = document.getElementById(`char${attackerIndex}`);
-  if (!attacker) return;
-  
+  const sys = spriteSystem;
+  const sprite = sys.chars[attackerIndex];
+  if (!sprite || !party[attackerIndex]?.alive) return Promise.resolve();
+
+  const charEl = document.getElementById(`stageChar${attackerIndex}`);
+  const charBody = charEl?.querySelector('.character-sprite');
+
   return new Promise((resolve) => {
-    // 攻撃アニメーション開始
-    attacker.classList.add('attacking');
-    
-    setTimeout(() => {
-      // ヒットエフェクト
-      if (target === 'enemy') {
-        const enemy = document.getElementById('currentEnemy');
-        if (enemy) enemy.classList.add('damaged');
-        
+    const origX = sprite.targetX;
+    const origY = sprite.targetY;
+    const isMelee = MELEE_CLASSES.includes(party[attackerIndex].classId);
+
+    if (target === 'enemy' && sys.enemy.visible) {
+      if (isMelee) {
+        // 近接：敵に向かってダッシュ
+        sprite.state = 'dashing';
+        sprite.targetX = sys.enemy.x - 12;
+        sprite.targetY = sys.enemy.y;
+
         setTimeout(() => {
-          if (enemy) enemy.classList.remove('damaged');
-        }, 500);
+          // ヒットエフェクト
+          spawnEffect('slash', sys.enemy.x, sys.enemy.y);
+          const enemyBody = document.getElementById('currentEnemy');
+          if (enemyBody) {
+            enemyBody.style.animation = 'shake 0.4s ease-in-out';
+            setTimeout(() => enemyBody.style.animation = '', 400);
+          }
+          // 戻る
+          setTimeout(() => {
+            sprite.targetX = origX;
+            sprite.targetY = origY;
+            sprite.state = 'idle';
+            resolve();
+          }, 250);
+        }, 300);
       } else {
-        // パーティーメンバーが攻撃される場合
-        const targetEl = document.getElementById(`char${target}`);
-        if (targetEl) {
-          targetEl.classList.add('hit-flash');
-          setTimeout(() => targetEl.classList.remove('hit-flash'), 300);
+        // 遠距離：その場から弾を撃つ
+        sprite.state = 'casting';
+        if (charBody) {
+          charBody.style.transform += ' scale(1.15)';
+          charBody.style.boxShadow = '0 0 20px rgba(255,215,0,0.5)';
         }
+        // 弾エフェクト
+        const projIcon = party[attackerIndex].classId === 'archer' ? '🏹' :
+                         party[attackerIndex].classId === 'mage' ? '✨' : '💫';
+        spawnProjectile(projIcon, sprite.x, sprite.y, sys.enemy.x, sys.enemy.y);
+
+        setTimeout(() => {
+          const enemyBody = document.getElementById('currentEnemy');
+          if (enemyBody) {
+            enemyBody.style.animation = 'shake 0.4s ease-in-out';
+            setTimeout(() => enemyBody.style.animation = '', 400);
+          }
+          spawnEffect('slash', sys.enemy.x, sys.enemy.y);
+          if (charBody) {
+            charBody.style.boxShadow = '';
+          }
+          sprite.state = 'idle';
+          resolve();
+        }, 400);
       }
-      
-      // 攻撃アニメーション終了
-      attacker.classList.remove('attacking');
+    } else {
+      // 味方攻撃（罠など）
+      const targetSprite = document.getElementById(`char${target}`);
+      if (targetSprite) {
+        targetSprite.classList.add('hit-flash');
+        setTimeout(() => targetSprite.classList.remove('hit-flash'), 300);
+      }
       resolve();
-    }, 300);
+    }
   });
 }
 
+// 敵がキャラに突進するアニメーション
 function performEnemyAttackAnimation() {
-  const enemy = document.getElementById('currentEnemy');
-  if (!enemy) return Promise.resolve();
-  
+  const sys = spriteSystem;
+  if (!sys.enemy.visible) return Promise.resolve();
+  const enemyBody = document.getElementById('currentEnemy');
+
   return new Promise((resolve) => {
-    enemy.classList.add('attacking');
-    
+    const origX = sys.enemy.targetX;
+    // 突進
+    sys.enemy.targetX = origX - 20;
+    if (enemyBody) {
+      enemyBody.style.transform = 'scale(1.2)';
+      enemyBody.style.filter = 'brightness(1.3)';
+    }
     setTimeout(() => {
-      enemy.classList.remove('attacking');
+      // 戻る
+      sys.enemy.targetX = origX;
+      if (enemyBody) {
+        enemyBody.style.transform = '';
+        enemyBody.style.filter = '';
+      }
       resolve();
     }, 500);
   });
 }
 
+// エフェクト生成
+function spawnEffect(type, x, y) {
+  const layer = document.getElementById('effectsLayer');
+  if (!layer) return;
+  const el = document.createElement('div');
+  el.className = type === 'heal' ? 'fx-heal' : 'fx-slash';
+  el.style.left = `${x}%`;
+  el.style.top = `${y}%`;
+  el.style.transform = 'translate(-50%,-50%)';
+  layer.appendChild(el);
+  setTimeout(() => el.remove(), type === 'heal' ? 800 : 400);
+}
+
+// 弾エフェクト
+function spawnProjectile(icon, fromX, fromY, toX, toY) {
+  const layer = document.getElementById('effectsLayer');
+  if (!layer) return;
+  const el = document.createElement('div');
+  el.className = 'fx-projectile';
+  el.textContent = icon;
+  el.style.left = `${fromX}%`;
+  el.style.top = `${fromY}%`;
+  el.style.transition = 'left 0.35s ease-in, top 0.35s ease-in';
+  layer.appendChild(el);
+  requestAnimationFrame(() => {
+    el.style.left = `${toX}%`;
+    el.style.top = `${toY}%`;
+  });
+  setTimeout(() => el.remove(), 400);
+}
+
+// 焚き火エフェクト
+function showCampfire() {
+  const layer = document.getElementById('effectsLayer');
+  if (!layer) return;
+  const el = document.createElement('div');
+  el.className = 'fx-campfire';
+  el.id = 'campfire';
+  el.textContent = '🔥';
+  el.style.left = '46%';
+  el.style.top = '56%';
+  el.style.transform = 'translate(-50%,-50%)';
+  layer.appendChild(el);
+  spriteSystem.campfire = el;
+}
+function hideCampfire() {
+  if (spriteSystem.campfire) {
+    spriteSystem.campfire.remove();
+    spriteSystem.campfire = null;
+  }
+}
+
 function initAdventureField() {
+  initSpriteSystem();
   updateAdventureField();
   updateEventStatus('探索準備完了');
   showEventMessage('ダンジョンの奥深くへ向かう');
   clearFieldFeed();
-  // 初期状態でキャラクターにidleアニメーション
-  setPartyAnimation('idle');
+  setStageMode('explore');
+}
+
+// ステージモード切替
+function setStageMode(mode) {
+  spriteSystem.mode = mode;
+  const formation = FORMATIONS[mode] || FORMATIONS.explore;
+  spriteSystem.chars.forEach((sprite, i) => {
+    if (!party[i] || !party[i].alive) return;
+    sprite.targetX = formation[i].x;
+    sprite.targetY = formation[i].y;
+    sprite.state = 'idle';
+    sprite.facing = mode === 'rest' ? (i < 2 ? 1 : -1) : 1;
+  });
 }
 
 // ===== ログ折りたたみ =====
@@ -2277,32 +2253,23 @@ function clearFieldFeed() {
 function addFieldMsg(text, type = 'event') {
   const feed = document.getElementById('fieldDialogueFeed');
   if (!feed) return;
-
   const el = document.createElement('div');
   el.className = `field-msg ${type}-msg`;
   el.textContent = text;
   feed.appendChild(el);
   feed.scrollTop = feed.scrollHeight;
-
-  // 最大30件に制限
-  while (feed.children.length > 30) {
-    feed.removeChild(feed.firstChild);
-  }
+  while (feed.children.length > 25) feed.removeChild(feed.firstChild);
 }
 
 function addFieldDialogue(speakerName, speakerIcon, text) {
   const feed = document.getElementById('fieldDialogueFeed');
   if (!feed) return;
-
   const el = document.createElement('div');
   el.className = 'field-dialogue';
   el.innerHTML = `<div class="speaker-icon">${speakerIcon || '💬'}</div><div class="dialogue-content"><div class="speaker-name">${speakerName}</div>${escapeHtml(text)}</div>`;
   feed.appendChild(el);
   feed.scrollTop = feed.scrollHeight;
-
-  while (feed.children.length > 30) {
-    feed.removeChild(feed.firstChild);
-  }
+  while (feed.children.length > 25) feed.removeChild(feed.firstChild);
 }
 
 function escapeHtml(str) {
@@ -2311,14 +2278,9 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
-// パーティー全体のアニメーション設定
+// パーティー全体のアニメーション設定（互換用 - 実際はspriteSystemが制御）
 function setPartyAnimation(state) {
-  party.forEach((member, index) => {
-    const sprite = document.getElementById(`char${index}`);
-    if (!sprite || !member.alive) return;
-    sprite.classList.remove('idle', 'walking', 'attacking');
-    if (state) sprite.classList.add(state);
-  });
+  // spriteSystemのmodeで制御するので、ここでは何もしない
 }
 
 // 環境エフェクト
@@ -2326,9 +2288,7 @@ function setEnvEffect(type) {
   const envEffect = document.getElementById('envEffect');
   if (!envEffect) return;
   envEffect.className = 'env-effect';
-  if (type) {
-    envEffect.classList.add(type, 'active');
-  }
+  if (type) envEffect.classList.add(type, 'active');
 }
 
 // 環境情報の更新
@@ -2343,11 +2303,11 @@ function updateEnvironmentVisual() {
 
 function setExploringMode() {
   hideEnemy();
+  hideCampfire();
   updateEventStatus('探索中...');
-  setPartyAnimation('walking');
+  setStageMode('explore');
   setEnvEffect(null);
   updateEnvironmentVisual();
-
   const exploreMessages = [
     '暗い通路を慎重に進んでいる',
     '石の壁に古い文字が刻まれている',
@@ -2361,7 +2321,7 @@ function setExploringMode() {
 function setBattleMode(monsterName) {
   updateEventStatus('⚔️ 戦闘中！');
   showEventMessage(`${monsterName} と戦闘開始！`, 'battle');
-  setPartyAnimation('idle');
+  setStageMode('battle');
   setEnvEffect('battle-env');
 }
 
@@ -2430,7 +2390,7 @@ async function battleEvent() {
     await performAttackAnimation(charIndex, 'enemy');
     
     // 敵にダメージ表示
-    const enemySlot = document.querySelector('.enemy-slot');
+    const enemySlot = document.getElementById('stageEnemy');
     if (enemySlot) {
       showDamageNumber(enemySlot, dmg, 'damage');
     }
@@ -2517,6 +2477,10 @@ async function battleEvent() {
       if (targetSlot) {
         showDamageNumber(targetSlot, heal, 'heal');
       }
+      // ステージ上にヒールエフェクト
+      if (spriteSystem.chars[targetIndex]) {
+        spawnEffect('heal', spriteSystem.chars[targetIndex].x, spriteSystem.chars[targetIndex].y);
+      }
       
       await new Promise(resolve => setTimeout(resolve, 300));
     }
@@ -2538,11 +2502,16 @@ async function battleEvent() {
       if (targetSlot) {
         const targetSprite = targetSlot.querySelector('.character-sprite');
         if (targetSprite) {
-          targetSprite.style.boxShadow = '0 0 15px #ffd700';
+          targetSprite.style.boxShadow = '0 0 18px #ffd700';
+          targetSprite.style.borderColor = '#ffd700';
           setTimeout(() => {
             targetSprite.style.boxShadow = '';
-          }, 1000);
+            targetSprite.style.borderColor = '';
+          }, 1200);
         }
+      }
+      if (spriteSystem.chars[targetIndex]) {
+        spawnEffect('heal', spriteSystem.chars[targetIndex].x, spriteSystem.chars[targetIndex].y);
       }
       
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -2555,7 +2524,6 @@ async function battleEvent() {
   // 2秒後に探索モードに戻る
   setTimeout(() => {
     setExploringMode();
-    setPartyAnimation('walking');
     showEventMessage(mHp <= 0 ? '戦闘に勝利した。先に進む...' : '敵を退けた。先に進む...');
   }, 2000);
 }
@@ -2593,7 +2561,8 @@ function trapEvent() {
 }
 
 function restEvent() {
-  setPartyAnimation('idle');
+  setStageMode('rest');
+  showCampfire();
   addLog(pick(TEXTS.restScene), 'rest');
   const alive = party.filter(p=>p.alive);
   alive.forEach(p => {
@@ -2777,6 +2746,9 @@ function setSpeed(s) {
 function endGame() {
   running = false;
   clearTimeout(intervalId);
+  // ゲームループ停止
+  if (spriteSystem.animId) { cancelAnimationFrame(spriteSystem.animId); spriteSystem.animId = null; }
+  hideCampfire();
   addLog(`\n${pick(TEXTS.wipe)}`, 'death');
 
   setTimeout(() => {
@@ -2808,6 +2780,8 @@ function endGame() {
 }
 
 function backToSelect() {
+  if (spriteSystem.animId) { cancelAnimationFrame(spriteSystem.animId); spriteSystem.animId = null; }
+  spriteSystem.initialized = false;
   selected = [];
   renderSelect();
   showScreen('select-screen');
