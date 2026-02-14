@@ -101,8 +101,84 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
 .hp-bar.low{background:linear-gradient(90deg,#ff5722,#ff8a65)}
 .hp-bar.mid{background:linear-gradient(90deg,#ff9800,#ffcc02)}
 
-/* ログエリア */
-.log-area{background:#0d1117;border:1px solid #333;border-radius:8px;padding:12px;height:calc(100vh - 380px);overflow-y:auto;font-size:.82em;line-height:1.6;scroll-behavior:smooth}
+/* ログコンテナ */
+.log-container{
+  background:#0d1117;
+  border:1px solid #333;
+  border-radius:8px;
+  height:calc(100vh - 400px);
+  display:flex;
+  flex-direction:column;
+}
+.log-tabs{
+  display:flex;
+  background:#16213e;
+  border-bottom:1px solid #333;
+  padding:5px;
+  gap:5px;
+}
+.log-tab{
+  background:transparent;
+  border:1px solid #334155;
+  color:#e2e8f0;
+  padding:8px 12px;
+  border-radius:6px;
+  cursor:pointer;
+  transition:all 0.2s;
+  font-size:0.8em;
+  font-family:inherit;
+}
+.log-tab:hover{
+  background:rgba(51,65,85,0.5);
+}
+.log-tab.active{
+  background:#334155;
+  border-color:#4a5568;
+  color:#ffd700;
+}
+.log-area{
+  flex:1;
+  padding:12px;
+  overflow-y:auto;
+  font-size:.82em;
+  line-height:1.6;
+  scroll-behavior:smooth;
+}
+.log-filters{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  padding:8px 12px;
+  background:#16213e;
+  border-top:1px solid #333;
+  flex-wrap:wrap;
+}
+.filter-toggle{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  cursor:pointer;
+  font-size:0.8em;
+  color:#e2e8f0;
+}
+.filter-toggle input[type="checkbox"]{
+  width:16px;
+  height:16px;
+  accent-color:#ffd700;
+}
+.filter-clear{
+  background:#d44;
+  color:white;
+  border:none;
+  padding:4px 8px;
+  border-radius:4px;
+  cursor:pointer;
+  font-size:0.8em;
+  margin-left:auto;
+}
+.filter-clear:hover{
+  background:#e55;
+}
 .log-line{animation:fadeIn .3s;padding:2px 4px;border-radius:4px;margin:1px 0}
 .log-line.battle{color:#ff6b6b}
 .log-line.heal{color:#69db7c}
@@ -220,12 +296,55 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   left:15px;
   font-size:1.2em;
 }
+.battle-summary{
+  background:rgba(34,17,23,0.8);
+  border:1px solid #8b2635;
+  border-radius:8px;
+  padding:12px;
+  margin:10px 0;
+  text-align:center;
+}
+.battle-turn{
+  font-size:1.1em;
+  color:#ff8a65;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+.battle-damage{
+  display:flex;
+  justify-content:space-between;
+  font-size:0.9em;
+}
+.battle-damage > div{
+  color:#e2e8f0;
+}
+.battle-damage span{
+  color:#ffd700;
+  font-weight:bold;
+}
+.quick-stats{
+  display:flex;
+  justify-content:space-between;
+  background:rgba(16,33,62,0.6);
+  border:1px solid #334155;
+  border-radius:8px;
+  padding:8px 12px;
+  margin:10px 0;
+  font-size:0.8em;
+}
+.stat-item{
+  color:#aaa;
+}
+.stat-value{
+  color:#ffd700;
+  font-weight:bold;
+}
 .event-messages{
   background:rgba(13,17,23,0.7);
   border:1px solid #21262d;
   border-radius:8px;
   padding:10px;
-  max-height:100px;
+  max-height:80px;
   overflow-y:auto;
   font-size:0.8em;
   width:100%;
@@ -829,6 +948,18 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
       <div class="speech-content" id="speechContent"></div>
     </div>
     <div class="action-description" id="actionDesc">ダンジョンを探索している</div>
+    <div class="battle-summary" id="battleSummary" style="display:none;">
+      <div class="battle-turn">ターン <span id="battleTurn">1</span></div>
+      <div class="battle-damage">
+        <div>与ダメージ: <span id="totalDamageDealt">0</span></div>
+        <div>被ダメージ: <span id="totalDamageTaken">0</span></div>
+      </div>
+    </div>
+    <div class="quick-stats" id="quickStats">
+      <div class="stat-item">階層: <span class="stat-value" id="quickFloor">B1F</span></div>
+      <div class="stat-item">生存: <span class="stat-value" id="quickSurvivors">4/4</span></div>
+      <div class="stat-item">HP: <span class="stat-value" id="quickTotalHP">100%</span></div>
+    </div>
     <div class="event-messages" id="eventMessages"></div>
   </div>
 
@@ -854,7 +985,35 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
   </div>
 </div>
 
-<div class="log-area" id="log-area"></div>
+<div class="log-container">
+  <!-- ログタブ -->
+  <div class="log-tabs">
+    <button class="log-tab active" onclick="switchLogTab('all')" id="tab-all">📜 すべて</button>
+    <button class="log-tab" onclick="switchLogTab('battle')" id="tab-battle">⚔️ 戦闘</button>
+    <button class="log-tab" onclick="switchLogTab('talk')" id="tab-talk">💬 会話</button>
+    <button class="log-tab" onclick="switchLogTab('system')" id="tab-system">ℹ️ システム</button>
+  </div>
+  
+  <!-- メインログエリア -->
+  <div class="log-area" id="log-area"></div>
+  
+  <!-- ログフィルター -->
+  <div class="log-filters">
+    <label class="filter-toggle">
+      <input type="checkbox" id="filter-battle" checked onchange="updateLogFilter()">
+      <span>戦闘</span>
+    </label>
+    <label class="filter-toggle">
+      <input type="checkbox" id="filter-talk" checked onchange="updateLogFilter()">
+      <span>会話</span>
+    </label>
+    <label class="filter-toggle">
+      <input type="checkbox" id="filter-system" checked onchange="updateLogFilter()">
+      <span>システム</span>
+    </label>
+    <button class="filter-clear" onclick="clearLog()">🗑️ クリア</button>
+  </div>
+</div>
 </div>
 
 <!-- 設定画面 -->
@@ -2257,6 +2416,71 @@ function updateAdventureField() {
   if (floorDisplay) {
     floorDisplay.textContent = `B${floor}F`;
   }
+  
+  // クイック統計更新
+  updateQuickStats();
+}
+
+function updateQuickStats() {
+  const survivors = party.filter(p => p.alive).length;
+  const totalHP = party.reduce((sum, p) => sum + p.hp, 0);
+  const maxHP = party.reduce((sum, p) => sum + p.maxHp, 0);
+  const hpPercent = maxHP > 0 ? Math.round((totalHP / maxHP) * 100) : 0;
+  
+  const quickFloor = document.getElementById('quickFloor');
+  const quickSurvivors = document.getElementById('quickSurvivors');
+  const quickTotalHP = document.getElementById('quickTotalHP');
+  
+  if (quickFloor) quickFloor.textContent = `B${floor}F`;
+  if (quickSurvivors) {
+    quickSurvivors.textContent = `${survivors}/${party.length}`;
+    quickSurvivors.style.color = survivors === party.length ? '#4caf50' : survivors > party.length / 2 ? '#ffd700' : '#ff6b6b';
+  }
+  if (quickTotalHP) {
+    quickTotalHP.textContent = `${hpPercent}%`;
+    quickTotalHP.style.color = hpPercent > 75 ? '#4caf50' : hpPercent > 50 ? '#ffd700' : hpPercent > 25 ? '#ff9800' : '#ff6b6b';
+  }
+}
+
+let battleTurn = 0;
+let battleDamageDealt = 0;
+let battleDamageTaken = 0;
+
+function startBattleUI() {
+  battleTurn++;
+  battleDamageDealt = 0;
+  battleDamageTaken = 0;
+  
+  const battleSummary = document.getElementById('battleSummary');
+  const battleTurnEl = document.getElementById('battleTurn');
+  
+  if (battleSummary) battleSummary.style.display = 'block';
+  if (battleTurnEl) battleTurnEl.textContent = battleTurn;
+  
+  updateBattleStats();
+}
+
+function endBattleUI() {
+  const battleSummary = document.getElementById('battleSummary');
+  if (battleSummary) {
+    setTimeout(() => {
+      battleSummary.style.display = 'none';
+    }, 2000);
+  }
+}
+
+function updateBattleStats() {
+  const totalDamageDealtEl = document.getElementById('totalDamageDealt');
+  const totalDamageTakenEl = document.getElementById('totalDamageTaken');
+  
+  if (totalDamageDealtEl) totalDamageDealtEl.textContent = battleDamageDealt;
+  if (totalDamageTakenEl) totalDamageTakenEl.textContent = battleDamageTaken;
+}
+
+function addBattleDamage(dealt = 0, taken = 0) {
+  battleDamageDealt += dealt;
+  battleDamageTaken += taken;
+  updateBattleStats();
 }
 
 function showEnemy(monsterName, currentHp, maxHp) {
@@ -2483,6 +2707,7 @@ async function battleEvent() {
   // 戦闘モード設定
   setBattleMode(mon.name);
   showEnemy(mon.name, mHp, maxHp);
+  startBattleUI();
 
   const alive = party.filter(p=>p.alive);
   // 戦闘中の掛け合い
@@ -2526,6 +2751,9 @@ async function battleEvent() {
     
     // フィールド状態更新
     updateAdventureField();
+    
+    // 戦闘ダメージ記録
+    addBattleDamage(dmg, 0);
     
     // 0.5秒待機（次の攻撃まで）
     await new Promise(resolve => setTimeout(resolve, 500));
@@ -2577,6 +2805,9 @@ async function battleEvent() {
           setTimeout(() => charSprite.classList.remove('hit-flash'), 300);
         }
       }
+      
+      // 戦闘ダメージ記録
+      addBattleDamage(0, dmg);
       
       // 0.3秒待機（次のヒットまで）
       await new Promise(resolve => setTimeout(resolve, 300));
@@ -2646,6 +2877,7 @@ async function battleEvent() {
   setTimeout(() => {
     setExploringMode();
     showEventMessage(mHp <= 0 ? '戦闘に勝利した' : '敵を退けた');
+    endBattleUI();
   }, 2000);
 }
 
@@ -2903,19 +3135,116 @@ function renderHP() {
   }).join('');
 }
 
+// ログ管理システム
+let logData = [];
+let currentLogFilter = 'all';
+let logFilters = {
+  battle: true,
+  talk: true,
+  system: true
+};
+
 function addLog(text, cls='') {
+  // ログデータに保存
+  const logEntry = {
+    id: Date.now() + Math.random(),
+    message: text,
+    type: cls,
+    timestamp: new Date(),
+    category: getLogCategory(cls)
+  };
+  
+  logData.push(logEntry);
+  
+  // 表示上限を設定（パフォーマンス対策）
+  if (logData.length > 500) {
+    logData = logData.slice(-400);
+  }
+  
+  // 現在のフィルターに応じて表示
+  updateLogDisplay();
+}
+
+function getLogCategory(type) {
+  if (['battle', 'death'].includes(type)) return 'battle';
+  if (['talk', 'love'].includes(type)) return 'talk';
+  if (['system', 'floor', 'synergy', 'achievement', 'heal', 'trap', 'rest'].includes(type)) return 'system';
+  return 'system';
+}
+
+function switchLogTab(filter) {
+  currentLogFilter = filter;
+  
+  // タブの見た目更新
+  document.querySelectorAll('.log-tab').forEach(tab => {
+    tab.classList.remove('active');
+  });
+  document.getElementById(`tab-${filter}`).classList.add('active');
+  
+  updateLogDisplay();
+}
+
+function updateLogFilter() {
+  logFilters.battle = document.getElementById('filter-battle').checked;
+  logFilters.talk = document.getElementById('filter-talk').checked;
+  logFilters.system = document.getElementById('filter-system').checked;
+  
+  updateLogDisplay();
+}
+
+function updateLogDisplay() {
   const area = document.getElementById('log-area');
-  const div = document.createElement('div');
-  // セリフは吹き出し風に
-  const isTalkBubble = cls === 'talk' && (text.includes('「') || text.trim().startsWith('💬'));
-  div.className = 'log-line ' + cls + (isTalkBubble ? ' talk-bubble' : '');
-  div.textContent = text;
-  area.appendChild(div);
+  area.innerHTML = '';
+  
+  // フィルタリング
+  let filteredLogs = logData;
+  
+  // タブフィルター
+  if (currentLogFilter !== 'all') {
+    filteredLogs = filteredLogs.filter(log => log.category === currentLogFilter);
+  }
+  
+  // チェックボックスフィルター
+  filteredLogs = filteredLogs.filter(log => {
+    if (log.category === 'battle') return logFilters.battle;
+    if (log.category === 'talk') return logFilters.talk;
+    if (log.category === 'system') return logFilters.system;
+    return true;
+  });
+  
+  // 最新100件のみ表示（パフォーマンス対策）
+  const displayLogs = filteredLogs.slice(-100);
+  
+  displayLogs.forEach(log => {
+    const div = document.createElement('div');
+    // セリフは吹き出し風に
+    const isTalkBubble = log.type === 'talk' && (log.message.includes('「') || log.message.trim().startsWith('💬'));
+    div.className = `log-line ${log.type}${isTalkBubble ? ' talk-bubble' : ''}`;
+    div.textContent = log.message;
+    div.setAttribute('data-category', log.category);
+    div.setAttribute('data-timestamp', log.timestamp.toLocaleTimeString());
+    div.title = log.timestamp.toLocaleString();
+    area.appendChild(div);
+  });
+  
+  // 空の場合のメッセージ
+  if (displayLogs.length === 0) {
+    const emptyDiv = document.createElement('div');
+    emptyDiv.className = 'log-line system';
+    emptyDiv.textContent = 'このカテゴリのログはありません';
+    emptyDiv.style.opacity = '0.5';
+    emptyDiv.style.fontStyle = 'italic';
+    area.appendChild(emptyDiv);
+  }
+  
   area.scrollTop = area.scrollHeight;
 }
 
 function clearLog() {
-  document.getElementById('log-area').innerHTML = '';
+  if (confirm('ログをクリアしますか？')) {
+    logData = [];
+    updateLogDisplay();
+  }
 }
 
 function showScreen(id) {
@@ -3241,6 +3570,7 @@ function shareResult() {
 renderSelect();
 loadSettings();
 updateContinueButton();
+updateLogDisplay();
 
 // 統計データの読み込み
 const statsStr = localStorage.getItem('dungeonParty_stats');
