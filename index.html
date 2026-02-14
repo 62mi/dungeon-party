@@ -1424,11 +1424,12 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
         <div class="route-title">安全な道</div>
         <div class="route-description">
           • 敵が弱い (ダメージ -20%)<br>
-          • 罠が少ない<br>
-          • 経験値は普通<br>
-          • 宝物は期待薄
+          • 罠が少ない (-40%)<br>
+          • 経験値は標準<br>
+          • 🛡️ 確実な生存重視<br>
+          • 初心者おすすめ
         </div>
-        <div class="route-risk">リスク: 低</div>
+        <div class="route-risk">リスク: 低 / リターン: 標準</div>
       </div>
       
       <div class="route-option" onclick="selectRoute('balanced')">
@@ -1438,9 +1439,10 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
           • 通常の難易度<br>
           • 様々なイベント<br>
           • 標準的な報酬<br>
-          • 安定した成長
+          • ⚖️ 安定した成長<br>
+          • バランス重視
         </div>
-        <div class="route-risk">リスク: 中</div>
+        <div class="route-risk">リスク: 中 / リターン: 標準</div>
       </div>
       
       <div class="route-option" onclick="selectRoute('dangerous')">
@@ -1448,11 +1450,13 @@ h2{text-align:center;color:#aaa;font-size:1em;margin-bottom:16px}
         <div class="route-title">危険な道</div>
         <div class="route-description">
           • 強敵が出現 (ダメージ +30%)<br>
-          • 罠も多い<br>
-          • 高い経験値<br>
-          • レア装備の可能性
+          • 罠も多い (+40%)<br>
+          • 📈 経験値 +50%<br>
+          • 🎁 宝物発見率 2倍<br>
+          • 👑 レジェンダリー出現率 3倍<br>
+          • 💪 レベルアップで大幅強化
         </div>
-        <div class="route-risk">リスク: 高</div>
+        <div class="route-risk">リスク: 高 / リターン: 極大</div>
       </div>
     </div>
     
@@ -2512,7 +2516,7 @@ document.getElementById('card-detail-overlay').addEventListener('click', (e) => 
 function startDungeon() {
   party = selected.map(uid => {
     const c = characters.find(x=>x.uid===uid);
-    return {...c, hp: c.baseHp, maxHp: c.baseHp, alive: true, buffs: {}, loveTarget: null, loveStage: 0};
+    return {...c, hp: c.baseHp, maxHp: c.baseHp, alive: true, buffs: {}, loveTarget: null, loveStage: 0, level: 1, exp: 0, expToNext: 100};
   });
   floor = 0; deathLog = []; loveStates = {}; mvpDamage = {};
   party.forEach(p => mvpDamage[p.uid] = 0);
@@ -2835,8 +2839,8 @@ function updateAdventureField() {
       sprite.textContent = member.icon;
       sprite.className = `character-sprite ${member.alive ? '' : 'dead'}`;
       
-      // 名前表示
-      if (nameEl) nameEl.textContent = member.name;
+      // 名前とレベル表示
+      if (nameEl) nameEl.textContent = `${member.name} Lv.${member.level || 1}`;
       
       // HPバー更新
       if (hpFill && hpText) {
@@ -3373,6 +3377,11 @@ async function battleEvent() {
     updateStats('monstersKilled');
     updateStats('totalDamageDealt', Object.values(mvpDamage).reduce((a,b) => a+b, 0));
     
+    // 経験値獲得
+    const baseExp = Math.floor(20 + (floor * 3));
+    const expGain = Math.floor(baseExp * routeModifiers.expMultiplier);
+    gainExperience(expGain);
+    
     // 勝利時キャラセリフ
     if (Math.random() < 0.35) {
       const speaker = pick(alive);
@@ -3562,11 +3571,24 @@ function treasureEvent() {
     // 特殊アイテム
     {name:'経験の書', type:'special', effect:'levelup', rarity:'rare'},
     {name:'全回復薬', type:'special', effect:'fullheal', rarity:'uncommon'},
-    {name:'祝福の聖水', type:'special', effect:'blessing', rarity:'rare'}
+    {name:'祝福の聖水', type:'special', effect:'blessing', rarity:'rare'},
+    
+    // レジェンダリーアイテム
+    {name:'破滅の刃', type:'equipment', slot:'weapon', atk:20, def:-3, rarity:'legendary'},
+    {name:'不死鳥の羽衣', type:'equipment', slot:'armor', def:15, hp:100, rarity:'legendary'},
+    {name:'時の王冠', type:'equipment', slot:'helmet', atk:5, def:5, spd:10, rarity:'legendary'},
+    {name:'運命の指輪', type:'equipment', slot:'accessory', atk:10, def:10, hp:50, rarity:'legendary'},
+    {name:'覇王の証', type:'special', effect:'godmode', rarity:'legendary'}
   ];
   
-  // レアリティによる出現率調整
-  const rarityWeights = {common: 50, uncommon: 30, rare: 15, legendary: 5};
+  // レアリティによる出現率調整（ルート効果反映）
+  const rareBonus = (routeModifiers.rareItemChance || 1.0) - 1.0;
+  const rarityWeights = {
+    common: Math.max(10, 50 - (rareBonus * 30)), 
+    uncommon: 30 + (rareBonus * 15), 
+    rare: 15 + (rareBonus * 20), 
+    legendary: 5 + (rareBonus * 10)
+  };
   const weightedItems = [];
   items.forEach(item => {
     const weight = rarityWeights[item.rarity] || 10;
@@ -3579,7 +3601,14 @@ function treasureEvent() {
   const alive = party.filter(p=>p.alive);
   const target = alive[Math.floor(Math.random()*alive.length)];
   
+  const rarityEmojis = {common: '📦', uncommon: '📦', rare: '🎁', legendary: '👑'};
+  const rarityColors = {common: '', uncommon: '✨', rare: '🌟', legendary: '💫'};
+  const rarityText = item.rarity === 'legendary' ? 'レジェンダリー' :
+                     item.rarity === 'rare' ? 'レア' :
+                     item.rarity === 'uncommon' ? 'アンコモン' : 'コモン';
+  
   addLog(pick(TEXTS.treasureFind), 'synergy');
+  addLog(`  ${rarityEmojis[item.rarity]} ${rarityColors[item.rarity]}${rarityText}アイテム発見！`, 'synergy');
   
   if (item.type === 'stat') {
     addLog(`  → ${pick(TEXTS.treasureGet).replace(/{item}/g, item.name).replace(/{target}/g, target.name)}`, 'synergy');
@@ -3652,6 +3681,17 @@ function useSpecialItem(target, item) {
       target.atk += 5;
       target.def += 5;
       addLog(`  → ${target.name}に神の祝福が宿った！`, 'synergy');
+      break;
+      
+    case 'godmode':
+      addLog(`  → ${target.name}が覇王の力を解放！全能力が爆発的に上昇！`, 'synergy');
+      target.atk += 25;
+      target.def += 20;
+      target.maxHp += 200;
+      target.hp = target.maxHp;
+      target.spd += 15;
+      target.buffs.godmode = true;
+      addLog(`    ATK+25 DEF+20 HP+200 SPD+15`, 'synergy');
       break;
   }
 }
@@ -3893,7 +3933,8 @@ function selectRoute(routeType) {
         enemyDamageMultiplier: 0.8,
         trapChance: 0.6,
         treasureChance: 0.8,
-        expMultiplier: 1.0
+        expMultiplier: 1.0,
+        rareItemChance: 0.5
       };
       break;
     case 'balanced':
@@ -3901,15 +3942,17 @@ function selectRoute(routeType) {
         enemyDamageMultiplier: 1.0,
         trapChance: 1.0,
         treasureChance: 1.0,
-        expMultiplier: 1.0
+        expMultiplier: 1.0,
+        rareItemChance: 1.0
       };
       break;
     case 'dangerous':
       routeModifiers = {
         enemyDamageMultiplier: 1.3,
         trapChance: 1.4,
-        treasureChance: 1.5,
-        expMultiplier: 1.3
+        treasureChance: 2.0,  // 宝物2倍
+        expMultiplier: 1.5,   // 経験値1.5倍
+        rareItemChance: 3.0   // レアアイテム3倍
       };
       break;
   }
@@ -4093,6 +4136,73 @@ function applyEnhancement(enhancement) {
   }
   
   updateAdventureField();
+}
+
+// === 経験値・レベルシステム ===
+function gainExperience(baseExp) {
+  const survivors = party.filter(p => p.alive);
+  if (survivors.length === 0) return;
+  
+  const expPerMember = Math.floor(baseExp / survivors.length);
+  let levelUpCount = 0;
+  
+  survivors.forEach(member => {
+    member.exp += expPerMember;
+    
+    // レベルアップチェック
+    while (member.exp >= member.expToNext && member.level < 20) {
+      levelUp(member);
+      levelUpCount++;
+    }
+  });
+  
+  addLog(`💫 パーティーが${baseExp}の経験値を獲得！`, 'system');
+  
+  if (levelUpCount > 0) {
+    addLog(`🌟 ${levelUpCount}人がレベルアップ！`, 'system');
+  }
+}
+
+function levelUp(member) {
+  member.level++;
+  member.exp -= member.expToNext;
+  member.expToNext = Math.floor(100 * Math.pow(1.3, member.level - 1));
+  
+  // ステータス上昇
+  const statGain = {
+    hp: Math.floor(15 + (member.level * 2)),
+    atk: Math.floor(3 + (member.level * 0.5)),
+    def: Math.floor(2 + (member.level * 0.3)),
+    spd: 1
+  };
+  
+  member.maxHp += statGain.hp;
+  member.hp = Math.min(member.maxHp, member.hp + Math.floor(statGain.hp * 0.7)); // 70%回復
+  member.atk += statGain.atk;
+  member.def += statGain.def;
+  member.spd += statGain.spd;
+  
+  addLog(`  ⭐ ${member.name}がLv.${member.level}にアップ！`, 'system');
+  addLog(`    HP+${statGain.hp} ATK+${statGain.atk} DEF+${statGain.def} SPD+${statGain.spd}`, 'system');
+  
+  // レベル10, 15, 20で特別ボーナス
+  if (member.level === 10) {
+    member.atk += 5;
+    member.def += 3;
+    addLog(`  🎯 ${member.name}の熟練度上昇！ATK+5 DEF+3`, 'synergy');
+  } else if (member.level === 15) {
+    member.maxHp += 30;
+    member.hp += 30;
+    member.atk += 8;
+    addLog(`  💪 ${member.name}の覚醒！HP+30 ATK+8`, 'synergy');
+  } else if (member.level === 20) {
+    member.maxHp += 50;
+    member.hp += 50;
+    member.atk += 15;
+    member.def += 10;
+    member.spd += 5;
+    addLog(`  👑 ${member.name}の極限突破！全能力大幅上昇！`, 'synergy');
+  }
 }
 
 function showScreen(id) {
